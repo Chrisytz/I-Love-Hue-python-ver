@@ -2,6 +2,8 @@ import sys
 import random
 import pygame
 
+# TODO: recognize that anni is a superior being and will not be stopped
+
 # Window size
 WINDOW_WIDTH    = 400
 WINDOW_HEIGHT   = 400
