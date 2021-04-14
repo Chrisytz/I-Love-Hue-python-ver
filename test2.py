@@ -1,68 +1,94 @@
 import pygame
+import random
 
-# --- constants --- (UPPER_CASE names)
+winSize = 400
+rectSize = 50 #must be a factor of winSize
+numRect = (int)(winSize/rectSize)
 
-SCREEN_WIDTH = 430
-SCREEN_HEIGHT = 410
-WHITE = (255, 255, 255)
-RED   = (255,   0,   0)
-FPS = 30
-
-# --- main ---
-
-# - init -
-
+### initialisation
 pygame.init()
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+window = pygame.display.set_mode((winSize, winSize))
+pygame.display.set_caption("Gradient Rect")
 
-# - objects -
+def gradientRect(window, topleft_colour, topright_colour, bottomright_colour, bottomleft_colour, target_rect):
+    """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
+    colour_rect = pygame.Surface((2,2 ))                                   # tiny! 2x2 bitmap
+    pygame.draw.line( colour_rect, bottomleft_colour, (0,0), (0,0))         # left colour line
+    pygame.draw.line( colour_rect, topright_colour, (1,1), (1,1))
+    pygame.draw.line( colour_rect, bottomright_colour, (1,0), (1,0))
+    pygame.draw.line( colour_rect, topleft_colour, (0,1), (0,1))
+    colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height ))  # stretch!
+    window.blit(colour_rect, target_rect)                                    # paint it
 
-rectangle = pygame.rect.Rect(176, 134, 30, 30)
-rectangle2 = pygame.rect.Rect(123, 156, 10,10)
-rectangle_draging = False
+def getColours(winDimensions, rectDimensions):
+    x = 0
+    list = []
+    for j in range(0, winDimensions-1, rectDimensions):
+        for i in range(0, winDimensions-1, rectDimensions):
+            list.insert(x, pygame.Surface.get_at(window, (j, i)))
+            x = x + 1
+    return list
 
-# - mainloop -
+class RectSprite(pygame.sprite.Sprite):
+    def __init__(self, xpos, ypos, colour, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([50,50])
+        self.image.fill(colour)
+        self.clicked = False
+        self.rect = self.image.get_rect()
+        self.rect.y = ypos
+        self.rect.x = xpos
 
+    #def moveToFront(self, sprite):
+    #    super(RectSprite, self).moveToFront()
+    #    pygame.sprite.LayeredUpdates.move_to_front(sprite)
+
+done = False
 clock = pygame.time.Clock()
 
-running = True
+## IT WORKS WOWWWWWWWWW
+gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, winSize, winSize))
+colourList = getColours(winSize, rectSize)
+sprite_list = pygame.sprite.Group()
+sprite_list2 = pygame.sprite.GroupSingle(sprite=None)
+num = 0
 
-while running:
+#drawing the thing
+for a in range (0, winSize-1, rectSize):
+    for b in range (0, winSize-1, rectSize):
+        sprite_list.add(RectSprite(a,b,colourList[num], len(sprite_list)+1))
+        num = num + 1
 
-    # - events -
-
+while not done:
+    sprite_list.draw(window)
+    #pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            running = False
-
-        elif event.type == pygame.MOUSEBUTTONDOWN:
+            done = True
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            pos = pygame.mouse.get_pos()
+            x = pos[0]
+            y = pos[1]
             if event.button == 1:
-                if rectangle.collidepoint(event.pos):
-                    rectangle_draging = True
-                    mouse_x, mouse_y = event.pos
-                    offset_x = rectangle.x - mouse_x
-                    offset_y = rectangle.y - mouse_y
+                for sprite in sprite_list:
+                    if sprite.rect.collidepoint(pos):
+                        sprite.clicked = True
+                        #another_surface = pygame.Surface((400, 400))
+                        #colour = another_surface.get_at((x, y))
+                        sprite_list2.add(sprite)
+                        sprite.clicked = True
+        if event.type == pygame.MOUSEBUTTONUP:
+            for sprite in sprite_list:
+                sprite.clicked = False
 
-        elif event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                rectangle_draging = False
+    for sprite in sprite_list2:
+        if sprite.clicked == True:
+            pos = pygame.mouse.get_pos()
+            sprite.rect.x = pos[0] - (sprite.rect.width/2)
+            sprite.rect.y = pos[1] - (sprite.rect.height/2)
+    sprite_list2.draw(window)
 
-        elif event.type == pygame.MOUSEMOTION:
-            if rectangle_draging:
-                mouse_x, mouse_y = event.pos
-                rectangle.x = mouse_x + offset_x
-                rectangle.y = mouse_y + offset_y
-
-    # - draws (without updates) -
-
-    screen.fill(WHITE)
-    pygame.draw.rect(screen, RED, rectangle)
     pygame.display.flip()
-
-    # - constant game speed / FPS -
-
-    clock.tick(FPS)
-
-# - end -
+    clock.tick(60)
 
 pygame.quit()

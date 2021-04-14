@@ -31,13 +31,17 @@ def getColours(winDimensions, rectDimensions):
 
 class RectSprite(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, colour, id):
-        super(RectSprite, self).__init__()
+        pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([50,50])
         self.image.fill(colour)
         self.clicked = False
         self.rect = self.image.get_rect()
         self.rect.y = ypos
         self.rect.x = xpos
+
+    #def moveToFront(self, sprite):
+    #    super(RectSprite, self).moveToFront()
+    #    pygame.sprite.LayeredUpdates.move_to_front(sprite)
 
 done = False
 clock = pygame.time.Clock()
@@ -55,6 +59,9 @@ for a in range (0, winSize-1, rectSize):
         num = num + 1
 
 while not done:
+    sprite_list.draw(window)
+    pygame.display.flip()
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
@@ -66,10 +73,8 @@ while not done:
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos):
                         sprite.clicked = True
-                    if sprite.rect.collidepoint(pos):
                         #another_surface = pygame.Surface((400, 400))
                         #colour = another_surface.get_at((x, y))
-                        #pygame.sprite.LayeredUpdates.move_to_front((sprite=sprite))
                         window.blit(window, sprite)
                         sprite.clicked = True
         if event.type == pygame.MOUSEBUTTONUP:
@@ -82,12 +87,5 @@ while not done:
             sprite.rect.x = pos[0] - (sprite.rect.width/2)
             sprite.rect.y = pos[1] - (sprite.rect.height/2)
 
-    window.fill((0,0,0))
-
-    sprite_list.draw(window)
-
-    pygame.display.flip()
-
-    clock.tick(60)
 
 pygame.quit()
