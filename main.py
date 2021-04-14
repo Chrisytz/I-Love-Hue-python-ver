@@ -2,15 +2,18 @@ import sys
 import random
 import pygame
 
-# Window size
-WINDOW_WIDTH    = 400
-WINDOW_HEIGHT   = 400
+### Setting up dimensions
+winSize = 400
+rectSize = 50 #must be a factor of winSize
+numRect = (int)(winSize/rectSize)
 
 ### initialisation
 pygame.init()
-window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+window = pygame.display.set_mode((winSize, winSize))
 pygame.display.set_caption("Gradient Rect")
 
+### functions
+# TODO: maybe fix the bottomleft things bc theyre wrong xd
 def gradientRect(window, topleft_colour, topright_colour, bottomright_colour, bottomleft_colour, target_rect):
     """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
     colour_rect = pygame.Surface((2,2 ))                                   # tiny! 2x2 bitmap
@@ -21,40 +24,47 @@ def gradientRect(window, topleft_colour, topright_colour, bottomright_colour, bo
     colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height ))  # stretch!
     window.blit(colour_rect, target_rect)                                    # paint it
 
-def getColours():
+def getColours(winDimensions, rectDimensions):
     x = 0
     list = []
-    for j in range(0, 399, 50):
-        for i in range(0, 399, 50):
+    for j in range(0, winDimensions-1, rectDimensions):
+        for i in range(0, winDimensions-1, rectDimensions):
             list.insert(x, pygame.Surface.get_at(window, (j, i)))
             x = x + 1
     return list
 
-def shuffle(list):
-    random.shuffle(list)
-    shuffled = list
+def shuffle(list, numRect):
+    shuffledList = list[1:numRect-1] + list [numRect:-numRect] + list[-(numRect-1):-1]
+    random.shuffle(shuffledList)
+    return shuffledList
+
+def replace(shuffledList, list, numRect) :
+    list[1:numRect-1] = shuffledList[0:numRect-2]
+    list[numRect:-numRect] = shuffledList[numRect-2:-(numRect-2)]
+    list[-(numRect-1):-1] = shuffledList[-(numRect-2):]
     return list
 
-def draw(xd):
+def draw(list, winDimensions, rectDimensions):
     x = 0
-    for j in range (0, 399, 50):
-        for i in range (0, 399, 50):
-            pygame.draw.rect(window, xd[x], (j, i, 50, 50))
+    for j in range (0, winDimensions-1, rectDimensions):
+        for i in range (0, winDimensions-1, rectDimensions):
+            pygame.draw.rect(window, list[x], (j, i, rectDimensions, rectDimensions))
             x=x+1
 
-gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, 400, 400))
+### creating gradiented rectangles
+gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, winSize, winSize))
 
-boop = getColours()
-draw(boop)
-print(boop)
+colourList = getColours(winSize, rectSize)
+draw(colourList, winSize, rectSize)
 pygame.display.update()
-shuffled = shuffle(getColours())
-draw(shuffled)
+pygame.time.delay(1000)
 
-pygame.draw.rect(window, boop[0], (0,0,50,50))
-pygame.draw.rect(window, boop[7], (0,350,50,50))
-pygame.draw.rect(window, boop[63], (350, 350, 50, 50))
-pygame.draw.rect(window, boop[-8], (350, 0, 50, 50))
+#print(colourList)
+#print(shuffle(colourList, numRect))
+#print(replace(shuffle(colourList, numRect), colourList, numRect))
+
+shuffledColourList = replace(shuffle(colourList, numRect), colourList, numRect)
+draw(shuffledColourList, winSize, rectSize)
 
 pygame.display.update()
 
