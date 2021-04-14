@@ -60,7 +60,7 @@ for a in range (0, winSize-1, rectSize):
         num = num + 1
 
 while not done:
-    sprite_list.draw(window)
+    # sprite_list.draw(window)
     #pygame.display.flip()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -86,6 +86,7 @@ while not done:
             pos = pygame.mouse.get_pos()
             sprite.rect.x = pos[0] - (sprite.rect.width/2)
             sprite.rect.y = pos[1] - (sprite.rect.height/2)
+    sprite_list.draw(window)
     sprite_list2.draw(window)
 
     pygame.display.flip()
