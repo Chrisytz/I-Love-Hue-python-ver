@@ -66,7 +66,7 @@ while not done:
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos):
                         sprite.clicked = True
-                    if key.rect.collidepoint(pos):
+                    if sprite.rect.collidepoint(pos):
                         #another_surface = pygame.Surface((400, 400))
                         #colour = another_surface.get_at((x, y))
                         #pygame.sprite.LayeredUpdates.move_to_front(pygame.sprite.LayeredUpdates.get_sprites_at((key)))
