@@ -29,7 +29,7 @@ def getColours(winDimensions, rectDimensions):
             x = x + 1
     return list
 
-class Key(pygame.sprite.Sprite):
+class RectSprite(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, colour, id):
         super(RectSprite, self).__init__()
         self.image = pygame.Surface([50,50])
@@ -69,9 +69,9 @@ while not done:
                     if sprite.rect.collidepoint(pos):
                         #another_surface = pygame.Surface((400, 400))
                         #colour = another_surface.get_at((x, y))
-                        #pygame.sprite.LayeredUpdates.move_to_front(pygame.sprite.LayeredUpdates.get_sprites_at((key)))
-                        window.blit(window, key)
-                        key.clicked = True
+                        #pygame.sprite.LayeredUpdates.move_to_front((sprite=sprite))
+                        window.blit(window, sprite)
+                        sprite.clicked = True
         if event.type == pygame.MOUSEBUTTONUP:
             for sprite in sprite_list:
                 sprite.clicked = False
