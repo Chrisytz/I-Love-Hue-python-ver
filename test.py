@@ -46,7 +46,6 @@ clock = pygame.time.Clock()
 gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, winSize, winSize))
 colourList = getColours(winSize, rectSize)
 key_list = pygame.sprite.Group()
-key_list2 = pygame.sprite.Group()
 num = 0
 
 #drawing the thing
@@ -66,11 +65,10 @@ while not done:
             if event.button == 1:
                 for key in key_list:
                     if key.rect.collidepoint(pos):
-                        another_surface = pygame.Surface((400, 400))
-                        colour = another_surface.get_at((x, y))
-                        pygame.sprite.LayeredUpdates.move_to_front(self=, sprite=Key(x, y, colour, len(key_list2)+1))
-                        #key_list2.add(Key(x, y, colour, len(key_list2) + 1))
-
+                        #another_surface = pygame.Surface((400, 400))
+                        #colour = another_surface.get_at((x, y))
+                        #pygame.sprite.LayeredUpdates.move_to_front(pygame.sprite.LayeredUpdates.get_sprites_at((key)))
+                        window.blit(window, key)
                         key.clicked = True
 
         if event.type == pygame.MOUSEBUTTONUP:
