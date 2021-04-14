@@ -31,7 +31,7 @@ def getColours(winDimensions, rectDimensions):
 
 class Key(pygame.sprite.Sprite):
     def __init__(self, xpos, ypos, colour, id):
-        super(Key, self).__init__()
+        super(RectSprite, self).__init__()
         self.image = pygame.Surface([50,50])
         self.image.fill(colour)
         self.clicked = False
@@ -45,13 +45,13 @@ clock = pygame.time.Clock()
 ## IT WORKS WOWWWWWWWWW
 gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, winSize, winSize))
 colourList = getColours(winSize, rectSize)
-key_list = pygame.sprite.Group()
+sprite_list = pygame.sprite.Group()
 num = 0
 
 #drawing the thing
 for a in range (0, winSize-1, rectSize):
     for b in range (0, winSize-1, rectSize):
-        key_list.add(Key(a,b,colourList[num], len(key_list)+1))
+        sprite_list.add(RectSprite(a,b,colourList[num], len(sprite_list)+1))
         num = num + 1
 
 while not done:
@@ -63,28 +63,28 @@ while not done:
             x = pos[0]
             y = pos[1]
             if event.button == 1:
-                for key in key_list:
+                for sprite in sprite_list:
+                    if sprite.rect.collidepoint(pos):
+                        sprite.clicked = True
                     if key.rect.collidepoint(pos):
                         #another_surface = pygame.Surface((400, 400))
                         #colour = another_surface.get_at((x, y))
                         #pygame.sprite.LayeredUpdates.move_to_front(pygame.sprite.LayeredUpdates.get_sprites_at((key)))
                         window.blit(window, key)
                         key.clicked = True
-
         if event.type == pygame.MOUSEBUTTONUP:
-            for key in key_list:
-                key.clicked = False
+            for sprite in sprite_list:
+                sprite.clicked = False
 
-### centering the mouse and rectangle n wtv
-    for key in key_list:
-        if key.clicked == True:
+    for sprite in sprite_list:
+        if sprite.clicked == True:
             pos = pygame.mouse.get_pos()
-            key.rect.x = pos[0] - (key.rect.width/2)
-            key.rect.y = pos[1] - (key.rect.height/2)
+            sprite.rect.x = pos[0] - (sprite.rect.width/2)
+            sprite.rect.y = pos[1] - (sprite.rect.height/2)
 
     window.fill((0,0,0))
 
-    key_list.draw(window)
+    sprite_list.draw(window)
 
     pygame.display.flip()
 
