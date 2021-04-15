@@ -56,6 +56,8 @@ def draw(list, win_dimensions, rect_dimensions):
     for i in range(0, win_dimensions - 1, rect_dimensions):
         for j in range(0, win_dimensions - 1, rect_dimensions):
             pygame.draw.rect(window, list[count], (i, j, rect_dimensions, rect_dimensions))
+            pygame.display.update()
+            pygame.time.delay(20)
             count += 1
 
 
@@ -72,6 +74,8 @@ def paintWhite (win_size, rect_size):
     for i in range (0, win_size - 1, rect_size):
         for j in range(0, win_size - 1, rect_size):
             pygame.draw.rect(window, (190, 232, 237), (i, j, rect_size, rect_size))
+            pygame.display.update()
+            pygame.time.delay(20)
             count += 1
 
 
@@ -150,6 +154,12 @@ while not done:
     colour_compare = getColours(win_size, rect_size)
     if colour_compare == colour_list_to_compare:
         pygame.time.delay(1000)
+        #paintWhite(win_size, rect_size)
+        img = pygame.image.load("animewin.png").convert_alpha()
+        img2 = pygame.transform.smoothscale(img,(win_size, win_size))
+        window.blit(img2, (0,0))
+        pygame.display.update()
+        pygame.time.delay(2000)
         done = True
 
 pygame.quit()
