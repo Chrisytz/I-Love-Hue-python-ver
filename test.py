@@ -76,6 +76,7 @@ while not done:
                         #another_surface = pygame.Surface((400, 400))
                         #colour = another_surface.get_at((x, y))
                         #pygame.sprite.LayeredUpdates.move_to_front((sprite=sprite))
+                        sprite.moveToFront(sprite)
                         window.blit(window, sprite)
                         sprite.clicked = True
         if event.type == pygame.MOUSEBUTTONUP:
