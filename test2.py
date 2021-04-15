@@ -12,8 +12,11 @@ sprite_list = pygame.sprite.Group()
 sprite_list2 = pygame.sprite.GroupSingle(sprite=None)
 location_x = 0
 location_y = 0
+x = 0
+y = 0
 sprite_swap1 = pygame.sprite.GroupSingle(sprite = None)
 sprite_swap2 = pygame.sprite.GroupSingle(sprite = None)
+spril_list_collide = pygame.sprite.GroupSingle(sprite = None)
 
 ### initialisation
 pygame.init()
