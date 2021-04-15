@@ -1,15 +1,30 @@
-import pygame
+import sys
 import random
+import pygame
+import math
 
-winSize = 400
-rectSize = 50 #must be a factor of winSize
-numRect = (int)(winSize/rectSize)
+### initiating variables
+win_size = 400
+rect_size = 200 #must be a factor of win_size
+num_rect = (int)(win_size/rect_size)
+done = False
+sprite_list = pygame.sprite.Group()
+sprite_list2 = pygame.sprite.GroupSingle(sprite=None)
+location_x = 0
+location_y = 0
+x = 0
+y = 0
+sprite_swap1 = pygame.sprite.GroupSingle(sprite = None)
+sprite_swap2 = pygame.sprite.GroupSingle(sprite = None)
+spril_list_collide = pygame.sprite.GroupSingle(sprite = None)
 
 ### initialisation
 pygame.init()
-window = pygame.display.set_mode((winSize, winSize))
+window = pygame.display.set_mode((win_size, win_size))
 pygame.display.set_caption("Gradient Rect")
 
+### functions
+# TODO: maybe fix the bottomleft things bc theyre wrong xd
 def gradientRect(window, topleft_colour, topright_colour, bottomright_colour, bottomleft_colour, target_rect):
     """ Draw a horizontal-gradient filled rectangle covering <target_rect> """
     colour_rect = pygame.Surface((2,2 ))                                   # tiny! 2x2 bitmap
@@ -20,72 +35,118 @@ def gradientRect(window, topleft_colour, topright_colour, bottomright_colour, bo
     colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height ))  # stretch!
     window.blit(colour_rect, target_rect)                                    # paint it
 
-def getColours(winDimensions, rectDimensions):
-    x = 0
+def getColours(win_dimensions, rect_dimensions):
+    count = 0
     list = []
-    for j in range(0, winDimensions-1, rectDimensions):
-        for i in range(0, winDimensions-1, rectDimensions):
-            list.insert(x, pygame.Surface.get_at(window, (j, i)))
-            x = x + 1
+    for i in range(0, win_dimensions-1, rect_dimensions):
+        for j in range(0, win_dimensions-1, rect_dimensions):
+            list.insert(count, pygame.Surface.get_at(window, (i, j)))
+            count += 1
     return list
 
+def shuffle(list, num_rect):
+    shuffled_list = list[1:num_rect-1] + list[num_rect:-num_rect] + list[-(num_rect-1):-1]
+    random.shuffle(shuffled_list)
+    return shuffled_list
+
+def replace(shuffled_list, list, num_rect) :
+    list[1:num_rect-1] = shuffled_list[0:num_rect-2]
+    list[num_rect:-num_rect] = shuffled_list[num_rect-2:-(num_rect-2)]
+    list[-(num_rect-1):-1] = shuffled_list[-(num_rect-2):]
+    return list
+
+def draw(list, win_dimensions, rect_dimensions):
+    count = 0
+    for i in range (0, win_dimensions-1, rect_dimensions):
+        for j in range (0, win_dimensions-1, rect_dimensions):
+            pygame.draw.rect(window, list[count], (i, j, rect_dimensions, rect_dimensions))
+            count += 1
+
+def spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list):
+    count = 0
+    for i in range(0, win_size - 1, rect_size):
+        for j in range(0, win_size - 1, rect_size):
+            sprite_list.add(RectSprite(i, j, shuffled_colour_list[count], len(sprite_list) + 1))
+            count += 1
+    return sprite_list
+
+### creating gradiented rectangles
+gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, win_size, win_size))
+colour_list = getColours(win_size, rect_size)
+draw(colour_list, win_size, rect_size)
+shuffled_colour_list = replace(shuffle(colour_list, num_rect), colour_list, num_rect)
+pygame.display.update()
+pygame.time.delay(1000)
+
+
 class RectSprite(pygame.sprite.Sprite):
-    def __init__(self, xpos, ypos, colour, id):
+
+    def __init__(self, x_pos, y_pos, colour, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50,50])
+        self.image = pygame.Surface([rect_size, rect_size])
+        self.colour = colour
         self.image.fill(colour)
         self.clicked = False
         self.rect = self.image.get_rect()
-        self.rect.y = ypos
-        self.rect.x = xpos
+        self.rect.y = y_pos
+        self.rect.x = x_pos
+#asdadadadasdadsfasfdasf
+    def getColour(self):
+        return self.colour
 
-    #def moveToFront(self, sprite):
-    #    super(RectSprite, self).moveToFront()
-    #    pygame.sprite.LayeredUpdates.move_to_front(sprite)
-
-done = False
-clock = pygame.time.Clock()
-
-## IT WORKS WOWWWWWWWWW
-gradientRect(window, (255, 0, 0), (255, 255, 255), (0, 0, 0), (0, 72, 255), pygame.Rect(0, 0, winSize, winSize))
-colourList = getColours(winSize, rectSize)
-sprite_list = pygame.sprite.Group()
-num = 0
-
-#drawing the thing
-for a in range (0, winSize-1, rectSize):
-    for b in range (0, winSize-1, rectSize):
-        sprite_list.add(RectSprite(a,b,colourList[num], len(sprite_list)+1))
-        num = num + 1
+# drawing the thing
+spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list)
 
 while not done:
+
     sprite_list.draw(window)
-    pygame.display.flip()
+
+    for spriteA in sprite_swap2:
+        sprite_list.add(spriteA)
+    for spriteB in sprite_swap1:
+        sprite_list.add(spriteB)
+
+    # pygame.display.flip()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.MOUSEBUTTONDOWN:
-            pos = pygame.mouse.get_pos()
-            x = pos[0]
-            y = pos[1]
+            position = pygame.mouse.get_pos()
+            position_x = position[0] # x pos of mouse on press
+            position_y = position[1] # y pos of mouse on press
+            print(position_x,position_y)
             if event.button == 1:
                 for sprite in sprite_list:
-                    if sprite.rect.collidepoint(pos):
+                    if sprite.rect.collidepoint(position):
                         sprite.clicked = True
-                        #another_surface = pygame.Surface((400, 400))
-                        #colour = another_surface.get_at((x, y))
-                        window.blit(window, sprite)
-                        sprite.clicked = True
+                        sprite_list2.add(sprite)
         if event.type == pygame.MOUSEBUTTONUP:
+            location = pygame.mouse.get_pos()
+            location_x = location[0]  # x pos of mouse on release
+            location_y = location[1]  # y pos of mouse on release
             for sprite in sprite_list:
                 sprite.clicked = False
+                print(location_x,location_y)
 
-    for sprite in sprite_list:
+    for sprite in sprite_list2:
         if sprite.clicked == True:
             pos = pygame.mouse.get_pos()
-            sprite.rect.x = pos[0] - (sprite.rect.width/2)
-            sprite.rect.y = pos[1] - (sprite.rect.height/2)
+            sprite.rect.x = pos[0] - sprite.rect.width / 2
+            sprite.rect.y = pos[1] - sprite.rect.height / 2
+        sprite_list2.draw(window)
 
+        if sprite.clicked == False:
+            for sprite2 in sprite_list:
+                if pygame.sprite.collide_rect(sprite, sprite2):
+                    sprite.rect.x = math.floor(location_x/rect_size) * rect_size
+                    sprite.rect.y = math.floor(location_y/rect_size) * rect_size
+                    sprite2.rect.x = math.floor(position_x/rect_size) * rect_size
+                    sprite2.rect.y = math.floor(position_y /rect_size) * rect_size
+                    sprite_list.add(sprite)
+                    sprite_list.add(sprite2)
+        sprite_list.draw(window)
+
+    pygame.display.flip()
 
 pygame.quit()
