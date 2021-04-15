@@ -5,7 +5,7 @@ import math
 
 ### initiating variables
 win_size = 400
-rect_size = 50 #must be a factor of win_size
+rect_size = 200 #must be a factor of win_size
 num_rect = (int)(win_size/rect_size)
 done = False
 sprite_list = pygame.sprite.Group()
@@ -83,7 +83,7 @@ class RectSprite(pygame.sprite.Sprite):
 
     def __init__(self, x_pos, y_pos, colour, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([50, 50])
+        self.image = pygame.Surface([rect_size, rect_size])
         self.colour = colour
         self.image.fill(colour)
         self.clicked = False
@@ -134,9 +134,9 @@ while not done:
         if sprite.clicked == False:
 
             sprite_list_collide = pygame.sprite.spritecollide(sprite, sprite_list, False)
-            sprite_swap1.add(RectSprite(math.floor(location_x/50)*50, math.floor(location_y/50)*50, sprite.colour, len(sprite_swap1)+1))
+            sprite_swap1.add(RectSprite(math.floor(location_x/rect_size)*rect_size, math.floor(location_y/rect_size)*rect_size, sprite.colour, len(sprite_swap1)+1))
             for sprite2 in sprite_list_collide:
-                sprite_swap2.add(RectSprite(math.floor(x/50)*50, math.floor(y/50)*50, sprite2.colour, len(sprite_swap2)+1))
+                sprite_swap2.add(RectSprite(math.floor(x/rect_size)*rect_size, math.floor(y/rect_size)*rect_size, sprite2.colour, len(sprite_swap2)+1))
             # for spriteA in sprite_swap2:
             #     sprite_list.add(spriteA)
             # for spriteB in sprite_swap1:
