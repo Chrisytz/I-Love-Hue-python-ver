@@ -87,7 +87,6 @@ spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list)
 
 while not done:
     sprite_list.draw(window)
-
     # pygame.display.flip()
 
     for event in pygame.event.get():
@@ -112,7 +111,8 @@ while not done:
             pos = pygame.mouse.get_pos()
             sprite.rect.x = pos[0] - sprite.rect.width / 2
             sprite.rect.y = pos[1] - sprite.rect.height / 2
-    sprite_list2.draw(window)
+        sprite_list2.draw(window)
+
 
     pygame.display.flip()
 

@@ -5,7 +5,7 @@ import math
 
 ### initiating variables
 win_size = 400
-rect_size = 200 #must be a factor of win_size
+rect_size = 100 #must be a factor of win_size
 num_rect = (int)(win_size/rect_size)
 done = False
 sprite_list = pygame.sprite.Group()
@@ -98,7 +98,12 @@ class RectSprite(pygame.sprite.Sprite):
 spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list)
 
 while not done:
+
     sprite_list.draw(window)
+    for spriteA in sprite_swap2:
+        sprite_list.add(spriteA)
+    for spriteB in sprite_swap1:
+        sprite_list.add(spriteB)
 
     # pygame.display.flip()
 
@@ -109,8 +114,7 @@ while not done:
             pos = pygame.mouse.get_pos()
             x = pos[0] # x pos of mouse on press
             y = pos[1] # y pos of mouse on press
-            print(x)
-            print(y)
+            print(x,y)
             if event.button == 1:
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos):
@@ -122,8 +126,7 @@ while not done:
             location_y = location[1]  # y pos of mouse on release
             for sprite in sprite_list:
                 sprite.clicked = False
-                print(location_x)
-                print(location_y)
+                print(location_x,location_y)
 
     for sprite in sprite_list2:
         if sprite.clicked == True:
@@ -131,16 +134,13 @@ while not done:
             sprite.rect.x = pos[0] - sprite.rect.width / 2
             sprite.rect.y = pos[1] - sprite.rect.height / 2
         sprite_list2.draw(window)
-        if sprite.clicked == False:
 
+        if sprite.clicked == False:
             sprite_list_collide = pygame.sprite.spritecollide(sprite, sprite_list, False)
             sprite_swap1.add(RectSprite(math.floor(location_x/rect_size)*rect_size, math.floor(location_y/rect_size)*rect_size, sprite.colour, len(sprite_swap1)+1))
             for sprite2 in sprite_list_collide:
                 sprite_swap2.add(RectSprite(math.floor(x/rect_size)*rect_size, math.floor(y/rect_size)*rect_size, sprite2.colour, len(sprite_swap2)+1))
-            # for spriteA in sprite_swap2:
-            #     sprite_list.add(spriteA)
-            # for spriteB in sprite_swap1:
-            #     sprite_list.add(spriteB)
+
         sprite_swap2.draw(window)
         sprite_swap1.draw(window)
 
