@@ -13,6 +13,7 @@
     - each theme is on the left side (league style friends list)
     - click on theme
     - open up some level menu
+2a SANDBOX GAMING MODE
 3. Click on a level
 4. Level generates, you play the level?
 5. Score / attempts / moves / pb all tracked.
@@ -20,5 +21,30 @@
 Todo
 ------------------
 
+# save and exit
+
 - level.py
-- level generator?
+    - constants
+        - constant in shuffling
+        - unmovable constants
+    - multiple point colour generation
+    - scaling grids (multiple blocks per grid)// different grid layouts/constants/etc=
+    - blind levels?
+    - HINTS ?
+- main.py
+    - main menu.
+- configuration settings
+    - so that people can adjust their game window sizes (independent of how many boxes in the grid)
+    - people can change MUSIC
+    - mouse settings? CURSORRRRR
+    - GRAPHICS SSETTINGS ! !  ! ! ! !
+        ( brightness )
+        ( light mode / dark mode )
+        ( cube boundary ? -> do we show black lines / white lines between cubes) THE AESTHETIC TT
+- endgame screens?????
+    - when is the endgame and how long will it take you to get there
+- level generator? (sandbox?)
+- loading screens
+
+further consideration:
+- different shapes?
