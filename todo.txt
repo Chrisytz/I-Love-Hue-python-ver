@@ -1,0 +1,24 @@
+### Game Flow ###
+
+- main entry
+- level function
+- start game
+- end game
+- sandbox mode?
+
+--- when you open the game ---
+1. Loading screen
+2. See all the levels screen
+    - themes & difficulty
+    - each theme is on the left side (league style friends list)
+    - click on theme
+    - open up some level menu
+3. Click on a level
+4. Level generates, you play the level?
+5. Score / attempts / moves / pb all tracked.
+
+Todo
+------------------
+
+- level.py
+- level generator?
