@@ -6,6 +6,7 @@
 - end game
 - sandbox mode?
 
+(๑• .̫ •๑) (*≧︶≦))(￣▽￣* )ゞ
 --- when you open the game ---
 1. Loading screen
 2. See all the levels screen
@@ -19,6 +20,7 @@
 5. Score / attempts / moves / pb all tracked.
 
 Todo
+ϞϞ(๑⚈ ․ ̫ ⚈๑)∩
 ------------------
 
 # save and exit
@@ -28,13 +30,19 @@ Todo
         - constant in shuffling
         - unmovable constants
     - multiple point colour generation
-    - scaling grids (multiple blocks per grid)// different grid layouts/constants/etc=
+    - scaling grids (multiple blocks per grid) // different grid layouts/constants/etc=
+        ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
+        ⬜ ⬜ ⬜ ⬜     ⬜ ⬜ ⬜ ⬜ ⬜ ⬜ ⬜
+        ⬜ ⬜ ⬜ ⬜     ⬜ ⬜ ⬜ ⬜ ⬜ ⬜ ⬜
+        ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
     - blind levels?
-    - HINTS ?
+    - HINTS?
 - main.py
     - main menu.
+        --> rectangles and circles and settings
 - configuration settings
     - so that people can adjust their game window sizes (independent of how many boxes in the grid)
+        --> slider for window size (drop down is easier xd)
     - people can change MUSIC
     - mouse settings? CURSORRRRR
     - GRAPHICS SSETTINGS ! !  ! ! ! !

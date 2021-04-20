@@ -1,14 +1,17 @@
+# The original colourgame coded by Christina Zhang, April Break 2021
+
 import sys
 import random
 import pygame
 
 ### initiating variables
 win_size = 800
-rect_size = 400  # must be a factor of win_size
+rect_size = 200  # must be a factor of win_size
 num_rect = (int)(win_size / rect_size)
 done = False
 sprite_list = pygame.sprite.Group()
 sprite_list2 = pygame.sprite.GroupSingle(sprite=None)
+
 
 ### initialisation
 pygame.init()
@@ -57,7 +60,7 @@ def draw(list, win_dimensions, rect_dimensions):
         for j in range(0, win_dimensions - 1, rect_dimensions):
             pygame.draw.rect(window, list[count], (i, j, rect_dimensions, rect_dimensions))
             pygame.display.update()
-            pygame.time.delay(20)
+            pygame.time.delay(15)
             count += 1
 
 
@@ -69,9 +72,10 @@ def spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list):
             count += 1
     return sprite_list
 
-def paintWhite (win_size, rect_size):
+
+def paintWhite(win_size, rect_size):
     count = 0
-    for i in range (0, win_size - 1, rect_size):
+    for i in range(0, win_size - 1, rect_size):
         for j in range(0, win_size - 1, rect_size):
             pygame.draw.rect(window, (190, 232, 237), (i, j, rect_size, rect_size))
             pygame.display.update()
@@ -80,10 +84,11 @@ def paintWhite (win_size, rect_size):
 
 
 ### creating gradiented rectangles
-gradientRect(window, (245, 255, 250), (255, 247, 235), (181, 27, 58), (17, 51, 173), pygame.Rect(0, 0, win_size, win_size))
+gradientRect(window, (245, 255, 250), (255, 247, 235), (181, 27, 58), (17, 51, 173),
+             pygame.Rect(0, 0, win_size, win_size))
 colour_list = getColours(win_size, rect_size)
 colour_list_to_compare = getColours(win_size, rect_size)
-pygame.draw.rect(window, (0,0,0), (0,0, win_size, win_size))
+pygame.draw.rect(window, (0, 0, 0), (0, 0, win_size, win_size))
 draw(colour_list, win_size, rect_size)
 shuffled_colour_list = replace(shuffle(colour_list, num_rect), colour_list, num_rect)
 pygame.display.update()
@@ -102,6 +107,8 @@ class RectSprite(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.original_x = x_pos
         self.original_y = y_pos
+        self.colour = colour
+
 
 # drawing the thing
 spriteGroup(shuffled_colour_list, win_size, rect_size, sprite_list)
@@ -120,9 +127,14 @@ while not done:
             print(position_x, position_y)
             if event.button == 1:
                 for sprite in sprite_list:
+                    colour = sprite.colour
                     if sprite.rect.collidepoint(position):
-                        sprite.clicked = True
-                        sprite_list2.add(sprite)
+                        print(colour)
+                        if colour != shuffled_colour_list[0] and colour != shuffled_colour_list[
+                            num_rect - 1] and colour != shuffled_colour_list[-num_rect] and colour != \
+                                shuffled_colour_list[-1]:
+                            sprite.clicked = True
+                            sprite_list2.add(sprite)
         if event.type == pygame.MOUSEBUTTONUP:
             position = pygame.mouse.get_pos()
             position_x = position[0]  # x pos of mouse on release
@@ -130,15 +142,20 @@ while not done:
             for sprite in sprite_list:
                 if sprite.rect.collidepoint(position):
                     for sprite2 in sprite_list2:
-                        sprite.rect.x = sprite2.original_x
-                        sprite.rect.y = sprite2.original_y
-                        sprite2.rect.x = sprite.original_x
-                        sprite2.rect.y = sprite.original_y
-                        sprite.original_x = sprite.rect.x
-                        sprite.original_y = sprite.rect.y
-                        sprite2.original_x = sprite2.rect.x
-                        sprite2.original_y = sprite2.rect.y
+                        colour = sprite2.colour
+                        if colour != shuffled_colour_list[0] and colour != shuffled_colour_list[
+                            num_rect - 1] and colour != shuffled_colour_list[-num_rect] and colour != \
+                                shuffled_colour_list[-1]:
+                            sprite.rect.x = sprite2.original_x
+                            sprite.rect.y = sprite2.original_y
+                            sprite2.rect.x = sprite.original_x
+                            sprite2.rect.y = sprite.original_y
+                            sprite.original_x = sprite.rect.x
+                            sprite.original_y = sprite.rect.y
+                            sprite2.original_x = sprite2.rect.x
+                            sprite2.original_y = sprite2.rect.y
                 sprite.clicked = False
+            sprite_list2.empty()
 
     for sprite in sprite_list2:
         if sprite.clicked == True:
@@ -154,10 +171,10 @@ while not done:
     colour_compare = getColours(win_size, rect_size)
     if colour_compare == colour_list_to_compare:
         pygame.time.delay(1000)
-        #paintWhite(win_size, rect_size)
+        # paintWhite(win_size, rect_size)
         img = pygame.image.load("animewin.png").convert_alpha()
-        img2 = pygame.transform.smoothscale(img,(win_size, win_size))
-        window.blit(img2, (0,0))
+        img2 = pygame.transform.smoothscale(img, (win_size, win_size))
+        window.blit(img2, (0, 0))
         pygame.display.update()
         pygame.time.delay(2000)
         done = True

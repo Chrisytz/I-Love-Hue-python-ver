@@ -1,3 +1,8 @@
+# Colour Game 2021 Christina Zhang & Anthony Luo
+# ♪(ϞϞ(๑⚈ ․̫ ⚈๑)∩
+# April 2021
+
+
 import sys
 import random
 import pygame
