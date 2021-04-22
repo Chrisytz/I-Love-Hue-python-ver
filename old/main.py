@@ -128,7 +128,7 @@ while not done:
             if event.button == 1:
                 for sprite in sprite_list:
                     colour = sprite.colour
-                    if sprite.rect.collidepoint(position):
+                    if sprite.rect.collidepoint(position):# at
                         print(colour)
                         if colour != shuffled_colour_list[0] and colour != shuffled_colour_list[
                             num_rect - 1] and colour != shuffled_colour_list[-num_rect] and colour != \
