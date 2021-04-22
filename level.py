@@ -9,7 +9,7 @@ import random
 import pygame
 
 # global vars
-DEBUG = False
+DEBUG = True
 
 # Temp utils
 # TODO: remove these
@@ -24,6 +24,22 @@ def drawGridLoose(window, win_size, steps, grid):
         for y in range(0, y_step):
             pygame.draw.rect(window, grid[x][y], (x * x_loc_scalar, y * y_loc_scalar, x_loc_scalar, y_loc_scalar))
     pygame.display.update()
+
+def getColours(window, window_size, steps):
+    x_size, y_size = window_size
+    x_step, y_step = steps
+
+    x_loc_scalar = x_size / x_step
+    y_loc_scalar = y_size / y_step
+
+    grid = []
+
+    for x in range(0, x_step):
+        templist = []
+        for y in range(0, y_step):
+            templist.append(pygame.Surface.get_at(window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
+        grid.append(templist)
+    return grid
 
 
 # Const functions here.
@@ -62,7 +78,6 @@ class Grid:
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
-        self.new_grid = []
 
     def drawGradient(self):
         x_size, y_size = self.window_size
@@ -194,10 +209,12 @@ def evaluate_level(window, levelgrid, sprite_list):
             moving_sprite_list.draw(window) # draw this last ALWAYS
         pygame.display.flip()
         # levelgrid.getColours(newgrid=True)
-        if levelgrid.original_grid == levelgrid.getColours(newgrid=True, ret=True):
-            done = True
+        if DEBUG:
+            levelgrid.getColours(newgrid=True)
+        if levelgrid.original_grid == getColours(window, window_size, steps):
+            if DEBUG: print("you won")
             return 0 # 0 = won the game
-            # you've won the game
+                # you've won the game
 
 def run_level(level):
     """This will run the entire level!"""
@@ -214,9 +231,10 @@ def run_level(level):
     levelgrid = Grid(window, colours, colour_size, constants, window_size, steps)
     if DEBUG: print(constants)
     levelgrid.drawGradient()
+    # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
     levelgrid.shuffle()
-    # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
+
     levelgrid.addToSpriteGroup(sprite_list)
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
@@ -240,7 +258,7 @@ if __name__ == "__main__":
 
     # for 900x900, 9, 6, 3
     # steps = 8, 8
-    steps = 8, 8
+    steps = 8,8
     x_step, y_step = steps
     colours = []
     # set 1
