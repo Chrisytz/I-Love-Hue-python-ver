@@ -24,6 +24,19 @@ def drawGridLoose(window, win_size, steps, grid):
 
 
 # Const functions here.
+class Rect(pygame.sprite.Sprite):
+    def __init(self, x_pos, y_pos, colour, rectsize_x, rectsize_y):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([rectsize_x, rectsize_y])
+        self.image.fill(colour)
+        self.clicked = False
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.original_x = x_pos
+        self.original_y = y_pos
+        self.colour = colour
+
 
 class Grid:
     """
@@ -33,17 +46,19 @@ class Grid:
     def __init__(self, window, colours, colour_size, constants, window_size, steps):
         self.window = window  # window which everything will be drawn onto
         self.colours = colours  # colours and their locations.
-        self.colour_size = colour_size
+        self.gradient_size = colour_size
         self.constants = constants
         self.window_size = window_size  # (x, y) size of window
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
+        self.sprite_list = pygame.sprite.Group()
+        self.sprite_single = pygame.sprite.GroupSingle(sprite=None)
 
     def drawGradient(self):
         x_size, y_size = self.window_size
         target_rect = pygame.Rect(0, 0, x_size, y_size)
-        colour_rect = pygame.Surface(self.colour_size)
+        colour_rect = pygame.Surface(self.gradient_size)
         for i in self.colours:
             pygame.draw.line(colour_rect, i[0], i[1], i[1])
         colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height))
@@ -90,6 +105,24 @@ class Grid:
                     count += 1
             self.shuffle_grid.append(shuffleList)
 
+    def addToSpriteGroup(self):
+        count = 0
+        winx, winy = self.window_size
+        x_step, y_step = self.steps
+
+        x_block_width = winx/x_step
+        y_block_width = winy/y_step
+
+        # add sprites with x, y, colour
+        for i in range(0, x_step):
+            x_loc = i * x_block_width
+            for j in range(0, y_step):
+                y_loc = j * y_block_width
+                pos = x_loc, y_loc
+                rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps)
+                self.sprite_list.add(rect)
+                # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
+
 
 def run_level(level):
     """This will run the entire level!"""
@@ -102,6 +135,7 @@ def run_level(level):
     levelgrid.getColours()
     levelgrid.shuffle()
     drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
+    levelgrid.addToSpriteGroup()
 
 
 if __name__ == "__main__":
