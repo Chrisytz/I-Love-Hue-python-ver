@@ -127,8 +127,11 @@ class Grid:
             for j in range(0, y_step):
                 y_loc = j * y_block_width
                 pos = x_loc, y_loc
-                if (x_step, y_step) in self.constants:
-                    rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps, constant=True)
+                if DEBUG: print(pos)
+                if DEBUG: print(x_step, y_step)
+                if (i, j) in self.constants:
+                    if DEBUG: print("addToSpriteGroup constant: ", x_step, y_step)
+                    rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps, True)
                 else:
                     rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps)
                 sprite_list.add(rect)
@@ -138,7 +141,6 @@ def evaluate_level(window, levelgrid, sprite_list):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
     while not done:
-        sprite_list.draw(window)
 
         for event in pygame.event.get():
             if event.type==pygame.QUIT:
@@ -149,14 +151,14 @@ def evaluate_level(window, levelgrid, sprite_list):
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
-                        if DEBUG: print(sprite.colour)
+                        if DEBUG: print(sprite.constant)
                         sprite.clicked = True
                         moving_sprite_list.add(sprite)
             elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 if DEBUG: print("this is mousebutton up pos:", pos)
                 for sprite in sprite_list:
-                    if sprite.rect.collidepoint(pos):
+                    if sprite.rect.collidepoint(pos) and sprite.movable:
                         for sprite2 in moving_sprite_list:
                             sprite.rect.x = sprite2.original_x
                             sprite.rect.y = sprite2.original_y
@@ -172,6 +174,10 @@ def evaluate_level(window, levelgrid, sprite_list):
                 for sprite in moving_sprite_list:
                     if sprite.clicked == True and sprite.movable:
                         sprite.rect.move_ip(event.rel)
+                        moving_sprite_list.draw(window)
+            sprite_list.draw(window)
+            moving_sprite_list.draw(window)
+        pygame.display.flip()
 
 
 def run_level(level):
@@ -187,10 +193,11 @@ def run_level(level):
     pygame.init()  # is pygame already init from another side?
     # window = pygame.display.set_mode((window_size))
     levelgrid = Grid(window, colours, colour_size, constants, window_size, steps)
+    if DEBUG: print(constants)
     levelgrid.drawGradient()
     levelgrid.getColours()
     levelgrid.shuffle()
-    drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
+    # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.addToSpriteGroup(sprite_list)
 
     evaluate_level(window, levelgrid, sprite_list)
@@ -200,7 +207,6 @@ def run_level(level):
 
 if __name__ == "__main__":
     level = 0  # TODO: CHANGE THIS
-    DEBUG = False
     window_size = (400, 400)
 
     # common sizes for 1200x900
@@ -282,9 +288,3 @@ if __name__ == "__main__":
     steps = x_step, y_step
     level = testWindow, colours, colour_size, constants, window_size, steps
     run_level(level)
-    while True:
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
