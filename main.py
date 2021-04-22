@@ -4,7 +4,11 @@
 
 # This is the main entry point to the game.
 
+# create loading screen!
 
+# create level selection screen !
+
+# create configuration screen !
 
 
 if __name__ == "__main__":
