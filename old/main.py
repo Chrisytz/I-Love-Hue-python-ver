@@ -89,7 +89,7 @@ gradientRect(window, (245, 255, 250), (255, 247, 235), (181, 27, 58), (17, 51, 1
 colour_list = getColours(win_size, rect_size)
 colour_list_to_compare = getColours(win_size, rect_size)
 pygame.draw.rect(window, (0, 0, 0), (0, 0, win_size, win_size))
-draw(colour_list, win_size, rect_size)
+draw(colour_list, win_size, rect_size) # not actually very important.
 shuffled_colour_list = replace(shuffle(colour_list, num_rect), colour_list, num_rect)
 pygame.display.update()
 pygame.time.delay(1000)
