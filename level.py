@@ -24,6 +24,10 @@ class Grid:
 
 
 
-def run_level():
+def run_level(level):
     """This will run the entire level!"""
+    # Todo: Do we want this to only run one level?
+    colours, constants, window_size, blocks = level
     pygame.init() # is pygame already init from another side?
+
+    grid = Grid(colours, constants, window_size, blocks)
