@@ -14,6 +14,8 @@ pygame.init()
 window = pygame.display.set_mode((win_width, win_height))
 pygame.display.set_caption("Gradient Rect")
 
+# HAVE MULTIPLE SURFACES AND JUST SCROLL ONE
+# LINK: https://www.pygame.org/docs/ref/mouse.html --> pygame.MOUSEWHEEL
 test_colour_list = [[(0,0,255), (0,255,0), (255,0,255), (255,255,0)],[(255,0,255), (0,255,0), (0,0,255), (255,255,0)],[(0,255,255), (0,255,0), (255,0,255), (255,255,0)]]
 for i in range (0, 3):
     for j in range (0,4):
