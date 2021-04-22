@@ -62,6 +62,7 @@ class Grid:
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
+        self.new_grid = []
 
     def drawGradient(self):
         x_size, y_size = self.window_size
@@ -73,18 +74,29 @@ class Grid:
         self.window.blit(colour_rect, target_rect)
         pygame.display.update()
 
-    def getColours(self):
+    def getColours(self, newgrid=False, ret=False):
         x_size, y_size = self.window_size
         x_step, y_step = self.steps
 
         x_loc_scalar = x_size / x_step
         y_loc_scalar = y_size / y_step
 
-        for x in range(0, x_step):
-            templist = []
-            for y in range(0, y_step):
-                templist.append(pygame.Surface.get_at(self.window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
-            self.original_grid.append(templist)
+        if newgrid:
+            for x in range(0, x_step):
+                templist = []
+                for y in range(0, y_step):
+                    templist.append(pygame.Surface.get_at(self.window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
+                self.new_grid.append(templist)
+            if ret:
+                return self.new_grid
+        else:
+            for x in range(0, x_step):
+                templist = []
+                for y in range(0, y_step):
+                    templist.append(pygame.Surface.get_at(self.window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
+                self.original_grid.append(templist)
+            if ret:
+                return self.newgrid
 
     def shuffle(self, bypass=False):
         # if you want to bypass grid shuffling
@@ -168,6 +180,9 @@ def evaluate_level(window, levelgrid, sprite_list):
                             sprite.original_y = sprite.rect.y
                             sprite2.original_x = sprite2.rect.x
                             sprite2.original_y = sprite2.rect.y
+                    else:
+                        sprite.rect.x = sprite.original_x
+                        sprite.rect.y = sprite.original_y
                     sprite.clicked = False
                 moving_sprite_list.empty()
             if event.type == pygame.MOUSEMOTION:
@@ -176,9 +191,13 @@ def evaluate_level(window, levelgrid, sprite_list):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)
-            moving_sprite_list.draw(window)
+            moving_sprite_list.draw(window) # draw this last ALWAYS
         pygame.display.flip()
-
+        # levelgrid.getColours(newgrid=True)
+        if levelgrid.original_grid == levelgrid.getColours(newgrid=True, ret=True):
+            done = True
+            return 0 # 0 = won the game
+            # you've won the game
 
 def run_level(level):
     """This will run the entire level!"""
@@ -200,7 +219,9 @@ def run_level(level):
     # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.addToSpriteGroup(sprite_list)
 
-    evaluate_level(window, levelgrid, sprite_list)
+    if evaluate_level(window, levelgrid, sprite_list) == 0:
+        print("you have won")
+        sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
 
