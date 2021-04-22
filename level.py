@@ -211,7 +211,7 @@ def evaluate_level(window, levelgrid, sprite_list):
             sprite_list.draw(window)
             moving_sprite_list.draw(window)  # draw this last ALWAYS
         pygame.display.flip()
-        
+
         if levelgrid.original_grid == getColours(window, window_size, steps):
             if DEBUG: print("you won")
             return 0  # 0 = won the game
