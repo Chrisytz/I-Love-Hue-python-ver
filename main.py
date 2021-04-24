@@ -7,13 +7,14 @@ import random
 import pygame
 from pygame.locals import *
 
+DEBUG = False
 
 class Rect(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, colour, dictionary):
+    def __init__(self, x_pos, y_pos, colour, win_vars):
         pygame.sprite.Sprite.__init__(self)
 
         # todo: this surface needs to scale wrt window size. (checkmark)
-        self.image = pygame.Surface([dictionary["sprite_size"], dictionary["sprite_size"]])
+        self.image = pygame.Surface([win_vars["sprite_size"], win_vars["sprite_size"]])
         self.image.fill(colour)
         self.clicked = False
         self.rect = self.image.get_rect()
@@ -36,21 +37,21 @@ class Rect(pygame.sprite.Sprite):
 #         pygame.display.set_caption("Gradient Rect")
 
 
-def updateSprites(sprite_list, window, win_height, dictionary):
-    pygame.draw.rect(window, dictionary["black"], (0, 0, dictionary["width_sidebar"], win_height))
+def updateSprites(sprite_list, window, win_height, win_vars):
+    pygame.draw.rect(window, win_vars["black"], (0, 0, win_vars["width_sidebar"], win_height))
     sprite_list.draw(window)
-    pygame.draw.rect(window, dictionary["black"], (0, 0, dictionary["width_sidebar"], dictionary["bar_thickness"]))
-    pygame.draw.rect(window, dictionary["black"],
-                     (0, dictionary["bottom_bar_loc"], dictionary["width_sidebar"], dictionary["bar_thickness"]))
+    pygame.draw.rect(window, win_vars["black"], (0, 0, win_vars["width_sidebar"], win_vars["bar_thickness"]))
+    pygame.draw.rect(window, win_vars["black"],
+                     (0, win_vars["bottom_bar_loc"], win_vars["width_sidebar"], win_vars["bar_thickness"]))
 
 
-def addSidebarSprites(sprite_list, colour_list, dictionary):
-    for i in range(0, dictionary["num_of_rectangles"]):
+def addSidebarSprites(sprite_list, colour_list, win_vars):
+    for i in range(0, win_vars["num_of_rectangles"]):
         for j in range(0, 4):
             sprite_list.add(
-                Rect(dictionary["bar_thickness"] + (dictionary["sprite_size"] * j),
-                     (dictionary["bar_thickness"] * (i + 1)) + (dictionary["sprite_size"] * i), colour_list[i][j],
-                     dictionary))
+                Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
+                     (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
+                     win_vars))
     return sprite_list
 
 
@@ -59,7 +60,7 @@ def addSidebarSprites(sprite_list, colour_list, dictionary):
 def sidebar():
     # todo: anni will create a proper init function to set these variables.
     # init
-    win_size = [600, 400]
+    win_size = 600, 400
     done = False
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
@@ -72,7 +73,7 @@ def sidebar():
     sprite_list = pygame.sprite.Group()
 
     # calculating variables
-    dictionary = {
+    win_vars = {
         "bar_thickness": win_size[1] * 0.05,
         "sprite_size": ((win_size[0] / 3) - (win_size[1] * 0.1)) / 4,
         "width_sidebar": win_size[0] / 3,
@@ -87,7 +88,7 @@ def sidebar():
     # -----------------------------
 
     # displaying sprites
-    sprite_list = addSidebarSprites(sprite_list, colour_list, dictionary)
+    sprite_list = addSidebarSprites(sprite_list, colour_list, win_vars)
     sprite_list.draw(window)
     pygame.display.update()
 
@@ -97,18 +98,18 @@ def sidebar():
             if event.type == pygame.QUIT:
                 done = True
             elif event.type == MOUSEWHEEL:
-                if pygame.mouse.get_pos()[0] < dictionary["width_sidebar"]:
+                if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
                     if event.y == -1:
-                        for sprite in sprite_list:
-                            sprite.rect.y -= dictionary["bar_thickness"]
-                            print(sprite.rect.y)
-                        updateSprites(sprite_list, window, win_size[1], dictionary)
+                        for rect_sprite in sprite_list:
+                            rect_sprite.rect.y -= win_vars["bar_thickness"]
+                            if DEBUG: print(rect_sprite.rect.y)
+                        updateSprites(sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
                     else:
-                        for sprite in sprite_list:
-                            sprite.rect.y += dictionary["bar_thickness"]
-                            print(sprite.rect.y)
-                        updateSprites(sprite_list, window, win_size[1], dictionary)
+                        for rect_sprite in sprite_list:
+                            rect_sprite.rect.y += win_vars["bar_thickness"]
+                            if DEBUG: print(rect_sprite.rect.y)
+                        updateSprites(sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
     pygame.quit()
 
@@ -123,3 +124,4 @@ def sidebar():
 if __name__ == "__main__":
     print("This is the main file!")
     sidebar()
+    print("bleppers")
