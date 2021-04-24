@@ -37,16 +37,15 @@ class Rect(pygame.sprite.Sprite):
 
 
 def updateSprites(sprite_list, window, win_height, dictionary):
-    black = (0, 0, 0)
-    pygame.draw.rect(window, black, (0, 0, dictionary["width_sidebar"], win_height))
+    pygame.draw.rect(window, dictionary["black"], (0, 0, dictionary["width_sidebar"], win_height))
     sprite_list.draw(window)
-    pygame.draw.rect(window, black, (0, 0, dictionary["width_sidebar"], dictionary["bar_thickness"]))
-    pygame.draw.rect(window, black,
+    pygame.draw.rect(window, dictionary["black"], (0, 0, dictionary["width_sidebar"], dictionary["bar_thickness"]))
+    pygame.draw.rect(window, dictionary["black"],
                      (0, dictionary["bottom_bar_loc"], dictionary["width_sidebar"], dictionary["bar_thickness"]))
 
 
 def addSidebarSprites(sprite_list, colour_list, dictionary):
-    for i in range(0, 3):
+    for i in range(0, dictionary["num_of_rectangles"]):
         for j in range(0, 4):
             sprite_list.add(
                 Rect(dictionary["bar_thickness"] + (dictionary["sprite_size"] * j),
@@ -77,7 +76,9 @@ def sidebar():
         "bar_thickness": win_size[1] * 0.05,
         "sprite_size": ((win_size[0] / 3) - (win_size[1] * 0.1)) / 4,
         "width_sidebar": win_size[0] / 3,
-        "bottom_bar_loc": win_size[1] * 0.95
+        "bottom_bar_loc": win_size[1] * 0.95,
+        "black": (0,0,0),
+        "num_of_rectangles": 3
     }
 
     # -----------------------------
