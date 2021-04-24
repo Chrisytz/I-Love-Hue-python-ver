@@ -11,6 +11,8 @@ from pygame.locals import *
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour):
         pygame.sprite.Sprite.__init__(self)
+
+        # todo: this surface needs to scale wrt window size.
         self.image = pygame.Surface([40, 40])
         self.image.fill(colour)
         self.clicked = False
@@ -38,6 +40,7 @@ def addSidebarSprites(sprite_list, colour_list, bar_thickness, rect_size):
 # This is the main entry point to the game.
 
 def sidebar():
+    # todo: anni will create a proper init function to set these variables.
     # init
     win_width = 600
     win_height = 400
@@ -46,6 +49,7 @@ def sidebar():
     window = pygame.display.set_mode((win_width, win_height))
     pygame.display.set_caption("Gradient Rect")
 
+    # todo: multiple colours loaded from levels file?
     colour_list = [[(0, 0, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)],
                    [(255, 0, 255), (0, 255, 0), (0, 0, 255), (255, 255, 0)],
                    [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
@@ -53,9 +57,14 @@ def sidebar():
 
     # calculating variables
     bar_thickness = win_height * 0.05
-    rect_size = ((win_width / 3) - (win_height * 0.1)) / 4
+    rect_size = ((win_width / 3) - (win_height * 0.1)) / 4  # there's a lot of rectangles idk which is which
     width_sidebar = win_width / 3
     bottom_bar_loc = win_height * 0.95
+
+    # -----------------------------
+    # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
+    # I'll probably also make a configurator for the settings that will return all of these as a list or tuple.
+    # -----------------------------
 
     # displaying sprites
     sprite_list = addSidebarSprites(sprite_list, colour_list, bar_thickness, rect_size)
