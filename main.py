@@ -18,13 +18,11 @@ pygame.display.set_caption("Gradient Rect")
 colour_list = [[(0,0,255), (0,255,0), (255,0,255), (255,255,0)],[(255,0,255), (0,255,0), (0,0,255), (255,255,0)],[(0,255,255), (0,255,0), (255,0,255), (255,255,0)]]
 sprite_list = pygame.sprite.Group()
 
-def fill_rect_window():
+def update_sprites(sprite_list):
     pygame.draw.rect(window, (0, 0, 0), (0, 0, 200, 400))
-
-def rect_window_padding():
-    pygame.draw.rect(window, (0, 0, 0), (0,0, 200, 20))
-    pygame.draw.rect(window, (0, 0, 0), (0,380, 200, 20))
-
+    sprite_list.draw(window)
+    pygame.draw.rect(window, (0, 0, 0), (0, 0, 200, 20))
+    pygame.draw.rect(window, (0, 0, 0), (0, 380, 200, 20))
 
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour):
@@ -56,22 +54,19 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         elif event.type == MOUSEWHEEL:
-            if event.y == -1:
-                for sprite in sprite_list:
-                    sprite.rect.y -= 20
-                    print (sprite.rect.y)
-                fill_rect_window()
-                sprite_list.draw(window)
-                rect_window_padding()
-            pygame.display.flip()
-            if event.y == 1:
-                for sprite in sprite_list:
-                    sprite.rect.y += 20
-                    print (sprite.rect.y)
-                fill_rect_window()
-                sprite_list.draw(window)
-                rect_window_padding()
-            pygame.display.flip()
+            if pygame.mouse.get_pos()[0] < 200:
+                if event.y == -1:
+                    for sprite in sprite_list:
+                        sprite.rect.y -= 20
+                        print (sprite.rect.y)
+                    update_sprites(sprite_list)
+                    pygame.display.flip()
+                else:
+                    for sprite in sprite_list:
+                        sprite.rect.y += 20
+                        print (sprite.rect.y)
+                    update_sprites(sprite_list)
+                    pygame.display.flip()
 
 pygame.quit()
 
