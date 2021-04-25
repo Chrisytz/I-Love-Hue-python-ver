@@ -8,6 +8,7 @@ import pygame
 
 DEBUG = False
 
+
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour, win_vars, id):
         pygame.sprite.Sprite.__init__(self)
@@ -23,10 +24,11 @@ class Rect(pygame.sprite.Sprite):
         self.clicked = False
         self.id = id
 
+
 class Circle(pygame.sprite.Sprite):
     def __init__(self, colour, x_pos, y_pos, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface([400, 400])
+        self.image = pygame.Surface([400, 400])  # todo: variables tomorrow pls
         self.image.fill(colour)
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
@@ -34,10 +36,11 @@ class Circle(pygame.sprite.Sprite):
         self.id = id
 
 
-def addCircleSprites(sprite_list2, colour_list, win_vars) :
-    for i in range (0, win_vars["num_of_rectangles"]):
-        sprite_list2.add(Circle(colour_list[i], 200, 0, i))
-    return sprite_list2
+def addCircleSprites(sprite_list2, colour_list, win_vars):
+    for i in range(0, win_vars["num_of_rectangles"]):
+        sprite_list2.add(Circle(colour_list[i], 200, 0, i))  # todo: variables tomorrow pls
+    return sprite_list2  # todo: pls rename these things
+
 
 # class Display():
 #     def __init__(self, win_width, win_height):
@@ -86,7 +89,7 @@ def sidebar():
     colour_list = [[(0, 0, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)],
                    [(255, 0, 255), (0, 255, 0), (0, 0, 255), (255, 255, 0)],
                    [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
-    colour_list_circle = [(255, 0, 0), (0,0,255),(255,255,0)]
+    colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
     sprite_list = pygame.sprite.Group()
     sprite_list2 = pygame.sprite.Group()
     single_sprite_list = pygame.sprite.GroupSingle()
@@ -97,7 +100,7 @@ def sidebar():
         "sprite_size": ((win_size[0] / 3) - (win_size[1] * 0.1)) / 4,
         "width_sidebar": win_size[0] / 3,
         "bottom_bar_loc": win_size[1] * 0.95,
-        "black": (0,0,0),
+        "black": (0, 0, 0),
         "num_of_rectangles": 3
     }
 
@@ -131,15 +134,12 @@ def sidebar():
                             if DEBUG: print(rect_sprite.rect.y)
                         updateSprites(sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
+
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 for rect_sprite in sprite_list:
                     if rect_sprite.rect.collidepoint(pos):
                         rect_sprite.clicked = True
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                for rect_sprite in sprite_list:
-                    rect_sprite.clicked = False
 
             for rect_sprite in sprite_list:
                 if rect_sprite.clicked == True:
@@ -147,11 +147,9 @@ def sidebar():
                     for circle_sprite in sprite_list2:
                         if circle_sprite.id == temp_id:
                             single_sprite_list.add(circle_sprite)
+                    rect_sprite.clicked = False
             single_sprite_list.draw(window)
             pygame.display.flip()
-
-
-
 
     pygame.quit()
 
