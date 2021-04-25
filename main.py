@@ -8,6 +8,12 @@ import pygame
 
 DEBUG = False
 
+# todo: BIG BRAINED THINGS SO I DONT FORGET
+# for the circles can u have like semi transparent things? like can u adjust opacity if u can u could totally
+# create two classes (or one class) and have a like self.transparent and if ur on hover
+# and then create two sprite lists one for the base colour and one for like a black overlay
+# and then do a like for loop ot see if hovering on top of a circle and if on top of a circle
+# and then if on top of a circle change the like overlay_sprite_list sprite to self.transparent = false 
 
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour, win_vars, id):
