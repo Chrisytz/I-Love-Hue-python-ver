@@ -13,7 +13,7 @@ DEBUG = False
 # create two classes (or one class) and have a like self.transparent and if ur on hover
 # and then create two sprite lists one for the base colour and one for like a black overlay
 # and then do a like for loop ot see if hovering on top of a circle and if on top of a circle
-# and then if on top of a circle change the like overlay_sprite_list sprite to self.transparent = false 
+# and then if on top of a circle change the like overlay_sprite_list sprite to self.transparent = false
 
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour, win_vars, id):
@@ -26,8 +26,7 @@ class Rect(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
-        self.colour = colour
-        self.clicked = False
+        # self.colour = colour
         self.id = id
 
 
@@ -36,9 +35,11 @@ class Circle(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface([400, 400])  # todo: variables tomorrow pls
         self.image.fill(colour)
+        self.clicked = False
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
+        # self.colour = colour
         self.id = id
 
 
@@ -142,10 +143,11 @@ def sidebar():
                         pygame.display.flip()
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pos = pygame.mouse.get_pos()
-                for rect_sprite in sprite_list:
-                    if rect_sprite.rect.collidepoint(pos):
-                        rect_sprite.clicked = True
+                if event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    for rect_sprite in sprite_list:
+                        if rect_sprite.rect.collidepoint(pos):
+                            rect_sprite.clicked = True
 
             for rect_sprite in sprite_list:
                 if rect_sprite.clicked == True:
