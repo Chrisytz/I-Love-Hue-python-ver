@@ -8,6 +8,7 @@ import pygame
 
 DEBUG = False
 
+
 # todo: BIG BRAINED THINGS SO I DONT FORGET
 # for the circles can u have like semi transparent things? like can u adjust opacity if u can u could totally
 # create two classes (or one class) and have a like self.transparent and if ur on hover
@@ -43,12 +44,6 @@ class Circle(pygame.sprite.Sprite):
         self.id = id
 
 
-def addCircleSprites(sprite_list2, colour_list, win_vars):
-    for i in range(0, win_vars["num_of_rectangles"]):
-        sprite_list2.add(Circle(colour_list[i], 200, 0, i))  # todo: variables tomorrow pls
-    return sprite_list2  # todo: pls rename these things
-
-
 # class Display():
 #     def __init__(self, win_width, win_height):
 #         self.win_width = win_width
@@ -79,6 +74,12 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
                      (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
                      win_vars, i))
     return sprite_list
+
+
+def addCircleSprites(sprite_list2, colour_list, win_vars):
+    for i in range(0, win_vars["num_of_rectangles"]):
+        sprite_list2.add(Circle(colour_list[i], 200, 0, i))  # todo: variables tomorrow pls
+    return sprite_list2  # todo: pls rename these things
 
 
 # This is the main entry point to the game.
