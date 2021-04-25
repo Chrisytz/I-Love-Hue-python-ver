@@ -5,12 +5,11 @@
 import sys
 import random
 import pygame
-from pygame.locals import *
 
 DEBUG = False
 
 class Rect(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, colour, win_vars):
+    def __init__(self, x_pos, y_pos, colour, win_vars, id):
         pygame.sprite.Sprite.__init__(self)
 
         # todo: this surface needs to scale wrt window size. (checkmark)
@@ -21,7 +20,24 @@ class Rect(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.rect.y = y_pos
         self.colour = colour
+        self.clicked = False
+        self.id = id
 
+class Circle(pygame.sprite.Sprite):
+    def __init__(self, colour, x_pos, y_pos, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface([400, 400])
+        self.image.fill(colour)
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.id = id
+
+
+def addCircleSprites(sprite_list2, colour_list, win_vars) :
+    for i in range (0, win_vars["num_of_rectangles"]):
+        sprite_list2.add(Circle(colour_list[i], 200, 0, i))
+    return sprite_list2
 
 # class Display():
 #     def __init__(self, win_width, win_height):
@@ -51,7 +67,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
             sprite_list.add(
                 Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
                      (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
-                     win_vars))
+                     win_vars, i))
     return sprite_list
 
 
@@ -70,7 +86,10 @@ def sidebar():
     colour_list = [[(0, 0, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)],
                    [(255, 0, 255), (0, 255, 0), (0, 0, 255), (255, 255, 0)],
                    [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
+    colour_list_circle = [(255, 0, 0), (0,0,255),(255,255,0)]
     sprite_list = pygame.sprite.Group()
+    sprite_list2 = pygame.sprite.Group()
+    single_sprite_list = pygame.sprite.GroupSingle()
 
     # calculating variables
     win_vars = {
@@ -89,6 +108,7 @@ def sidebar():
 
     # displaying sprites
     sprite_list = addSidebarSprites(sprite_list, colour_list, win_vars)
+    sprite_list2 = addCircleSprites(sprite_list2, colour_list_circle, win_vars)
     sprite_list.draw(window)
     pygame.display.update()
 
@@ -97,7 +117,7 @@ def sidebar():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-            elif event.type == MOUSEWHEEL:
+            if event.type == pygame.MOUSEWHEEL:
                 if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
                     if event.y == -1:
                         for rect_sprite in sprite_list:
@@ -111,6 +131,28 @@ def sidebar():
                             if DEBUG: print(rect_sprite.rect.y)
                         updateSprites(sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pos = pygame.mouse.get_pos()
+                for rect_sprite in sprite_list:
+                    if rect_sprite.rect.collidepoint(pos):
+                        rect_sprite.clicked = True
+
+            if event.type == pygame.MOUSEBUTTONUP:
+                for rect_sprite in sprite_list:
+                    rect_sprite.clicked = False
+
+            for rect_sprite in sprite_list:
+                if rect_sprite.clicked == True:
+                    temp_id = rect_sprite.id
+                    for circle_sprite in sprite_list2:
+                        if circle_sprite.id == temp_id:
+                            single_sprite_list.add(circle_sprite)
+            single_sprite_list.draw(window)
+            pygame.display.flip()
+
+
+
+
     pygame.quit()
 
 
