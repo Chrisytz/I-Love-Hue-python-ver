@@ -1,7 +1,7 @@
 # Currently draws circle overlay with on-click brighten.
 
 
-import pygame, random
+import pygame, random, sys
 
 
 class Circle(pygame.sprite.Sprite):
@@ -20,11 +20,16 @@ class Circle(pygame.sprite.Sprite):
     def getOriginalColour(self):
         return self._original_colour
 
+    def drawCircle(self, screen):
+        pygame.draw.ellipes(screen, self.colour, self.rect)
+
 
 class Overlay(pygame.sprite.Sprite):
+    # overlay is a really bad name but that's ok we will go with it
     def __init__(self, colour, x_pos, y_pos, id):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((100, 100))
+        self.alpha = 128
         self.image.set_alpha(128)
         self._original_colour = colour
         self.colour = colour
@@ -38,6 +43,10 @@ class Overlay(pygame.sprite.Sprite):
 
     def getOriginalColour(self):
         return self._original_colour
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
+        self.image.fill(self.colour)
 
 
 def drawCircles():
@@ -208,20 +217,25 @@ def drawCircles3():
                 done = True
             mouse_pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for sprite in circle_sprites:
+                for sprite in overlay_sprites:
                     if sprite.rect.collidepoint(mouse_pos):
                         sprite.clicked = True
-                        sprite.colour = (255, 255, 255)
+                        sprite.alpha = 0
+                        sprite.fillImage(0)
             if event.type == pygame.MOUSEBUTTONUP:
-                for sprite in circle_sprites:
+                for sprite in overlay_sprites:
                     sprite.clicked = False
-                    sprite.colour = sprite.getOriginalColour()
+                    sprite.alpha = 128
+                    sprite.fillImage(128)
 
             # circle_sprites.draw(screen)
             count = 0
             for sprite in circle_sprites:
                 pygame.draw.ellipse(screen, sprite.colour, sprite.rect)
                 count += 1
+
+            for sprite in overlay_sprites:
+                screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
 
         pygame.display.update()
 
