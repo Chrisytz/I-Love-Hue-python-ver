@@ -51,7 +51,6 @@ def main():
     for sprite in allSprites:
         pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
         count +=1
-
     for i in range (0,3):
         sprites.add(overlay((0,0,0), 25+ i*150, 25, i))
 
