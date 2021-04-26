@@ -51,6 +51,31 @@ class Circle(pygame.sprite.Sprite):
         pygame.draw.ellipes(screen, self.colour, self.rect)
 
 
+class Overlay(pygame.sprite.Sprite):
+    # overlay is a really bad name but that's ok we will go with it
+    def __init__(self, colour, x_pos, y_pos, win_vars, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((win_vars["circle_size"], win_vars["circle_size"]))
+        self.alpha = 128
+        self.image.set_alpha(128)
+        self._original_colour = colour
+        self.colour = colour
+        self.image.fill(self.colour)
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.hover = False
+        self.clicked = False
+        self.id = id
+
+    def getOriginalColour(self):
+        return self._original_colour
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
+        self.image.fill(self.colour)
+
+
 # class Display():
 #     def __init__(self, win_width, win_height):
 #         self.win_width = win_width
@@ -83,7 +108,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(colour_list_circle, circle_sprites, win_vars):
+def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_vars):
     for i in range(0, 3):
         for j in range(0, 3):
             circle_sprites.add(Circle(colour_list_circle[i],
@@ -92,12 +117,21 @@ def addCircleSprites(colour_list_circle, circle_sprites, win_vars):
                                       win_vars["bar_thickness"] + j * (
                                                   win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars, i))
+            overlay_sprites.add(Overlay((0,0,0),
+                                      (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                      win_vars["bar_thickness"] + j * (
+                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                      win_vars, i))
     return circle_sprites
 
 
-def drawCircles(window, colour_list_circle, circle_sprites, id):
+def drawCircles(window, colour_list_circle, circle_sprites, overlay_sprites, id):
     for sprite in circle_sprites:
         pygame.draw.ellipse(window, colour_list_circle[id], sprite.rect)
+
+    for sprite in overlay_sprites:
+        window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
 
 
 # This is the main entry point to the game.
@@ -117,9 +151,8 @@ def sidebar():
                    [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
     colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
     sprite_list = pygame.sprite.Group()
-    sprite_list2 = pygame.sprite.Group()
     circle_sprite_list = pygame.sprite.Group()
-    single_sprite_list = pygame.sprite.GroupSingle()
+    overlay_sprites = pygame.sprite.Group()
 
     # calculating variables
     win_vars = {
@@ -140,7 +173,7 @@ def sidebar():
 
     # displaying sprites
     sprite_list = addSidebarSprites(sprite_list, colour_list, win_vars)
-    circles = addCircleSprites(colour_list_circle, circle_sprite_list, win_vars)
+    circles = addCircleSprites(colour_list_circle, circle_sprite_list, overlay_sprites, win_vars)
     sprite_list.draw(window)
     pygame.display.update()
 
@@ -175,7 +208,7 @@ def sidebar():
                 if rect_sprite.clicked == True:
                     temp_id = rect_sprite.id
                     circles.draw(window)
-                    drawCircles(window, colour_list_circle, circle_sprite_list, temp_id)
+                    drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, temp_id)
                     rect_sprite.clicked = False
 
             pygame.display.flip()
