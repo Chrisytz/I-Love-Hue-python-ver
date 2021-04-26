@@ -17,7 +17,7 @@ DEBUG = False
 # and then if on top of a circle change the like overlay_sprite_list sprite to self.transparent = false
 
 class Rect(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, colour, win_vars, id):
+    def __init__(self, x_pos, y_pos, colour, win_vars, level_id):
         pygame.sprite.Sprite.__init__(self)
 
         # todo: this surface needs to scale wrt window size. (checkmark)
@@ -28,7 +28,7 @@ class Rect(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.rect.y = y_pos
         # self.colour = colour
-        self.id = id
+        self.level_id = level_id
 
 
 class Circle(pygame.sprite.Sprite):
@@ -89,6 +89,30 @@ class Overlay(pygame.sprite.Sprite):
 #         self.window = pygame.display.set_mode((win_width, win_height))
 #         pygame.display.set_caption("Gradient Rect")
 
+# # Utils
+# todo: chris will fill
+#  def rectangleEventHandler(event, pos):
+#      if event.type == pygame.MOUSEWHEEL:
+#          if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
+#              if event.y == -1:
+#                  for rect_sprite in sprite_list:
+#                      rect_sprite.rect.y -= win_vars["bar_thickness"]
+#                      if DEBUG: print(rect_sprite.rect.y)
+#                  updateSprites(sprite_list, window, win_size[1], win_vars)
+#                  pygame.display.flip()
+#              else:
+#                  for rect_sprite in sprite_list:
+#                      rect_sprite.rect.y += win_vars["bar_thickness"]
+#                      if DEBUG: print(rect_sprite.rect.y)
+#                  updateSprites(sprite_list, window, win_size[1], win_vars)
+#                  pygame.display.flip()
+
+# if event.type == pygame.MOUSEBUTTONDOWN:
+#     if event.button == 1:
+#         pos = pygame.mouse.get_pos()
+#         for rect_sprite in sprite_list:
+#             if rect_sprite.rect.collidepoint(pos):
+#                 rect_sprite.clicked = True
 
 def updateSprites(sprite_list, window, win_height, win_vars):
     pygame.draw.rect(window, win_vars["black"], (0, 0, win_vars["width_sidebar"], win_height))
@@ -113,16 +137,16 @@ def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_va
         for j in range(0, 3):
             circle_sprites.add(Circle(colour_list_circle[i],
                                       (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
-                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                              win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars["bar_thickness"] + j * (
-                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                              win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars, i))
-            overlay_sprites.add(Overlay((0,0,0),
-                                      (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
-                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars["bar_thickness"] + j * (
-                                                  win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars, i))
+            overlay_sprites.add(Overlay((0, 0, 0),
+                                        (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                        win_vars["bar_thickness"] + j * (
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                        win_vars, i))
     return circle_sprites
 
 
@@ -132,6 +156,7 @@ def drawCircles(window, colour_list_circle, circle_sprites, overlay_sprites, id)
 
     for sprite in overlay_sprites:
         window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+
 
 
 # This is the main entry point to the game.
@@ -150,7 +175,7 @@ def sidebar():
                    [(255, 0, 255), (0, 255, 0), (0, 0, 255), (255, 255, 0)],
                    [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
     colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
-    sprite_list = pygame.sprite.Group()
+    rect_sprite_list = pygame.sprite.Group()
     circle_sprite_list = pygame.sprite.Group()
     overlay_sprites = pygame.sprite.Group()
 
@@ -172,62 +197,73 @@ def sidebar():
     # -----------------------------
 
     # displaying sprites
-    sprite_list = addSidebarSprites(sprite_list, colour_list, win_vars)
+    rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     circle_sprite_list = addCircleSprites(colour_list_circle, circle_sprite_list, overlay_sprites, win_vars)
-    sprite_list.draw(window)
+    rect_sprite_list.draw(window)
     pygame.display.update()
 
     # running the game
+    circles_visible = False
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+                # rectangleEventHandler(event, pygame.mouse.get_pos())
             if event.type == pygame.MOUSEWHEEL:
                 if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
                     if event.y == -1:
-                        for rect_sprite in sprite_list:
+                        for rect_sprite in rect_sprite_list:
                             rect_sprite.rect.y -= win_vars["bar_thickness"]
                             if DEBUG: print(rect_sprite.rect.y)
-                        updateSprites(sprite_list, window, win_size[1], win_vars)
+                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
                     else:
-                        for rect_sprite in sprite_list:
+                        for rect_sprite in rect_sprite_list:
                             rect_sprite.rect.y += win_vars["bar_thickness"]
                             if DEBUG: print(rect_sprite.rect.y)
-                        updateSprites(sprite_list, window, win_size[1], win_vars)
+                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
                         pygame.display.flip()
 
+            # determines which rectangle is clicked?
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    for rect_sprite in sprite_list:
+                    for rect_sprite in rect_sprite_list:
                         if rect_sprite.rect.collidepoint(pos):
                             rect_sprite.clicked = True
 
-            pos = pygame.mouse.get_pos()
-            for rect_sprite in overlay_sprites:
-                if rect_sprite.rect.collidepoint(pos):
-                    rect_sprite.clicked = True
-                    rect_sprite.alpha = 0
-                    rect_sprite.fillImage(0)
-
-            for rect_sprite in sprite_list:
+            for rect_sprite in rect_sprite_list:
                 if rect_sprite.clicked == True:
+                    # determining if first/second/third rect.
                     temp_id = rect_sprite.id
+                    circles_visible = True
                     circle_sprite_list.draw(window)
                     drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, temp_id)
                     rect_sprite.clicked = False
                     for sprite in overlay_sprites:
                         sprite.id = temp_id
 
+            pos = pygame.mouse.get_pos()
+            for rect_sprite in overlay_sprites:
+                if rect_sprite.rect.collidepoint(pos):
+                    rect_sprite.hover = True
+                    rect_sprite.alpha = 0  # this is unecessary
+                    rect_sprite.fillImage(0)
+                else:
+                    rect_sprite.hover = False
+                    rect_sprite.alpha = 128
+                    rect_sprite.fillImage(128)
+
+
 
             for sprite in overlay_sprites:
-                if sprite.clicked == True:
-                    circle_sprite_list.draw(window)
-                    drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
-                    sprite.clicked = False
+                if sprite.hover == True:
+                    # circle_sprite_list.draw(window)
+                    # drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
+                    sprite.hover = False
                     sprite.alpha = 128
                     sprite.fillImage(128)
+            # drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
 
             pygame.display.flip()
 
