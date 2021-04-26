@@ -10,11 +10,15 @@ class Circle(pygame.sprite.Sprite):
         self.image = pygame.Surface((100, 100))
         self.image.fill((0, 0, 0))
         self.colour = colour
+        self._original_colour = colour
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
         self.clicked = False
         self.id = id
+
+    def getOriginalColour(self):
+        return self._original_colour
 
 
 class Overlay(pygame.sprite.Sprite):
@@ -204,26 +208,20 @@ def drawCircles3():
                 done = True
             mouse_pos = pygame.mouse.get_pos()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for overlay_sprite in overlay_sprites:
-                    if overlay_sprite.rect.collidepoint(mouse_pos):
-                        overlay_sprite.clicked = True
+                for sprite in circle_sprites:
+                    if sprite.rect.collidepoint(mouse_pos):
+                        sprite.clicked = True
+                        sprite.colour = (255, 255, 255)
             if event.type == pygame.MOUSEBUTTONUP:
-                for overlay_sprite in overlay_sprites:
-                    overlay_sprite.clicked = False
-                    overlay_sprite.colour = overlay_sprite.getOriginalColour()
-                    overlay_sprite.image.fill(overlay_sprite.colour)
+                for sprite in circle_sprites:
+                    sprite.clicked = False
+                    sprite.colour = sprite.getOriginalColour()
 
-            circle_sprites.draw(screen)
+            # circle_sprites.draw(screen)
             count = 0
             for sprite in circle_sprites:
-                pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
+                pygame.draw.ellipse(screen, sprite.colour, sprite.rect)
                 count += 1
-
-            for mysprite in overlay_sprites:
-                if mysprite.clicked:
-                    mysprite.colour = (255, 255, 255)
-                    pygame.draw.ellipse(screen, mysprite.colour, mysprite.rect)
-                    mysprite.image.fill(mysprite.colour)
 
         pygame.display.update()
 
