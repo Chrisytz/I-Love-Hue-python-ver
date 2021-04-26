@@ -28,6 +28,7 @@ class Overlay(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.rect.y = y_pos
         self.hover = False
+        self.clicked = False
         self.id = id
 
     def getOriginalColour(self):
@@ -62,7 +63,6 @@ def drawCircles():
     # hide mouse
     done = False
     while not done:
-        pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
@@ -70,18 +70,28 @@ def drawCircles():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for overlay_sprite in overlay_sprites:
                     if overlay_sprite.rect.collidepoint(mouse_pos):
-                        overlay_sprite.hover = True
+                        overlay_sprite.clicked = True
+                for circle_sprite in circle_sprites:
+                    if circle_sprite.rect.collidepoint(mouse_pos):
+                        circle_sprite.clicked = True
             if event.type == pygame.MOUSEBUTTONUP:
                 for overlay_sprite in overlay_sprites:
-                    overlay_sprite.hover = False
+                    overlay_sprite.clicked = False
                     overlay_sprite.colour = overlay_sprite.getOriginalColour()
-                    overlay_sprite.hover = False
+                    overlay_sprite.image.fill(overlay_sprite.colour)
+                for circle_sprite in circle_sprites:
+                    circle_sprite.clicked = False
 
             for mysprite in overlay_sprites:
-                if mysprite.hover:
+                if mysprite.clicked:
                     mysprite.colour = (255, 255, 255)
                     mysprite.image.fill(mysprite.colour)
-                    overlay_sprites.draw(screen)
+
+        for sprite in overlay_sprites:
+            screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+        # overlay_sprites.draw(screen)
+
+        pygame.display.update()
 
 
 if __name__=="__main__":
