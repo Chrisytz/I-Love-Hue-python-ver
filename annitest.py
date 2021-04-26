@@ -101,6 +101,7 @@ def drawCircles():
 
         pygame.display.update()
 
+
 def drawCircles2():
     pygame.init()
     screen = pygame.display.set_mode((600, 400))
@@ -167,6 +168,7 @@ def drawCircles2():
 
         pygame.display.update()
 
+
 def drawCircles3():
     pygame.init()
     screen = pygame.display.set_mode((600, 400))
@@ -205,16 +207,11 @@ def drawCircles3():
                 for overlay_sprite in overlay_sprites:
                     if overlay_sprite.rect.collidepoint(mouse_pos):
                         overlay_sprite.clicked = True
-                for circle_sprite in circle_sprites:
-                    if circle_sprite.rect.collidepoint(mouse_pos):
-                        circle_sprite.clicked = True
             if event.type == pygame.MOUSEBUTTONUP:
                 for overlay_sprite in overlay_sprites:
                     overlay_sprite.clicked = False
                     overlay_sprite.colour = overlay_sprite.getOriginalColour()
                     overlay_sprite.image.fill(overlay_sprite.colour)
-                for circle_sprite in circle_sprites:
-                    circle_sprite.clicked = False
 
             circle_sprites.draw(screen)
             count = 0
@@ -227,8 +224,6 @@ def drawCircles3():
                     mysprite.colour = (255, 255, 255)
                     pygame.draw.ellipse(screen, mysprite.colour, mysprite.rect)
                     mysprite.image.fill(mysprite.colour)
-
-
 
         pygame.display.update()
 
