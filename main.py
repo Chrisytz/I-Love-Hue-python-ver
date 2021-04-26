@@ -173,7 +173,7 @@ def sidebar():
 
     # displaying sprites
     sprite_list = addSidebarSprites(sprite_list, colour_list, win_vars)
-    circles = addCircleSprites(colour_list_circle, circle_sprite_list, overlay_sprites, win_vars)
+    circle_sprite_list = addCircleSprites(colour_list_circle, circle_sprite_list, overlay_sprites, win_vars)
     sprite_list.draw(window)
     pygame.display.update()
 
@@ -204,12 +204,30 @@ def sidebar():
                         if rect_sprite.rect.collidepoint(pos):
                             rect_sprite.clicked = True
 
+            pos = pygame.mouse.get_pos()
+            for rect_sprite in overlay_sprites:
+                if rect_sprite.rect.collidepoint(pos):
+                    rect_sprite.clicked = True
+                    rect_sprite.alpha = 0
+                    rect_sprite.fillImage(0)
+
             for rect_sprite in sprite_list:
                 if rect_sprite.clicked == True:
                     temp_id = rect_sprite.id
-                    circles.draw(window)
+                    circle_sprite_list.draw(window)
                     drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, temp_id)
                     rect_sprite.clicked = False
+                    for sprite in overlay_sprites:
+                        sprite.id = temp_id
+
+
+            for sprite in overlay_sprites:
+                if sprite.clicked == True:
+                    circle_sprite_list.draw(window)
+                    drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
+                    sprite.clicked = False
+                    sprite.alpha = 128
+                    sprite.fillImage(128)
 
             pygame.display.flip()
 
