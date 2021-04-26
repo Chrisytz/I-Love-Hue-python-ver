@@ -154,9 +154,12 @@ def drawCircles(window, colour_list_circle, circle_sprites, overlay_sprites, id)
     for sprite in circle_sprites:
         pygame.draw.ellipse(window, colour_list_circle[id], sprite.rect)
 
+    # for sprite in overlay_sprites:
+    #     window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+
+def drawOverlay(window, overlay_sprites):
     for sprite in overlay_sprites:
         window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
 
 
 # This is the main entry point to the game.
@@ -231,17 +234,11 @@ def sidebar():
                     for rect_sprite in rect_sprite_list:
                         if rect_sprite.rect.collidepoint(pos):
                             rect_sprite.clicked = True
-
-            for rect_sprite in rect_sprite_list:
-                if rect_sprite.clicked == True:
-                    # determining if first/second/third rect.
-                    temp_id = rect_sprite.id
-                    circles_visible = True
-                    circle_sprite_list.draw(window)
-                    drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, temp_id)
-                    rect_sprite.clicked = False
-                    for sprite in overlay_sprites:
-                        sprite.id = temp_id
+                            temp_id = rect_sprite.level_id
+                            circles_visible = True
+                            rect_sprite.clicked = False
+                            for sprite in overlay_sprites:
+                                sprite.id = temp_id
 
             pos = pygame.mouse.get_pos()
             for rect_sprite in overlay_sprites:
@@ -254,16 +251,9 @@ def sidebar():
                     rect_sprite.alpha = 128
                     rect_sprite.fillImage(128)
 
-
-
-            for sprite in overlay_sprites:
-                if sprite.hover == True:
-                    # circle_sprite_list.draw(window)
-                    # drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
-                    sprite.hover = False
-                    sprite.alpha = 128
-                    sprite.fillImage(128)
-            # drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, sprite.id)
+            if circles_visible:
+                drawCircles(window, colour_list_circle, circle_sprite_list, overlay_sprites, temp_id)
+            drawOverlay(window, overlay_sprites)
 
             pygame.display.flip()
 
