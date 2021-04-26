@@ -3,11 +3,12 @@
 
 import pygame, random
 
+
 class Circle(pygame.sprite.Sprite):
     def __init__(self, colour, x_pos, y_pos, id):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((100, 100))
-        self.image.fill((0,0,0))
+        self.image.fill((0, 0, 0))
         self.colour = colour
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
@@ -34,15 +35,16 @@ class Overlay(pygame.sprite.Sprite):
     def getOriginalColour(self):
         return self._original_colour
 
+
 def drawCircles():
     pygame.init()
-    screen = pygame.display.set_mode((600,400))
+    screen = pygame.display.set_mode((600, 400))
     pygame.display.set_caption("circles")
 
     background = pygame.Surface(screen.get_size())
     colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
     circle_sprites = pygame.sprite.Group()
-    overlay_sprites  = pygame.sprite.Group()
+    overlay_sprites = pygame.sprite.Group()
     single = pygame.sprite.GroupSingle()
 
     for i in range(0, 3):
@@ -53,6 +55,7 @@ def drawCircles():
     for sprite in circle_sprites:
         pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
         count += 1
+
     for i in range(0, 3):
         overlay_sprites.add(Overlay((0, 0, 0), 25 + i * 150, 25, i))
 
@@ -87,6 +90,11 @@ def drawCircles():
                     mysprite.colour = (255, 255, 255)
                     mysprite.image.fill(mysprite.colour)
 
+        # circle_sprites.draw(screen)
+        count = 0
+        for sprite in circle_sprites:
+            pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
+            count += 1
         for sprite in overlay_sprites:
             screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
         # overlay_sprites.draw(screen)
@@ -94,5 +102,5 @@ def drawCircles():
         pygame.display.update()
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     drawCircles()
