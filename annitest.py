@@ -240,5 +240,31 @@ def drawCircles3():
         pygame.display.update()
 
 
+
+def drawGradientCircles():
+    pygame.init()
+    colours = []
+    colours.append([(255, 255, 255), (0, 0)])
+    colours.append([(168, 220, 255), (0, 1)])
+    colours.append([(0, 29, 69), (1, 1)])
+    colours.append([(255, 171, 107), (1, 0)])
+    colour_size = (2, 2)
+
+    window = pygame.display.set_mode((400, 400))
+    pygame.display.set_caption("anni is crying")
+
+    target_rect = pygame.Rect(0,0, 400, 400)
+    colour_rect = pygame.Surface((2,2))
+    for i in colours:
+        pygame.draw.line(colour_rect, i[0], i[1], i[1])
+    colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height))
+    window.blit(colour_rect, target_rect)
+
 if __name__ == "__main__":
-    drawCircles3()
+    drawGradientCircles()
+    while True:
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
