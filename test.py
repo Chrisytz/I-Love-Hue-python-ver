@@ -20,9 +20,16 @@ window = pygame.display.set_mode((win_size, win_size))
 pygame.display.set_caption("Gradient Rect")
 
 array = [["Circles2/0.png", "Circles2/1.png"]]
+array2 = []
 circle1 = pygame.image.load(array[0][0])
 circle1 = pygame.transform.smoothscale(circle1, (100,100))
-window.blit(circle1, (0,0))
+
+count = 0
+for circle in array:
+    array2.append(pygame.image.load(array[0][count]))
+    count += 1
+
+window.blit(array2[0], (0,0))
 
 pygame.display.update()
 
