@@ -71,18 +71,19 @@ class Grid:
     This class should contain (one) grid which we can use to control everything on each level
     """
 
-    def __init__(self, window, colours, colour_size, constants, window_size, steps):
+    def __init__(self, window, colours, colour_size, constants, window_size, drawing_size, steps):
         self.window = window  # window which everything will be drawn onto
         self.colours = colours  # colours and their locations.
         self.gradient_size = colour_size
         self.constants = constants
         self.window_size = window_size  # (x, y) size of window
+        self.drawing_size = drawing_size
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
 
     def drawGradient(self):
-        x_size, y_size = self.window_size
+        x_size, y_size = self.drawing_size
         target_rect = pygame.Rect(0, 0, x_size, y_size)
         colour_rect = pygame.Surface(self.gradient_size)
         for i in self.colours:
@@ -92,7 +93,7 @@ class Grid:
         pygame.display.update()
 
     def getColours(self, newgrid=False, ret=False):
-        x_size, y_size = self.window_size
+        x_size, y_size = self.drawing_size
         x_step, y_step = self.steps
 
         x_loc_scalar = x_size / x_step
@@ -124,7 +125,7 @@ class Grid:
         templist = []
         for x in range(0, x_step):
             for y in range(0, y_step):
-                if (x, y) in constants:
+                if (x, y) in self.constants:
                     continue
                 else:
                     templist.append(self.original_grid[x][y])
@@ -135,7 +136,7 @@ class Grid:
         for x in range(0, x_step):
             shuffleList = []
             for y in range(0, y_step):
-                if (x, y) in constants:
+                if (x, y) in self.constants:
                     shuffleList.append(self.original_grid[x][y])
                 else:
                     shuffleList.append(templist[count])
@@ -144,7 +145,7 @@ class Grid:
 
     def addToSpriteGroup(self, sprite_list):
         count = 0
-        winx, winy = self.window_size
+        winx, winy = self.drawing_size
         x_step, y_step = self.steps
 
         x_block_width = winx / x_step
@@ -160,9 +161,9 @@ class Grid:
                 if DEBUG: print(x_step, y_step)
                 if (i, j) in self.constants:
                     if DEBUG: print("addToSpriteGroup constant: ", x_step, y_step)
-                    rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps, True)
+                    rect = Rect(pos, self.shuffle_grid[i][j], self.drawing_size, self.steps, True)
                 else:
-                    rect = Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps)
+                    rect = Rect(pos, self.shuffle_grid[i][j], self.drawing_size, self.steps)
                 sprite_list.add(rect)
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
 
@@ -226,14 +227,14 @@ def evaluate_level(window, levelgrid, sprite_list):
         pygame.draw.rect(window, (0, 0, 0), pygame.Rect(horiz_lim, 0, 200, horiz_lim))
         pygame.display.flip()
 
-        if levelgrid.original_grid == getColours(window, window_size, steps):
+        if levelgrid.original_grid == getColours(window, levelgrid.window_size, levelgrid.steps):
             if DEBUG: print("you won")
             return 0  # 0 = won the game
 
             # you've won the game
 
 
-def run_level(level, window):
+def run_level(level):
     """This will run the entire level!"""
     # Todo: Do we want this to only run one level?
 
@@ -242,9 +243,13 @@ def run_level(level, window):
     sprite_single = pygame.sprite.GroupSingle()
 
     window, colours, colour_size, constants, window_size, steps = level
-    pygame.init()  # is pygame already init from another side?
+    if window_size[0]<window_size[1]:
+        drawing_size = (window_size[0], window_size[0])
+    else:
+        drawing_size = (window_size[1], window_size[1])
+    # pygame.init()  # is pygame already init from another side?
     # window = pygame.display.set_mode((window_size))
-    levelgrid = Grid(window, colours, colour_size, constants, window_size, steps)
+    levelgrid = Grid(window, colours, colour_size, constants, window_size, drawing_size, steps)
     if DEBUG: print(constants)
     levelgrid.drawGradient()
     # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
@@ -259,21 +264,6 @@ def run_level(level, window):
 
     # at this point, everything has been created properly, hand over to run_game.
 
-steps = 4,4
-x_step, y_step = steps
-
-constants = []
-
-# general block
-constants.append((0, 0))
-constants.append((x_step - 1, y_step - 1))
-constants.append((0, y_step - 1))
-constants.append((x_step - 1, 0))
-
-# center block
-constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
-
-window_size = (400, 400)
 
 
 def runGame (rect_id, circle_id, testWindow):
@@ -448,11 +438,172 @@ def runGame (rect_id, circle_id, testWindow):
     # constants.append((3, 3))
 
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
+    x_step = 8
+    y_step = 8
+    steps = x_step, y_step
+    # constants are blocks that won't move.
+    constants = []
 
-    testWindow = pygame.display.set_mode((600,400))
+    window_size = (600, 400)
+
+    # general block
+    constants.append((0, 0))
+    constants.append((x_step - 1, y_step - 1))
+    constants.append((0, y_step - 1))
+    constants.append((x_step - 1, 0))
+
+    level = testWindow, colours, colour_size, constants, window_size, steps
+    run_level(level)
+
+
+
+if __name__ == "__main__":
+    level = 0  # TODO: CHANGE THIS
+    window_size = (400, 400)
+
+    testWindow = pygame.display.set_mode((600, 400))
+    pygame.display.set_caption("test_window")
+    # common sizes for 1200x900
+    # 300x300:  x=4     y=3
+    # 150x150:  x=8     y=6
+    # 100x100:  x=12    y=9
+    # 75x75:    x=16    y=12
+    # 60x60:    x=20    y=15
+    # 50x50:    x=24    y=18
+
+    # for 900x900, 9, 6, 3
+    # steps = 8, 8
+    steps = 8, 8
+    x_step, y_step = steps
+    colours = []
+    # set 1
+    # colours.append([(255, 153, 51),(1,1)])
+    # colours.append([(153, 51, 255),(0,1)])
+    # colours.append([(51, 153, 255),(0,0)])
+    # colours.append([(51, 255, 153),(1,0)])
+
+    # set 2
+    # colours.append([(33, 11, 84), (0, 0)])
+    # colours.append([(201, 205, 242), (0, 1)])
+    # colours.append([(201, 255, 240), (1, 1)])
+    # colours.append([(6, 39, 69), (1, 0)])
+
+    # set 3
+    # colours.append([(0, 17, 54), (0, 0)])
+    # colours.append([(150, 255, 210), (0, 1)])
+    # colours.append([(255, 255, 255), (0, 2)])
+    # colours.append([(183, 78, 212), (1, 0)])
+    # colours.append([(197, 181, 255), (1, 1)])
+    # colours.append([(255, 229, 97), (1, 2)])
+    # colours.append([(148, 0, 55), (2, 0)])
+    # colours.append([(235, 115, 159), (2, 1)])
+    # colours.append([(191, 244, 255), (2, 2)])
+
+    # colours.append([(240,230,140),(1,0)])
+    # colours.append([(129,0,0), (1,1)])
+
+    # set 4
+    colours.append([(255, 255, 255), (0, 0)])
+    colours.append([(168, 220, 255), (0, 1)])
+    colours.append([(0, 29, 69), (1, 1)])
+    colours.append([(255, 171, 107), (1, 0)])
+
+    # IDFK IF I CAN DO THIS BUT HAVE IT ANYWAYS
+    # okay so pretty much [] is the whole list, [[four colours]] are nested inside and within [[four colours]] there are [[[colour1, pos], [colour2, pos], [colour3, pos], [colour4, pos]]]
+    colour_list1 = [
+        [[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
+         [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
+        [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
+         [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
+         [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
+        [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
+         [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
+        [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
+         [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(41, 164, 186), (1, 1)],
+         [(136, 191, 156), (1, 0)], [(166, 245, 255), (0, 0)]],
+        [[(231, 255, 246), (0, 1)], [(99, 255, 211), (1, 1)],
+         [(105, 183, 232), (1, 0)], [(180, 175, 239), (0, 0)]],
+        [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+         [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
+        [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
+         [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]],
+    ]
+
+    colour_list2 = [
+        [[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
+         [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
+        [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
+         [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
+        [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
+         [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
+        [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
+         [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
+        [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
+         [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
+        [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
+         [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
+        [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
+         [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
+        [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
+         [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
+        [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
+         [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]],
+    ]
+
+    colour_list3 = [
+        [[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
+         [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
+        [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
+         [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
+        [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
+         [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
+        [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
+         [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
+        [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
+         [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
+         [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
+        [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+         [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
+        [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
+         [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
+        [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
+         [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]],
+    ]
+
+    colour_size = (2, 2)
+    # use 4 random colours for now
+    c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
+    # c1 = (255, 0, 0)
+    # c2 = (0, 255, 0)
+    # c3 = (0, 0, 255)
+    # c4 = (150, 150, 150)
+
+    # constants are blocks that won't move.
+    constants = []
+
+    # general block
+    constants.append((0, 0))
+    constants.append((x_step - 1, y_step - 1))
+    constants.append((0, y_step - 1))
+    constants.append((x_step - 1, 0))
+
+    # center block
+    constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
+
+    # 7x7 block
+    # constants.append((0, 0))
+    # constants.append((6, 6))
+    # constants.append((0, 6))
+    # constants.append((6, 0))
+    # constants.append((3, 3))
+
+    # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
+
+    testWindow = pygame.display.set_mode(window_size)
     pygame.display.set_caption("test_window")
     steps = x_step, y_step
     level = testWindow, colours, colour_size, constants, window_size, steps
-    run_level(level, testWindow)
-
-
+    run_level(level)
