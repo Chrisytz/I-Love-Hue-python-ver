@@ -248,6 +248,10 @@ def run_level(level):
         drawing_size = (window_size[0], window_size[0])
     else:
         drawing_size = (window_size[1], window_size[1])
+
+    # TODO: horizontal lim to be coded here with diff between drawing size and window sizes
+
+    
     # pygame.init()  # is pygame already init from another side?
     # window = pygame.display.set_mode((window_size))
     levelgrid = Grid(window, colours, colour_size, constants, window_size, drawing_size, steps)
