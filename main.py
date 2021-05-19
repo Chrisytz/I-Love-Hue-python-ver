@@ -186,16 +186,16 @@ def sidebar():
     }
 
     # todo: multiple colours loaded from levels file?
-    colour_list = [[(0, 0, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)],
-                   [(255, 0, 255), (0, 255, 0), (0, 0, 255), (255, 255, 0)],
-                   [(0, 255, 255), (0, 255, 0), (255, 0, 255), (255, 255, 0)]]
+    colour_list = [[(52, 83, 97), (63,172,185), (140, 224, 160), (199, 170, 237)],
+                   [(60, 38, 80), (233, 72, 137), (255,121,93), (255,184,88)],
+                   [(46,58,83), (96,155,185), (216,225,246), (249,175,164)]]
     colour_list_circle = [
         ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
          "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
         ["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
-        ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
-         "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"]]
+        ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
+         "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"]]
     rect_sprite_list = pygame.sprite.Group()
     circle_sprite_list0 = pygame.sprite.Group()
     circle_sprite_list1 = pygame.sprite.Group()
