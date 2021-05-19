@@ -369,7 +369,6 @@ def sidebar():
                 window.fill((0, 0, 0))
                 drawCircles(window, listtt, colour_list_circle, temp_id)
                 drawOverlay(window, overlay_sprites)
-
                 rect_sprite_list.draw(window)
 
             pygame.display.flip()
