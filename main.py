@@ -11,11 +11,11 @@ DEBUG = False
 
 
 # todo: BIG BRAINED THINGS SO I DONT FORGET
-# for the circles can u have like semi transparent things? like can u adjust opacity if u can u could totally
-# create two classes (or one class) and have a like self.transparent and if ur on hover
-# and then create two sprite lists one for the base colour and one for like a black overlay
-# and then do a like for loop ot see if hovering on top of a circle and if on top of a circle
-# and then if on top of a circle change the like overlay_sprite_list sprite to self.transparent = false
+# diff num of squares (4x4, 8x8, 10x10)
+# if u beat a level thatsprite.beat = true or smth and then yeet the overlay be like if evaluatelevel(from level.py) == 0 then yayyy it works
+# find some way to show the difficulty of each level
+# one the side of each lvl --> #moves, home, restart --> smth smth import the shuffle function or wtv
+
 
 class Rect(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, colour, win_vars, level_id):
