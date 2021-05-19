@@ -363,6 +363,7 @@ def sidebar():
                                 circle_sprite.clicked = True
                                 print(circle_sprite.id)
                                 runGame(temp_id, circle_sprite.id, window)
+                                pygame.display.set_caption("Gradient Rect")
 
 
                 # circle_sprite_list.empty()

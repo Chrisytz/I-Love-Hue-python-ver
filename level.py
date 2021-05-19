@@ -243,6 +243,7 @@ def run_level(level):
     sprite_single = pygame.sprite.GroupSingle()
 
     window, colours, colour_size, constants, window_size, steps = level
+    pygame.display.set_caption("LEVEL!!!!!")
     if window_size[0]<window_size[1]:
         drawing_size = (window_size[0], window_size[0])
     else:
