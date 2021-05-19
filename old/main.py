@@ -6,7 +6,7 @@ import pygame
 
 ### initiating variables
 win_size = 800
-rect_size = 200  # must be a factor of win_size
+rect_size = 50  # must be a factor of win_size
 num_rect = (int)(win_size / rect_size)
 done = False
 sprite_list = pygame.sprite.Group()
