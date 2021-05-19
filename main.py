@@ -5,6 +5,7 @@
 import sys
 import random
 import pygame
+from level import runGame
 
 DEBUG = False
 
@@ -32,9 +33,9 @@ class Rect(pygame.sprite.Sprite):
 
 
 class Circle(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, win_vars, circle_list, j, id):
+    def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(circle_list[id][j]).convert_alpha()
+        self.image = pygame.image.load(circle_list[i][j]).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -131,7 +132,7 @@ def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_va
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars["bar_thickness"] + j * (
                                               win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars, colour_list_circle, count, id))
+                                      win_vars, colour_list_circle, id, count, count))
             overlay_sprites.add(Overlay((0, 0, 0),
                                         (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
@@ -162,6 +163,13 @@ def loadCircles(circle_list, win_vars):
     return loaded_circle_list
 
 
+def addColours(colour_list, rect_clicked, circle_clicked):
+    colour = []
+    for i in range(0, 4):
+        colour.append(colour_list[rect_clicked][circle_clicked][i])
+    return colour
+
+
 # This is the main entry point to the game.
 
 def sidebar():
@@ -186,9 +194,9 @@ def sidebar():
     }
 
     # todo: multiple colours loaded from levels file?
-    colour_list = [[(52, 83, 97), (63,172,185), (116, 190, 109), (235,223,255)],
-                   [(60, 38, 80), (233, 72, 137), (255,121,93), (255,184,88)],
-                   [(46,58,83), (96,155,185), (216,225,246), (249,175,164)]]
+    colour_list = [[(52, 83, 97), (63, 172, 185), (116, 190, 109), (235, 223, 255)],
+                   [(60, 38, 80), (233, 72, 137), (255, 121, 93), (255, 184, 88)],
+                   [(46, 58, 83), (96, 155, 185), (216, 225, 246), (249, 175, 164)]]
     colour_list_circle = [
         ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
          "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
@@ -215,6 +223,89 @@ def sidebar():
         listtt[number] = addCircleSprites(colour_list_circle, listtt[number], overlay_sprites, win_vars, number)
     rect_sprite_list.draw(window)
     pygame.display.update()
+
+    # STUFF FROM LEVEL.PY
+    level = 0  # TODO: CHANGE THIS
+    game_screen_size = (400, 400)
+
+    steps = 8, 8
+    x_step, y_step = steps
+
+    list_of_colours = [
+        # colourlist1
+        [[[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
+          [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
+         [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
+          [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
+          [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
+         [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
+          [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
+         [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
+          [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(41, 164, 186), (1, 1)],
+          [(136, 191, 156), (1, 0)], [(166, 245, 255), (0, 0)]],
+         [[(231, 255, 246), (0, 1)], [(99, 255, 211), (1, 1)],
+          [(105, 183, 232), (1, 0)], [(180, 175, 239), (0, 0)]],
+         [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+          [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
+         [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
+          [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]]],
+        # colourlist2
+        [[[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
+          [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
+         [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
+          [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
+         [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
+          [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
+         [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
+          [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
+         [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
+          [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
+         [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
+          [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
+         [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
+          [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
+         [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
+          [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
+         [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
+          [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]]],
+        # colourlist3
+        [[[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
+          [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
+         [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
+          [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
+         [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
+          [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
+         [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
+          [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
+         [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
+          [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
+          [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
+         [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+          [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
+         [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
+          [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
+         [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
+          [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]]]
+    ]
+
+    colour_size = (2, 2)
+
+    # constants are blocks that won't move.
+    constants = []
+
+    # general block
+    constants.append((0, 0))
+    constants.append((x_step - 1, y_step - 1))
+    constants.append((0, y_step - 1))
+    constants.append((x_step - 1, 0))
+
+    # center block
+    constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
+
+    steps = x_step, y_step
 
     # running the game
     circles_visible = False
@@ -247,6 +338,8 @@ def sidebar():
                             rect_sprite.clicked = True
                             temp_id = rect_sprite.level_id
                             circles_visible = True
+                            print(temp_id)
+
                             # rect_sprite.clicked = False
                             # for sprite in overlay_sprites:
                             #     sprite.id = temp_id
@@ -262,8 +355,22 @@ def sidebar():
 
             if circles_visible:
                 drawCircles(window, listtt, colour_list_circle, temp_id)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        pos = pygame.mouse.get_pos()
+                        for circle_sprite in listtt[temp_id]:
+                            if circle_sprite.rect.collidepoint(pos):
+                                circle_sprite.clicked = True
+                                print(circle_sprite.id)
+                                runGame(temp_id, circle_sprite.id, window)
+
+
                 # circle_sprite_list.empty()
-            drawOverlay(window, overlay_sprites)
+                window.fill((0, 0, 0))
+                drawCircles(window, listtt, colour_list_circle, temp_id)
+                drawOverlay(window, overlay_sprites)
+
+                rect_sprite_list.draw(window)
 
             pygame.display.flip()
 

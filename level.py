@@ -166,6 +166,11 @@ class Grid:
                 sprite_list.add(rect)
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
 
+def addColours (colour_list, rect_clicked, circle_clicked):
+    colour = []
+    for i in range (0,4):
+        colour.append(colour_list[rect_clicked][circle_clicked][i])
+    return colour
 
 def evaluate_level(window, levelgrid, sprite_list):
     done = False
@@ -215,10 +220,11 @@ def evaluate_level(window, levelgrid, sprite_list):
         if levelgrid.original_grid == getColours(window, window_size, steps):
             if DEBUG: print("you won")
             return 0  # 0 = won the game
+
             # you've won the game
 
 
-def run_level(level):
+def run_level(level, window):
     """This will run the entire level!"""
     # Todo: Do we want this to only run one level?
 
@@ -240,14 +246,29 @@ def run_level(level):
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
         print("you have won")
-        sys.exit()
+        #sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
 
+steps = 4,4
+x_step, y_step = steps
 
-if __name__ == "__main__":
+constants = []
+
+# general block
+constants.append((0, 0))
+constants.append((x_step - 1, y_step - 1))
+constants.append((0, y_step - 1))
+constants.append((x_step - 1, 0))
+
+# center block
+constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
+
+window_size = (400, 400)
+
+
+def runGame (rect_id, circle_id, testWindow):
     level = 0  # TODO: CHANGE THIS
-    window_size = (400, 400)
 
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
@@ -259,9 +280,8 @@ if __name__ == "__main__":
 
     # for 900x900, 9, 6, 3
     # steps = 8, 8
-    steps = 8, 8
-    x_step, y_step = steps
-    colours = []
+
+    #colours = []
     # set 1
     # colours.append([(255, 153, 51),(1,1)])
     # colours.append([(153, 51, 255),(0,1)])
@@ -288,16 +308,18 @@ if __name__ == "__main__":
     # colours.append([(240,230,140),(1,0)])
     # colours.append([(129,0,0), (1,1)])
 
-    # set 4
-    colours.append([(255, 255, 255), (0, 0)])
-    colours.append([(168, 220, 255), (0, 1)])
-    colours.append([(0, 29, 69), (1, 1)])
-    colours.append([(255, 171, 107), (1, 0)])
+    # # set 4
+    # colours.append([(255, 255, 255), (0, 0)])
+    # colours.append([(168, 220, 255), (0, 1)])
+    # colours.append([(0, 29, 69), (1, 1)])
+    # colours.append([(255, 171, 107), (1, 0)])
 
     # IDFK IF I CAN DO THIS BUT HAVE IT ANYWAYS
-    # okay so pretty much [] is the whole list, [[four colours]] are nested inside and within [[four colours]] there are [[[colour1, pos], [colour2, pos], [colour3, pos], [colour4, pos]]]
-    colour_list1 = [
-        [[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
+    # okay so pretty much [] is the whole list, [[colourlist]], [[[four colours]]] are nested inside and within
+    # [[[four colours]]] there are [[[[colour1, pos], [colour2, pos], [colour3, pos], [colour4, pos]]]]
+    colour_list = [
+        #colourlist1
+        [[[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
          [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
         [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
          [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
@@ -314,11 +336,9 @@ if __name__ == "__main__":
         [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
          [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
         [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
-         [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]],
-    ]
-
-    colour_list2 = [
-        [[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
+         [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]]],
+        #colourlist2
+        [[[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
          [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
         [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
          [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
@@ -335,11 +355,9 @@ if __name__ == "__main__":
         [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
          [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
         [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
-         [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]],
-    ]
-
-    colour_list3 = [
-        [[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
+         [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]]],
+        #colourlist3
+        [[[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
          [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
         [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
          [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
@@ -356,28 +374,62 @@ if __name__ == "__main__":
         [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
          [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
         [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
-         [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]],
+         [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]]]
     ]
+
+    colours = addColours(colour_list, rect_id, circle_id)
+
+    # colour_list2 = [
+    #     [[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
+    #      [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
+    #     [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
+    #      [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
+    #     [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
+    #      [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
+    #     [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
+    #      [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
+    #     [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
+    #      [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
+    #     [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
+    #      [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
+    #     [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
+    #      [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
+    #     [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
+    #      [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
+    #     [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
+    #      [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]],
+    # ]
+    #
+    # colour_list3 = [
+    #     [[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
+    #      [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
+    #     [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
+    #      [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
+    #     [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
+    #      [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
+    #     [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
+    #      [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
+    #     [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
+    #      [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
+    #     [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
+    #      [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
+    #     [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+    #      [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
+    #     [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
+    #      [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
+    #     [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
+    #      [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]],
+    # ]
 
     colour_size = (2, 2)
     # use 4 random colours for now
-    c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
+    #c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
     # c1 = (255, 0, 0)
     # c2 = (0, 255, 0)
     # c3 = (0, 0, 255)
     # c4 = (150, 150, 150)
 
     # constants are blocks that won't move.
-    constants = []
-
-    # general block
-    constants.append((0, 0))
-    constants.append((x_step - 1, y_step - 1))
-    constants.append((0, y_step - 1))
-    constants.append((x_step - 1, 0))
-
-    # center block
-    constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
 
     # 7x7 block
     # constants.append((0, 0))
@@ -388,8 +440,10 @@ if __name__ == "__main__":
 
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
 
-    testWindow = pygame.display.set_mode(window_size)
+    testWindow = pygame.display.set_mode((600,400))
     pygame.display.set_caption("test_window")
     steps = x_step, y_step
     level = testWindow, colours, colour_size, constants, window_size, steps
-    run_level(level)
+    run_level(level, testWindow)
+
+

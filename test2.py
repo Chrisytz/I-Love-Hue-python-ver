@@ -1,96 +1,87 @@
-""" moveCircle.py
-    create a blue circle sprite and have it
-    follow the mouse"""
+    level = 0  # TODO: CHANGE THIS
+    window_size = (400, 400)
 
-import pygame, random
+    steps = 8, 8
+    x_step, y_step = steps
 
-pygame.init()
-
-screen = pygame.display.set_mode((640, 480))
-
-
-class Circle(pygame.sprite.Sprite):
-    def __init__(self, colour, x_pos, y_pos, id):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((100, 100))
-        self.image.fill((0,0,0))
-        self.colour = colour
-        self.rect = self.image.get_rect()
-        self.rect.x = x_pos
-        self.rect.y = y_pos
-        self.clicked = False
-        self.id = id
-
-class overlay(pygame.sprite.Sprite):
-    def __init__(self, colour, x_pos, y_pos, id):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((100, 100))
-        self.image.set_alpha(128)
-        self.colour = colour
-        self.image.fill(self.colour)
-        self.rect = self.image.get_rect()
-        self.rect.x = x_pos
-        self.rect.y = y_pos
-        self.hover = False
-        self.id = id
-
-def main():
-    pygame.display.set_caption("move the circle with the mouse")
-
-    background = pygame.Surface(screen.get_size())
-    colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
-    allSprites = pygame.sprite.Group()
-    sprites = pygame.sprite.Group()
-    single = pygame.sprite.GroupSingle()
-
-    for i in range (0,3):
-        allSprites.add(Circle(colour_list_circle[i], 25+ i*150, 25, i))
-    allSprites.draw(screen)
-
-    count = 0
-    for sprite in allSprites:
-        pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
-        count +=1
-    for i in range (0,3):
-        sprites.add(overlay((0,0,0), 25+ i*150, 25, i))
-
-    for sprite in sprites:
-        screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
-    pygame.display.update()
-    keepGoing = True
-    # hide mouse
-    while keepGoing:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                keepGoing = False
-            pos = pygame.mouse.get_pos()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for sprite in sprites:
-                    if sprite.rect.collidepoint(pos):
-                        sprite.hover = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                for sprite in sprites:
-                    sprite.hover = False
-
-            for a in sprites:
-                if a.hover == True:
-                    print(a.colour)
-                    a.colour = (255,255,255)
-                    a.image.fill(a.colour)
-                    print(a.colour)
-
-            for sprite in sprites:
-                screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
-            # for sprite in single:
-            #     screen.fill((0,0,0))
-            #     allSprites.draw(screen)
-            #     screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-            #     print(sprite.colour)
+    colour_list = [
+        #colourlist1
+        [[[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
+         [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
+        [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
+         [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
+         [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
+        [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
+         [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
+        [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
+         [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(41, 164, 186), (1, 1)],
+         [(136, 191, 156), (1, 0)], [(166, 245, 255), (0, 0)]],
+        [[(231, 255, 246), (0, 1)], [(99, 255, 211), (1, 1)],
+         [(105, 183, 232), (1, 0)], [(180, 175, 239), (0, 0)]],
+        [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+         [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
+        [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
+         [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]]],
+        #colourlist2
+        [[[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
+         [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
+        [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
+         [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
+        [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
+         [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
+        [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
+         [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
+        [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
+         [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
+        [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
+         [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
+        [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
+         [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
+        [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
+         [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
+        [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
+         [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]]],
+        #colourlist3
+        [[[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
+         [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
+        [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
+         [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
+        [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
+         [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
+        [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
+         [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
+        [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
+         [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
+        [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
+         [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
+        [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+         [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
+        [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
+         [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
+        [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
+         [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]]]
+    ]
 
 
 
+    colour_size = (2, 2)
 
-if __name__ == "__main__":
-    main()
+    # constants are blocks that won't move.
+    constants = []
+
+    # general block
+    constants.append((0, 0))
+    constants.append((x_step - 1, y_step - 1))
+    constants.append((0, y_step - 1))
+    constants.append((x_step - 1, 0))
+
+    # center block
+    constants.append((((x_step - 1) / 2), ((y_step - 1) / 2)))
+
+    steps = x_step, y_step
+
+    colours = addColours(colour_list, 1, 1)
+    level = testWindow, colours, colour_size, constants, window_size, steps
+    run_level(level)
