@@ -175,6 +175,9 @@ def addColours (colour_list, rect_clicked, circle_clicked):
 def evaluate_level(window, levelgrid, sprite_list):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
+
+    # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING
+    horiz_lim = 400;
     while not done:
 
         for event in pygame.event.get():
@@ -209,12 +212,18 @@ def evaluate_level(window, levelgrid, sprite_list):
                     sprite.clicked = False
                 moving_sprite_list.empty()
             if event.type == pygame.MOUSEMOTION:
+                posx,posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
-                    if sprite.clicked == True and sprite.movable:
+                    # iirc the below code should run ok
+                    if sprite.clicked == True and sprite.movable and (posx<horiz_lim):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)
             moving_sprite_list.draw(window)  # draw this last ALWAYS
+
+        #TODO: FIND A BETTER WAY TO DRAW RECTANGLES
+        # in particular, we need a better way to calculate the '200' present here.
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(horiz_lim, 0, 200, horiz_lim))
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, window_size, steps):
