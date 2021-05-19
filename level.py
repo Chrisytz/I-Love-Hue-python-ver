@@ -224,7 +224,6 @@ def evaluate_level(window, levelgrid, sprite_list):
         #TODO: FIND A BETTER WAY TO DRAW RECTANGLES
         # in particular, we need a better way to calculate the '200' present here.
         pygame.draw.rect(window, (0, 0, 0), pygame.Rect(horiz_lim, 0, 200, horiz_lim))
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(400, 0, 200, 400))
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, window_size, steps):
