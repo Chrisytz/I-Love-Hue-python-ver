@@ -186,7 +186,7 @@ def sidebar():
     }
 
     # todo: multiple colours loaded from levels file?
-    colour_list = [[(52, 83, 97), (63,172,185), (140, 224, 160), (199, 170, 237)],
+    colour_list = [[(52, 83, 97), (63,172,185), (116, 190, 109), (235,223,255)],
                    [(60, 38, 80), (233, 72, 137), (255,121,93), (255,184,88)],
                    [(46,58,83), (96,155,185), (216,225,246), (249,175,164)]]
     colour_list_circle = [
@@ -206,7 +206,7 @@ def sidebar():
 
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
-    # I'll probably also make a configurator for the settings that will return all of these as a list or tuple.
+    # I'll probably also make a configurator for the settings that will return all of these as a ilist or tuple.
     # -----------------------------
 
     # displaying sprites
