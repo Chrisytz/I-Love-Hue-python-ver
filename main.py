@@ -362,7 +362,7 @@ def sidebar():
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 print(circle_sprite.id)
-                                runGame(temp_id, circle_sprite.id, window)
+                                runGame(temp_id, circle_sprite.id)
                                 pygame.display.set_caption("Gradient Rect")
 
 

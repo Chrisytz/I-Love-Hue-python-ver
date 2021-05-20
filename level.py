@@ -78,6 +78,7 @@ class Grid:
         self.constants = constants
         self.window_size = window_size  # (x, y) size of window
         self.drawing_size = drawing_size
+        self.horizontal_limit = (2/3) * window_size[0]
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
@@ -177,8 +178,7 @@ def evaluate_level(window, levelgrid, sprite_list):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
 
-    # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit
-    horiz_lim = 400;
+    # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
 
         for event in pygame.event.get():
@@ -216,7 +216,7 @@ def evaluate_level(window, levelgrid, sprite_list):
                 posx,posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
                     # iirc the below code should run ok
-                    if sprite.clicked == True and sprite.movable and (posx<horiz_lim):
+                    if sprite.clicked == True and sprite.movable and (posx<levelgrid.horizontal_limit):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)
@@ -224,10 +224,10 @@ def evaluate_level(window, levelgrid, sprite_list):
 
         #TODO: FIND A BETTER WAY TO DRAW RECTANGLES
         # in particular, we need a better way to calculate the '200' present here.
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(horiz_lim, 0, 200, horiz_lim))
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit/2, levelgrid.horizontal_limit))
         pygame.display.flip()
 
-        if levelgrid.original_grid == getColours(window, levelgrid.window_size, levelgrid.steps):
+        if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit), levelgrid.steps):
             if DEBUG: print("you won")
             return 0  # 0 = won the game
 
@@ -271,8 +271,10 @@ def run_level(level):
 
 
 
-def runGame (rect_id, circle_id, testWindow):
+def runGame (rect_id, circle_id):
     level = 0  # TODO: CHANGE THIS
+    window_size = (600, 400)
+    testWindow = pygame.display.set_mode((window_size))
 
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
@@ -407,8 +409,6 @@ def runGame (rect_id, circle_id, testWindow):
     # constants are blocks that won't move.
     constants = []
 
-    window_size = (600, 400)
-
     # general block
     constants.append((0, 0))
     constants.append((x_step - 1, y_step - 1))
@@ -423,9 +423,9 @@ def runGame (rect_id, circle_id, testWindow):
 if __name__ == "__main__":
     level = 0  # TODO: CHANGE THIS
     window_size = (400, 400)
-
-    testWindow = pygame.display.set_mode((600, 400))
+    testWindow = pygame.display.set_mode((window_size))
     pygame.display.set_caption("test_window")
+
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
     # 150x150:  x=8     y=6
@@ -436,7 +436,7 @@ if __name__ == "__main__":
 
     # for 900x900, 9, 6, 3
     # steps = 8, 8
-    steps = 8, 8
+    steps = 4, 4
     x_step, y_step = steps
     colours = []
     # set 1
@@ -538,7 +538,7 @@ if __name__ == "__main__":
 
     colour_size = (2, 2)
     # use 4 random colours for now
-    c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
+    #c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
     # c1 = (255, 0, 0)
     # c2 = (0, 255, 0)
     # c3 = (0, 0, 255)
@@ -565,8 +565,6 @@ if __name__ == "__main__":
 
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
 
-    testWindow = pygame.display.set_mode(window_size)
-    pygame.display.set_caption("test_window")
     steps = x_step, y_step
     level = testWindow, colours, colour_size, constants, window_size, steps
     run_level(level)
