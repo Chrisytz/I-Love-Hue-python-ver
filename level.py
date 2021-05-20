@@ -241,7 +241,7 @@ def evaluate_level(window, levelgrid, sprite_list):
 def run_level(level):
     """This will run the entire level!"""
     # Todo: Do we want this to only run one level?
-
+    boop = 10
     # system level variables.
     sprite_list = pygame.sprite.Group()
     sprite_single = pygame.sprite.GroupSingle()
@@ -268,6 +268,9 @@ def run_level(level):
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
         print("you have won")
+        boop = 50
+
+    return boop
         # sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
@@ -275,6 +278,7 @@ def run_level(level):
 
 def runGame(rect_id, circle_id):
     level = 0  # TODO: CHANGE THIS
+    level_complete = 0
     window_size = (600, 400)
     testWindow = pygame.display.set_mode((window_size))
 
@@ -386,6 +390,10 @@ def runGame(rect_id, circle_id):
 
     level = testWindow, colours, colour_size, constants, window_size, steps
     run_level(level)
+    if (run_level(level) == 50):
+        level_complete = 1
+    return level_complete
+
 
 
 if __name__ == "__main__":

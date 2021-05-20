@@ -41,6 +41,7 @@ class Circle(pygame.sprite.Sprite):
         self.rect.y = y_pos
         self.clicked = False
         self.id = id
+        self.complete = False
 
 
 class Overlay(pygame.sprite.Sprite):
@@ -59,6 +60,7 @@ class Overlay(pygame.sprite.Sprite):
         self.hover = False
         self.clicked = False
         self.id = id
+        self.complete = False
 
     def getOriginalColour(self):
         return self._original_colour
@@ -138,7 +140,7 @@ def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_va
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
                                         win_vars["bar_thickness"] + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                        win_vars, id))
+                                        win_vars, count))
             count += 1
 
     return circle_sprites
@@ -346,7 +348,7 @@ def sidebar():
 
             pos = pygame.mouse.get_pos()
             for rect_sprite in overlay_sprites:
-                if rect_sprite.rect.collidepoint(pos):
+                if rect_sprite.rect.collidepoint(pos) or rect_sprite.complete == True:
                     rect_sprite.hover = True
                     rect_sprite.fillImage(0)
                 else:
@@ -362,7 +364,16 @@ def sidebar():
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 print(circle_sprite.id)
-                                runGame(temp_id, circle_sprite.id)
+                                test = runGame(temp_id, circle_sprite.id)
+                                #checking if level was completed
+                                #TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
+                                #TODO: ALSO, SINCE THE OVERLAY SPRITES ARE THE SAME NINE FOR ALL THREE RECTANGLES, IF U PASS A LEVEL ON ONE, THE SAME OVERLAY WILL DISAPPEAR ON THE OTHER LEVELS TOO (DIFF RECTANLGES) --> IDK HOW I WILL FIX THIS LOL
+                                #todo: maybe have like bc we know the id of each rectangle, we can match that omg wait yea --> multiply original id by wtv rectangle (ig we would have to start from 1 then yikes) but yea and then just divide at the end ezpz
+                                if (test == 1):
+                                    for rect_sprite in overlay_sprites:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.complete = True
+
                                 pygame.display.set_caption("Gradient Rect")
 
                 # circle_sprite_list.empty()
