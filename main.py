@@ -365,7 +365,6 @@ def sidebar():
                                 runGame(temp_id, circle_sprite.id)
                                 pygame.display.set_caption("Gradient Rect")
 
-
                 # circle_sprite_list.empty()
                 window.fill((0, 0, 0))
                 drawCircles(window, listtt, colour_list_circle, temp_id)

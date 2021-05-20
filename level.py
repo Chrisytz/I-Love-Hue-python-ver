@@ -78,7 +78,7 @@ class Grid:
         self.constants = constants
         self.window_size = window_size  # (x, y) size of window
         self.drawing_size = drawing_size
-        self.horizontal_limit = (2/3) * window_size[0]
+        self.horizontal_limit = (2 / 3) * window_size[0]
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
@@ -168,11 +168,13 @@ class Grid:
                 sprite_list.add(rect)
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
 
-def addColours (colour_list, rect_clicked, circle_clicked):
+
+def addColours(colour_list, rect_clicked, circle_clicked):
     colour = []
-    for i in range (0,4):
+    for i in range(0, 4):
         colour.append(colour_list[rect_clicked][circle_clicked][i])
     return colour
+
 
 def evaluate_level(window, levelgrid, sprite_list):
     done = False
@@ -213,21 +215,23 @@ def evaluate_level(window, levelgrid, sprite_list):
                     sprite.clicked = False
                 moving_sprite_list.empty()
             if event.type == pygame.MOUSEMOTION:
-                posx,posy = pygame.mouse.get_pos()
+                posx, posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
                     # iirc the below code should run ok
-                    if sprite.clicked == True and sprite.movable and (posx<levelgrid.horizontal_limit):
+                    if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)
             moving_sprite_list.draw(window)  # draw this last ALWAYS
 
-        #TODO: FIND A BETTER WAY TO DRAW RECTANGLES
+        # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
         # in particular, we need a better way to calculate the '200' present here.
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit/2, levelgrid.horizontal_limit))
+        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
+                                                        levelgrid.horizontal_limit))
         pygame.display.flip()
 
-        if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit), levelgrid.steps):
+        if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
+                                                 levelgrid.steps):
             if DEBUG: print("you won")
             return 0  # 0 = won the game
 
@@ -244,14 +248,13 @@ def run_level(level):
 
     window, colours, colour_size, constants, window_size, steps = level
     pygame.display.set_caption("LEVEL!!!!!")
-    if window_size[0]<window_size[1]:
+    if window_size[0] < window_size[1]:
         drawing_size = (window_size[0], window_size[0])
     else:
         drawing_size = (window_size[1], window_size[1])
 
     # TODO: horizontal lim to be coded here with diff between drawing size and window sizes
 
-    
     # pygame.init()  # is pygame already init from another side?
     # window = pygame.display.set_mode((window_size))
     levelgrid = Grid(window, colours, colour_size, constants, window_size, drawing_size, steps)
@@ -265,13 +268,12 @@ def run_level(level):
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
         print("you have won")
-        #sys.exit()
+        # sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
 
 
-
-def runGame (rect_id, circle_id):
+def runGame(rect_id, circle_id):
     level = 0  # TODO: CHANGE THIS
     window_size = (600, 400)
     testWindow = pygame.display.set_mode((window_size))
@@ -287,107 +289,74 @@ def runGame (rect_id, circle_id):
     # for 900x900, 9, 6, 3
     # steps = 8, 8
 
-    #colours = []
-    # set 1
-    # colours.append([(255, 153, 51),(1,1)])
-    # colours.append([(153, 51, 255),(0,1)])
-    # colours.append([(51, 153, 255),(0,0)])
-    # colours.append([(51, 255, 153),(1,0)])
-
-    # set 2
-    # colours.append([(33, 11, 84), (0, 0)])
-    # colours.append([(201, 205, 242), (0, 1)])
-    # colours.append([(201, 255, 240), (1, 1)])
-    # colours.append([(6, 39, 69), (1, 0)])
-
-    # set 3
-    # colours.append([(0, 17, 54), (0, 0)])
-    # colours.append([(150, 255, 210), (0, 1)])
-    # colours.append([(255, 255, 255), (0, 2)])
-    # colours.append([(183, 78, 212), (1, 0)])
-    # colours.append([(197, 181, 255), (1, 1)])
-    # colours.append([(255, 229, 97), (1, 2)])
-    # colours.append([(148, 0, 55), (2, 0)])
-    # colours.append([(235, 115, 159), (2, 1)])
-    # colours.append([(191, 244, 255), (2, 2)])
-
-    # colours.append([(240,230,140),(1,0)])
-    # colours.append([(129,0,0), (1,1)])
-
-    # # set 4
-    # colours.append([(255, 255, 255), (0, 0)])
-    # colours.append([(168, 220, 255), (0, 1)])
-    # colours.append([(0, 29, 69), (1, 1)])
-    # colours.append([(255, 171, 107), (1, 0)])
-
     # IDFK IF I CAN DO THIS BUT HAVE IT ANYWAYS
     # okay so pretty much [] is the whole list, [[colourlist]], [[[four colours]]] are nested inside and within
     # [[[four colours]]] there are [[[[colour1, pos], [colour2, pos], [colour3, pos], [colour4, pos]]]]
     colour_list = [
-        #colourlist1
+        # colourlist1
         [[[(51, 111, 84), (0, 1)], [(180, 239, 255), (1, 1)],
-         [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
-        [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
-         [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
-        [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
-         [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
-        [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
-         [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
-        [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
-         [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
-        [[(161, 199, 255), (0, 1)], [(41, 164, 186), (1, 1)],
-         [(136, 191, 156), (1, 0)], [(166, 245, 255), (0, 0)]],
-        [[(231, 255, 246), (0, 1)], [(99, 255, 211), (1, 1)],
-         [(105, 183, 232), (1, 0)], [(180, 175, 239), (0, 0)]],
-        [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
-         [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
-        [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
-         [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]]],
-        #colourlist2
+          [(90, 223, 92), (1, 0)], [(91, 112, 82), (0, 0)]],
+         [[(84, 107, 78), (0, 1)], [(121, 154, 227), (1, 1)],
+          [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
+          [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
+         [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
+          [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
+         [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
+          [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(41, 164, 186), (1, 1)],
+          [(136, 191, 156), (1, 0)], [(166, 245, 255), (0, 0)]],
+         [[(231, 255, 246), (0, 1)], [(99, 255, 211), (1, 1)],
+          [(105, 183, 232), (1, 0)], [(180, 175, 239), (0, 0)]],
+         [[(210, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+          [(131, 236, 151), (1, 0)], [(38, 243, 182), (0, 0)]],
+         [[(74, 79, 224), (0, 1)], [(247, 220, 255), (1, 1)],
+          [(170, 255, 213), (1, 0)], [(50, 174, 213), (0, 0)]]],
+        # colourlist2
         [[[(211, 90, 63), (0, 1)], [(148, 41, 110), (1, 1)],
-         [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
-        [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
-         [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
-        [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
-         [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
-        [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
-         [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
-        [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
-         [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
-        [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
-         [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
-        [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
-         [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
-        [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
-         [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
-        [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
-         [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]]],
-        #colourlist3
+          [(118, 126, 154), (1, 0)], [(194, 119, 144), (0, 0)]],
+         [[(105, 28, 144), (0, 1)], [(166, 126, 186), (1, 1)],
+          [(255, 113, 123), (1, 0)], [(149, 16, 71), (0, 0)]],
+         [[(148, 63, 140), (0, 1)], [(244, 221, 255), (1, 1)],
+          [(255, 228, 234), (1, 0)], [(140, 3, 31), (0, 0)]],
+         [[(180, 155, 255), (0, 1)], [(118, 24, 85), (1, 1)],
+          [(255, 207, 215), (1, 0)], [(255, 162, 79), (0, 0)]],
+         [[(255, 214, 238), (0, 1)], [(255, 200, 129), (1, 1)],
+          [(255, 138, 133), (1, 0)], [(101, 12, 37), (0, 0)]],
+         [[(194, 192, 255), (0, 1)], [(255, 46, 113), (1, 1)],
+          [(255, 244, 218), (1, 0)], [(249, 159, 93), (0, 0)]],
+         [[(236, 200, 255), (0, 1)], [(255, 233, 248), (1, 1)],
+          [(227, 33, 139), (1, 0)], [(255, 104, 53), (0, 0)]],
+         [[(249, 81, 160), (0, 1)], [(247, 220, 255), (1, 1)],
+          [(255, 249, 223), (1, 0)], [(255, 117, 110), (0, 0)]],
+         [[(255, 168, 154), (0, 1)], [(224, 85, 113), (1, 1)],
+          [(255, 243, 100), (1, 0)], [(255, 191, 99), (0, 0)]]],
+        # colourlist3
         [[[(255, 195, 237), (0, 1)], [(227, 245, 255), (1, 1)],
-         [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
-        [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
-         [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
-        [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
-         [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
-        [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
-         [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
-        [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
-         [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
-        [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
-         [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
-        [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
-         [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
-        [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
-         [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
-        [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
-         [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]]]
+          [(119, 209, 254), (1, 0)], [(92, 111, 125), (0, 0)]],
+         [[(103, 109, 126), (0, 1)], [(255, 224, 131), (1, 1)],
+          [(169, 185, 218), (1, 0)], [(72, 144, 166), (0, 0)]],
+         [[(220, 231, 255), (0, 1)], [(101, 157, 224), (1, 1)],
+          [(255, 216, 173), (1, 0)], [(54, 50, 65), (0, 0)]],
+         [[(12, 32, 57), (0, 1)], [(86, 145, 214), (1, 1)],
+          [(249, 189, 153), (1, 0)], [(230, 242, 255), (0, 0)]],
+         [[(28, 34, 67), (0, 1)], [(3, 67, 81), (1, 1)],
+          [(236, 236, 255), (1, 0)], [(255, 189, 180), (0, 0)]],
+         [[(161, 199, 255), (0, 1)], [(34, 62, 103), (1, 1)],
+          [(255, 144, 130), (1, 0)], [(140, 212, 255), (0, 0)]],
+         [[(209, 223, 255), (0, 1)], [(70, 99, 180), (1, 1)],
+          [(157, 141, 180), (1, 0)], [(255, 174, 147), (0, 0)]],
+         [[(255, 200, 199), (0, 1)], [(169, 219, 255), (1, 1)],
+          [(72, 83, 120), (1, 0)], [(236, 245, 255), (0, 0)]],
+         [[(255, 158, 137), (0, 1)], [(69, 95, 115), (1, 1)],
+          [(199, 220, 255), (1, 0)], [(166, 245, 255), (0, 0)]]]
     ]
 
     colours = addColours(colour_list, rect_id, circle_id)
 
     colour_size = (2, 2)
     # use 4 random colours for now
-    #c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
+    # c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
     # c1 = (255, 0, 0)
     # c2 = (0, 255, 0)
     # c3 = (0, 0, 255)
@@ -417,7 +386,6 @@ def runGame (rect_id, circle_id):
 
     level = testWindow, colours, colour_size, constants, window_size, steps
     run_level(level)
-
 
 
 if __name__ == "__main__":
@@ -538,7 +506,7 @@ if __name__ == "__main__":
 
     colour_size = (2, 2)
     # use 4 random colours for now
-    #c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
+    # c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
     # c1 = (255, 0, 0)
     # c2 = (0, 255, 0)
     # c3 = (0, 0, 255)
