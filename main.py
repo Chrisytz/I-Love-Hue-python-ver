@@ -211,8 +211,13 @@ def sidebar():
     circle_sprite_list1 = pygame.sprite.Group()
     circle_sprite_list2 = pygame.sprite.Group()
 
-    listtt = [circle_sprite_list0, circle_sprite_list1, circle_sprite_list2]
-    overlay_sprites = pygame.sprite.Group()
+    list_of_circle_sprites = [circle_sprite_list0, circle_sprite_list1, circle_sprite_list2]
+
+    overlay_sprites0 = pygame.sprite.Group()
+    overlay_sprites1 = pygame.sprite.Group()
+    overlay_sprites2 = pygame.sprite.Group()
+
+    list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
 
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
@@ -222,7 +227,8 @@ def sidebar():
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
-        listtt[number] = addCircleSprites(colour_list_circle, listtt[number], overlay_sprites, win_vars, number)
+        list_of_circle_sprites[number] = addCircleSprites(colour_list_circle, list_of_circle_sprites[number],
+                                                          list_of_overlay_sprites[number], win_vars, number)
     rect_sprite_list.draw(window)
     pygame.display.update()
 
@@ -346,31 +352,29 @@ def sidebar():
                             # for sprite in overlay_sprites:
                             #     sprite.id = temp_id
 
-            pos = pygame.mouse.get_pos()
-            for rect_sprite in overlay_sprites:
-                if rect_sprite.rect.collidepoint(pos) or rect_sprite.complete == True:
-                    rect_sprite.hover = True
-                    rect_sprite.fillImage(0)
-                else:
-                    rect_sprite.hover = False
-                    rect_sprite.fillImage(60)
-
             if circles_visible:
-                drawCircles(window, listtt, colour_list_circle, temp_id)
+                pos = pygame.mouse.get_pos()
+                for rect_sprite in list_of_overlay_sprites[temp_id]:
+                    if rect_sprite.rect.collidepoint(pos) or rect_sprite.complete == True:
+                        rect_sprite.hover = True
+                        rect_sprite.fillImage(0)
+                    else:
+                        rect_sprite.hover = False
+                        rect_sprite.fillImage(150)
+
+                drawCircles(window, list_of_circle_sprites, colour_list_circle, temp_id)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         pos = pygame.mouse.get_pos()
-                        for circle_sprite in listtt[temp_id]:
+                        for circle_sprite in list_of_circle_sprites[temp_id]:
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 print(circle_sprite.id)
                                 test = runGame(temp_id, circle_sprite.id)
-                                #checking if level was completed
-                                #TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
-                                #TODO: ALSO, SINCE THE OVERLAY SPRITES ARE THE SAME NINE FOR ALL THREE RECTANGLES, IF U PASS A LEVEL ON ONE, THE SAME OVERLAY WILL DISAPPEAR ON THE OTHER LEVELS TOO (DIFF RECTANLGES) --> IDK HOW I WILL FIX THIS LOL
-                                #todo: maybe have like bc we know the id of each rectangle, we can match that omg wait yea --> multiply original id by wtv rectangle (ig we would have to start from 1 then yikes) but yea and then just divide at the end ezpz
+                                # checking if level was completed
+                                # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
                                 if (test == 1):
-                                    for rect_sprite in overlay_sprites:
+                                    for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
                                             rect_sprite.complete = True
 
@@ -378,8 +382,8 @@ def sidebar():
 
                 # circle_sprite_list.empty()
                 window.fill((0, 0, 0))
-                drawCircles(window, listtt, colour_list_circle, temp_id)
-                drawOverlay(window, overlay_sprites)
+                drawCircles(window, list_of_circle_sprites, colour_list_circle, temp_id)
+                drawOverlay(window, list_of_overlay_sprites[temp_id])
                 rect_sprite_list.draw(window)
 
             pygame.display.flip()
