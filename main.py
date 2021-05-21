@@ -373,6 +373,7 @@ def sidebar():
                                 test = runGame(temp_id, circle_sprite.id)
                                 # checking if level was completed
                                 # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
+                                # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
                                 if (test == 1):
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
