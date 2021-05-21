@@ -271,7 +271,7 @@ def run_level(level):
         boop = 50
 
     return boop
-        # sys.exit()
+    # sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
 
@@ -393,7 +393,6 @@ def runGame(rect_id, circle_id):
     if (run_level(level) == 50):
         level_complete = 1
     return level_complete
-
 
 
 if __name__ == "__main__":

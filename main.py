@@ -12,7 +12,6 @@ DEBUG = False
 
 # todo: BIG BRAINED THINGS SO I DONT FORGET
 # diff num of squares (4x4, 8x8, 10x10)
-# if u beat a level thatsprite.beat = true or smth and then yeet the overlay be like if evaluatelevel(from level.py) == 0 then yayyy it works
 # find some way to show the difficulty of each level
 # one the side of each lvl --> #moves, home, restart --> smth smth import the shuffle function or wtv
 
@@ -68,6 +67,21 @@ class Overlay(pygame.sprite.Sprite):
     def fillImage(self, alpha):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
+
+
+class Checkmark(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, win_vars, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("checkmark.png").convert_alpha()
+        self.rect = self.image.get_rect()
+        self.alpha = 0
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.show = False
+        self.id = id
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
 
 
 # class Display():
@@ -126,7 +140,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_vars, id):
+def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, checkmark_sprites, win_vars, id):
     count = 0
     for i in range(0, 3):
         for j in range(0, 3):
@@ -141,18 +155,28 @@ def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, win_va
                                         win_vars["bar_thickness"] + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
                                         win_vars, count))
+            checkmark_sprites.add(Checkmark((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                            win_vars["bar_thickness"] + j * (
+                                                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                            win_vars, count))
             count += 1
 
     return circle_sprites
 
 
 # no longer drawing ellipses on top of sprites, its just drawing the sprites --> id is which rectangle was clicked so what colours to draw
-def drawCircles(window, circle_sprites, colour_circle_list, id):
+def drawCircles(window, circle_sprites, id):
     circle_sprites[id].draw(window)
 
 
 def drawOverlay(window, overlay_sprites):
     for sprite in overlay_sprites:
+        window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+
+
+def drawCheckmarks(window, checkmark_sprites):
+    for sprite in checkmark_sprites:
         window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
 
 
@@ -206,7 +230,10 @@ def sidebar():
          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
         ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
          "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"]]
+
     rect_sprite_list = pygame.sprite.Group()
+
+    # todo: i should maybe find a better way to do this lol
     circle_sprite_list0 = pygame.sprite.Group()
     circle_sprite_list1 = pygame.sprite.Group()
     circle_sprite_list2 = pygame.sprite.Group()
@@ -219,6 +246,12 @@ def sidebar():
 
     list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
 
+    checkmark_sprites0 = pygame.sprite.Group()
+    checkmark_sprites1 = pygame.sprite.Group()
+    checkmark_sprites2 = pygame.sprite.Group()
+
+    list_of_checkmark_sprites = [checkmark_sprites0, checkmark_sprites1, checkmark_sprites2]
+
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
     # I'll probably also make a configurator for the settings that will return all of these as a ilist or tuple.
@@ -228,7 +261,8 @@ def sidebar():
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
         list_of_circle_sprites[number] = addCircleSprites(colour_list_circle, list_of_circle_sprites[number],
-                                                          list_of_overlay_sprites[number], win_vars, number)
+                                                          list_of_overlay_sprites[number],
+                                                          list_of_checkmark_sprites[number], win_vars, number)
     rect_sprite_list.draw(window)
     pygame.display.update()
 
@@ -348,10 +382,6 @@ def sidebar():
                             circles_visible = True
                             print(temp_id)
 
-                            # rect_sprite.clicked = False
-                            # for sprite in overlay_sprites:
-                            #     sprite.id = temp_id
-
             if circles_visible:
                 pos = pygame.mouse.get_pos()
                 for rect_sprite in list_of_overlay_sprites[temp_id]:
@@ -362,7 +392,13 @@ def sidebar():
                         rect_sprite.hover = False
                         rect_sprite.fillImage(150)
 
-                drawCircles(window, list_of_circle_sprites, colour_list_circle, temp_id)
+                for checkmark_sprite in list_of_checkmark_sprites[temp_id]:
+                    if checkmark_sprite.show == True:
+                        checkmark_sprite.fillImage(255)
+                    else:
+                        checkmark_sprite.fillImage(0)
+
+                drawCircles(window, list_of_circle_sprites, temp_id)
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
                         pos = pygame.mouse.get_pos()
@@ -371,6 +407,7 @@ def sidebar():
                                 circle_sprite.clicked = True
                                 print(circle_sprite.id)
                                 test = runGame(temp_id, circle_sprite.id)
+
                                 # checking if level was completed
                                 # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
@@ -378,13 +415,18 @@ def sidebar():
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
                                             rect_sprite.complete = True
+                                    for rect_sprite in list_of_checkmark_sprites[temp_id]:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.show = True
 
                                 pygame.display.set_caption("Gradient Rect")
 
                 # circle_sprite_list.empty()
                 window.fill((0, 0, 0))
-                drawCircles(window, list_of_circle_sprites, colour_list_circle, temp_id)
+                drawCircles(window, list_of_circle_sprites, temp_id)
                 drawOverlay(window, list_of_overlay_sprites[temp_id])
+                drawCheckmarks(window, list_of_checkmark_sprites[temp_id])
+
                 rect_sprite_list.draw(window)
 
             pygame.display.flip()
