@@ -169,6 +169,7 @@ class Grid:
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
 
 
+
 def addColours(colour_list, rect_clicked, circle_clicked):
     colour = []
     for i in range(0, 4):
@@ -179,7 +180,6 @@ def addColours(colour_list, rect_clicked, circle_clicked):
 def evaluate_level(window, levelgrid, sprite_list):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
-
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
 
@@ -221,18 +221,23 @@ def evaluate_level(window, levelgrid, sprite_list):
                     if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
-            sprite_list.draw(window)
+            sprite_list.draw(window) #THIS IS WHAT IS DRAWING THE SPRITES!
             moving_sprite_list.draw(window)  # draw this last ALWAYS
+            # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
+            # in particular, we need a better way to calculate the '200' present here.
+            pygame.draw.rect(window, (0, 0, 0),
+                             pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
+                                         levelgrid.horizontal_limit))
 
-        # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
-        # in particular, we need a better way to calculate the '200' present here.
-        pygame.draw.rect(window, (0, 0, 0), pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
-                                                        levelgrid.horizontal_limit))
+
+
+        pygame.draw.rect(window,(255,255,255), (400, 200, 50,50)) #THIS IS JUST A TEST THING :)
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
             if DEBUG: print("you won")
+            done = True #important: we should need this but why dont we wghat
             return 0  # 0 = won the game
 
             # you've won the game
@@ -240,8 +245,8 @@ def evaluate_level(window, levelgrid, sprite_list):
 
 def run_level(level):
     """This will run the entire level!"""
+    isComplete = 1
     # Todo: Do we want this to only run one level?
-    boop = 10
     # system level variables.
     sprite_list = pygame.sprite.Group()
     sprite_single = pygame.sprite.GroupSingle()
@@ -268,9 +273,13 @@ def run_level(level):
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
         print("you have won")
-        boop = 50
+        iscomplete = 0
+    else:
+        iscomplete = 1
 
-    return boop
+
+    return iscomplete
+
     # sys.exit()
 
     # at this point, everything has been created properly, hand over to run_game.
@@ -304,7 +313,7 @@ def runGame(rect_id, circle_id):
           [(40, 128, 104), (1, 0)], [(159, 237, 105), (0, 0)]],
          [[(161, 199, 255), (0, 1)], [(22, 61, 103), (1, 1)],
           [(41, 129, 105), (1, 0)], [(157, 237, 104), (0, 0)]],
-         [[(160, 1247, 227), (0, 1)], [(226, 245, 255), (1, 1)],
+         [[(160, 127, 227), (0, 1)], [(226, 245, 255), (1, 1)],
           [(120, 209, 254), (1, 0)], [(30, 109, 81), (0, 0)]],
          [[(155, 136, 184), (0, 1)], [(125, 234, 163), (1, 1)],
           [(125, 234, 163), (1, 0)], [(225, 255, 225), (0, 0)]],
@@ -376,8 +385,17 @@ def runGame(rect_id, circle_id):
     # constants.append((3, 3))
 
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
-    x_step = 4
-    y_step = 4
+    x_step = 10
+    y_step = 10
+
+    if (circle_id == 0 or circle_id == 3 or circle_id == 6):
+        x_step = 4
+        y_step = 4
+    elif (circle_id == 1 or circle_id == 4 or circle_id == 7):
+        x_step = 8
+        y_step = 8
+
+
     steps = x_step, y_step
     # constants are blocks that won't move.
     constants = []
@@ -390,7 +408,7 @@ def runGame(rect_id, circle_id):
 
     level = testWindow, colours, colour_size, constants, window_size, steps
     run_level(level)
-    if (run_level(level) == 50):
+    if (run_level(level) == 0):
         level_complete = 1
     return level_complete
 
