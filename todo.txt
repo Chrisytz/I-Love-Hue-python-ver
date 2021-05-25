@@ -26,10 +26,10 @@ Todo
 # save and exit
 
 - level.py
-    - constants
+    ✓ constants
         - constant in shuffling
         - unmovable constants
-    - multiple point colour generation
+    ✓ multiple point colour generation
     - scaling grids (multiple blocks per grid) // different grid layouts/constants/etc=
         ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
         ⬜ ⬜ ⬜ ⬜     ⬜ ⬜ ⬜ ⬜ ⬜ ⬜ ⬜
@@ -37,8 +37,13 @@ Todo
         ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
     - blind levels?
     - HINTS?
+    - gamestate tracking
 - main.py
     - main menu.
+        ✓ Rectangles & Circle creation
+        - backgrounds
+        - settings
+        - visual components!
         --> rectangles and circles and settings
 - configuration settings
     - so that people can adjust their game window sizes (independent of how many boxes in the grid)
@@ -46,9 +51,9 @@ Todo
     - people can change MUSIC
     - mouse settings? CURSORRRRR
     - GRAPHICS SSETTINGS ! !  ! ! ! !
-        ( brightness )
-        ( light mode / dark mode )
-        ( cube boundary ? -> do we show black lines / white lines between cubes) THE AESTHETIC TT
+        - ( brightness )
+        - ( light mode / dark mode )
+        ✓ ( cube boundary ? -> do we show black lines / white lines between cubes) THE AESTHETIC TT
 - endgame screens?????
     - when is the endgame and how long will it take you to get there
 - level generator? (sandbox?)
@@ -56,3 +61,11 @@ Todo
 
 further consideration:
 - different shapes?
+
+Immediate TODO for anni:
+- Don't auto-win on close level
+- Create new data ingest structure for levels and running levels
+- Automatic gradient generation?! -> not important
+
+Immediate TODO for chris:
+- organize folders
