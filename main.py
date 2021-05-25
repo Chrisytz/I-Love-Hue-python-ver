@@ -43,13 +43,39 @@ class Circle(pygame.sprite.Sprite):
         self.complete = False
 
 
+class NumbersWhite(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, number_list, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(number_list[id]).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.id = id
+        self.complete = False
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
+
+
+class NumbersBlack(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, number_list, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(number_list[id]).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.id = id
+        self.complete = False
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
+
+
 class Overlay(pygame.sprite.Sprite):
     # overlay is a really bad name but that's ok we will go with it
     def __init__(self, colour, x_pos, y_pos, win_vars, id):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((win_vars["circle_size"], win_vars["circle_size"]))
-        self.alpha = 128
-        self.image.set_alpha(128)
         self._original_colour = colour
         self.colour = colour
         self.image.fill(self.colour)
@@ -67,21 +93,6 @@ class Overlay(pygame.sprite.Sprite):
     def fillImage(self, alpha):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
-
-
-class Checkmark(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, win_vars, id):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("checkmark.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.alpha = 0
-        self.rect.x = x_pos
-        self.rect.y = y_pos
-        self.show = False
-        self.id = id
-
-    def fillImage(self, alpha):
-        self.image.set_alpha(alpha)
 
 
 # class Display():
@@ -140,26 +151,33 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(colour_list_circle, circle_sprites, overlay_sprites, checkmark_sprites, win_vars, id):
+def addCircleSprites(colour_list_circle, number_list_white, number_list_black, circle_sprites, overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
     count = 0
     for i in range(0, 3):
         for j in range(0, 3):
-            circle_sprites.add(Circle((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+            circle_sprites.add(Circle((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars["bar_thickness"] + j * (
+                                      win_vars["bar_thickness"] + i * (
                                               win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars, colour_list_circle, id, count, count))
             overlay_sprites.add(Overlay((0, 0, 0),
-                                        (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+                                        (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                        win_vars["bar_thickness"] + j * (
-                                                win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                        win_vars, count))
-            checkmark_sprites.add(Checkmark((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + i * (
+                                        win_vars["bar_thickness"] + i * (
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]), win_vars, count))
+
+            number_sprites_white.add(NumbersWhite((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                            win_vars["bar_thickness"] + j * (
-                                                    win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                            win_vars, count))
+                                                  win_vars["bar_thickness"] + i * (
+                                                          win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  number_list_white, count))
+
+            number_sprites_black.add(NumbersBlack((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  win_vars["bar_thickness"] + i * (
+                                                          win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  number_list_black, count))
+
             count += 1
 
     return circle_sprites
@@ -170,13 +188,8 @@ def drawCircles(window, circle_sprites, id):
     circle_sprites[id].draw(window)
 
 
-def drawOverlay(window, overlay_sprites):
-    for sprite in overlay_sprites:
-        window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
-
-def drawCheckmarks(window, checkmark_sprites):
-    for sprite in checkmark_sprites:
+def draw(window, number_sprites):
+    for sprite in number_sprites:
         window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
 
 
@@ -233,6 +246,14 @@ def sidebar():
 
     rect_sprite_list = pygame.sprite.Group()
 
+    number_list_white = ["number white/1.png", "number white/2.png", "number white/3.png", "number white/4.png",
+                         "number white/5.png",
+                         "number white/6.png", "number white/7.png", "number white/8.png", "number white/9.png"]
+
+    number_list_black = ["number black/1.png", "number black/2.png", "number black/3.png", "number black/4.png",
+                         "number black/5.png",
+                         "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
+
     # todo: i should maybe find a better way to do this lol
     circle_sprite_list0 = pygame.sprite.Group()
     circle_sprite_list1 = pygame.sprite.Group()
@@ -246,11 +267,18 @@ def sidebar():
 
     list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
 
-    checkmark_sprites0 = pygame.sprite.Group()
-    checkmark_sprites1 = pygame.sprite.Group()
-    checkmark_sprites2 = pygame.sprite.Group()
 
-    list_of_checkmark_sprites = [checkmark_sprites0, checkmark_sprites1, checkmark_sprites2]
+    number_white_sprites0 = pygame.sprite.Group()
+    number_white_sprites1 = pygame.sprite.Group()
+    number_white_sprites2 = pygame.sprite.Group()
+
+    list_of_number_white_sprites = [number_white_sprites0, number_white_sprites1, number_white_sprites2]
+
+    number_black_sprites0 = pygame.sprite.Group()
+    number_black_sprites1 = pygame.sprite.Group()
+    number_black_sprites2 = pygame.sprite.Group()
+
+    list_of_number_black_sprites = [number_black_sprites0, number_black_sprites1, number_black_sprites2]
 
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
@@ -260,9 +288,12 @@ def sidebar():
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
-        list_of_circle_sprites[number] = addCircleSprites(colour_list_circle, list_of_circle_sprites[number],
+        list_of_circle_sprites[number] = addCircleSprites(colour_list_circle, number_list_white, number_list_black,
+                                                          list_of_circle_sprites[number],
                                                           list_of_overlay_sprites[number],
-                                                          list_of_checkmark_sprites[number], win_vars, number)
+
+                                                          list_of_number_white_sprites[number],
+                                                          list_of_number_black_sprites[number], win_vars, number)
     rect_sprite_list.draw(window)
     pygame.display.update()
 
@@ -307,13 +338,23 @@ def sidebar():
                         rect_sprite.fillImage(0)
                     else:
                         rect_sprite.hover = False
-                        rect_sprite.fillImage(150)
-
-                for checkmark_sprite in list_of_checkmark_sprites[temp_id]:
-                    if checkmark_sprite.show == True:
-                        checkmark_sprite.fillImage(255)
+                        rect_sprite.fillImage(90)
+#todo: it would be nice if i could combine white numbers and back numbers into one array/one calss but idk how
+                for number_sprite_white in list_of_number_white_sprites[temp_id]:
+                    if number_sprite_white.complete == True:
+                        number_sprite_white.alpha = 0
+                        number_sprite_white.fillImage(0)
                     else:
-                        checkmark_sprite.fillImage(0)
+                        number_sprite_white.alpha = 255
+                        number_sprite_white.fillImage(255)
+
+                for number_sprite_black in list_of_number_black_sprites[temp_id]:
+                    if number_sprite_black.complete == True:
+                        number_sprite_black.alpha = 255
+                        number_sprite_black.fillImage(255)
+                    else:
+                        number_sprite_black.alpha = 0
+                        number_sprite_black.fillImage(0)
 
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -325,7 +366,6 @@ def sidebar():
                                 print(circle_sprite.id)
                                 test = runGame(temp_id, circle_sprite.id)
 
-
                                 # checking if level was completed
                                 # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
@@ -333,18 +373,21 @@ def sidebar():
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
                                             rect_sprite.complete = True
-                                    for rect_sprite in list_of_checkmark_sprites[temp_id]:
+                                    for rect_sprite in list_of_number_white_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
-                                            rect_sprite.show = True
+                                            rect_sprite.complete = True
+                                    for rect_sprite in list_of_number_black_sprites[temp_id]:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.complete = True
 
                                 pygame.display.set_caption("Gradient Rect")
 
                 # circle_sprite_list.empty()
                 window.fill((0, 0, 0))
                 drawCircles(window, list_of_circle_sprites, temp_id)
-                drawOverlay(window, list_of_overlay_sprites[temp_id])
-                drawCheckmarks(window, list_of_checkmark_sprites[temp_id])
-
+                draw(window, list_of_overlay_sprites[temp_id])
+                draw(window, list_of_number_white_sprites[temp_id])
+                draw(window, list_of_number_black_sprites[temp_id])
                 rect_sprite_list.draw(window)
 
             pygame.display.flip()

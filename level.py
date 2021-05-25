@@ -388,10 +388,10 @@ def runGame(rect_id, circle_id):
     x_step = 10
     y_step = 10
 
-    if (circle_id == 0 or circle_id == 3 or circle_id == 6):
+    if (0 <= circle_id < 3):
         x_step = 4
         y_step = 4
-    elif (circle_id == 1 or circle_id == 4 or circle_id == 7):
+    elif (3 <= circle_id < 6):
         x_step = 8
         y_step = 8
 
