@@ -151,7 +151,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(colour_list_circle, number_list_white, number_list_black, circle_sprites, overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
+def addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black, circle_sprites, overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
     count = 0
     for i in range(0, 3):
         for j in range(0, 3):
@@ -160,7 +160,7 @@ def addCircleSprites(colour_list_circle, number_list_white, number_list_black, c
                                       win_vars["bar_thickness"] + i * (
                                               win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars, colour_list_circle, id, count, count))
-            overlay_sprites.add(Overlay((0, 0, 0),
+            overlay_sprites.add(Overlay(background_colour,
                                         (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
                                         win_vars["bar_thickness"] + i * (
@@ -216,6 +216,7 @@ def sidebar():
     # init
     win_size = 600, 400
     done = False
+    background_colour = (18, 23, 36)
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
     pygame.display.set_caption("Gradient Rect")
@@ -288,12 +289,13 @@ def sidebar():
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
-        list_of_circle_sprites[number] = addCircleSprites(colour_list_circle, number_list_white, number_list_black,
+        list_of_circle_sprites[number] = addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black,
                                                           list_of_circle_sprites[number],
                                                           list_of_overlay_sprites[number],
 
                                                           list_of_number_white_sprites[number],
                                                           list_of_number_black_sprites[number], win_vars, number)
+    window.fill(background_colour)
     rect_sprite_list.draw(window)
     pygame.display.update()
 
@@ -383,7 +385,7 @@ def sidebar():
                                 pygame.display.set_caption("Gradient Rect")
 
                 # circle_sprite_list.empty()
-                window.fill((0, 0, 0))
+                window.fill(background_colour)
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_white_sprites[temp_id])
