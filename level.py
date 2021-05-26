@@ -184,7 +184,7 @@ def evaluate_level(window, levelgrid, sprite_list):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
+                return 1
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
