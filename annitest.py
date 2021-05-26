@@ -1,36 +1,81 @@
-# Currently draws circle overlay with on-click brighten.
+# Colour Game 2021 Christina Zhang & Anthony Luo
+# ♪(ϞϞ(๑⚈ ․̫ ⚈๑)∩
+# April 2021
+
+import sys
+import random
+import pygame
+from level import runGame
+
+DEBUG = False
 
 
-import pygame, random, sys
+# todo: BIG BRAINED THINGS SO I DONT FORGET
+# diff num of squares (4x4, 8x8, 10x10)
+# find some way to show the difficulty of each level
+# one the side of each lvl --> #moves, home, restart --> smth smth import the shuffle function or wtv
+
+
+class Rect(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, colour, win_vars, level_id):
+        pygame.sprite.Sprite.__init__(self)
+
+        # todo: this surface needs to scale wrt window size. (checkmark)
+        self.image = pygame.Surface([win_vars["sprite_size"], win_vars["sprite_size"]])
+        self.image.fill(colour)
+        self.clicked = False
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        # self.colour = colour
+        self.level_id = level_id
 
 
 class Circle(pygame.sprite.Sprite):
-    def __init__(self, colour, x_pos, y_pos, id):
+    def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((100, 100))
-        self.image.fill((0, 0, 0))
-        self.colour = colour
-        self._original_colour = colour
+        self.image = pygame.image.load(circle_list[i][j]).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
         self.clicked = False
         self.id = id
+        self.complete = False
 
-    def getOriginalColour(self):
-        return self._original_colour
 
-    def drawCircle(self, screen):
-        pygame.draw.ellipes(screen, self.colour, self.rect)
+class NumbersWhite(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, number_list, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(number_list[id]).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.id = id
+        self.complete = False
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
+
+
+class NumbersBlack(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos, number_list, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(number_list[id]).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x_pos
+        self.rect.y = y_pos
+        self.id = id
+        self.complete = False
+
+    def fillImage(self, alpha):
+        self.image.set_alpha(alpha)
 
 
 class Overlay(pygame.sprite.Sprite):
     # overlay is a really bad name but that's ok we will go with it
-    def __init__(self, colour, x_pos, y_pos, id):
+    def __init__(self, colour, x_pos, y_pos, win_vars, id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((100, 100))
-        self.alpha = 128
-        self.image.set_alpha(128)
+        self.image = pygame.Surface((win_vars["circle_size"], win_vars["circle_size"]))
         self._original_colour = colour
         self.colour = colour
         self.image.fill(self.colour)
@@ -40,6 +85,7 @@ class Overlay(pygame.sprite.Sprite):
         self.hover = False
         self.clicked = False
         self.id = id
+        self.complete = False
 
     def getOriginalColour(self):
         return self._original_colour
@@ -49,222 +95,322 @@ class Overlay(pygame.sprite.Sprite):
         self.image.fill(self.colour)
 
 
-def drawCircles():
-    pygame.init()
-    screen = pygame.display.set_mode((600, 400))
-    pygame.display.set_caption("circles")
+# class Display():
+#     def __init__(self, win_width, win_height):
+#         self.win_width = win_width
+#         self.win_height = win_height
+#         self.bar_thickness = win_height * 0.05
+#         self.sprite_size = ((win_width / 3) - (win_height * 0.1)) / 4
+#         self.width_sidebar = win_width / 3
+#         self.bottom_bar_loc = win_height * 0.95
+#         self.done = False
+#         pygame.init()
+#         self.window = pygame.display.set_mode((win_width, win_height))
+#         pygame.display.set_caption("Gradient Rect")
 
-    background = pygame.Surface(screen.get_size())
-    colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
-    circle_sprites = pygame.sprite.Group()
-    overlay_sprites = pygame.sprite.Group()
-    single = pygame.sprite.GroupSingle()
+# # Utils
+# todo: chris will fill
+#  def rectangleEventHandler(event, pos):
+#      if event.type == pygame.MOUSEWHEEL:
+#          if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
+#              if event.y == -1:
+#                  for rect_sprite in sprite_list:
+#                      rect_sprite.rect.y -= win_vars["bar_thickness"]
+#                      if DEBUG: print(rect_sprite.rect.y)
+#                  updateSprites(sprite_list, window, win_size[1], win_vars)
+#                  pygame.display.flip()
+#              else:
+#                  for rect_sprite in sprite_list:
+#                      rect_sprite.rect.y += win_vars["bar_thickness"]
+#                      if DEBUG: print(rect_sprite.rect.y)
+#                  updateSprites(sprite_list, window, win_size[1], win_vars)
+#                  pygame.display.flip()
 
-    for i in range(0, 3):
-        circle_sprites.add(Circle(colour_list_circle[i], 25 + i * 150, 25, i))
-    circle_sprites.draw(screen)
+# if event.type == pygame.MOUSEBUTTONDOWN:
+#     if event.button == 1:
+#         pos = pygame.mouse.get_pos()
+#         for rect_sprite in sprite_list:
+#             if rect_sprite.rect.collidepoint(pos):
+#                 rect_sprite.clicked = True
 
+def updateSprites(sprite_list, window, win_height, win_vars):
+    pygame.draw.rect(window, win_vars["black"], (0, 0, win_vars["width_sidebar"], win_height))
+    sprite_list.draw(window)
+    pygame.draw.rect(window, win_vars["black"], (0, 0, win_vars["width_sidebar"], win_vars["bar_thickness"]))
+    pygame.draw.rect(window, win_vars["black"],
+                     (0, win_vars["bottom_bar_loc"], win_vars["width_sidebar"], win_vars["bar_thickness"]))
+
+
+def addSidebarSprites(sprite_list, colour_list, win_vars):
+    for i in range(0, win_vars["num_of_rectangles"]):
+        for j in range(0, 4):
+            sprite_list.add(
+                Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
+                     (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
+                     win_vars, i))
+    return sprite_list
+
+
+def addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black, circle_sprites,
+                     overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
     count = 0
-    for sprite in circle_sprites:
-        pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
-        count += 1
-
     for i in range(0, 3):
-        overlay_sprites.add(Overlay((0, 0, 0), 25 + i * 150, 25, i))
+        for j in range(0, 3):
+            circle_sprites.add(Circle((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                      win_vars["bar_thickness"] + i * (
+                                              win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                      win_vars, colour_list_circle, id, count, count))
+            overlay_sprites.add(Overlay(background_colour,
+                                        (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                        win_vars["bar_thickness"] + i * (
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]), win_vars,
+                                        count))
 
-    for sprite in overlay_sprites:
-        screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+            number_sprites_white.add(NumbersWhite((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  win_vars["bar_thickness"] + i * (
+                                                          win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  number_list_white, count))
 
-    pygame.display.update()
-    # hide mouse
-    done = False
-    while not done:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            mouse_pos = pygame.mouse.get_pos()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for overlay_sprite in overlay_sprites:
-                    if overlay_sprite.rect.collidepoint(mouse_pos):
-                        overlay_sprite.clicked = True
-                for circle_sprite in circle_sprites:
-                    if circle_sprite.rect.collidepoint(mouse_pos):
-                        circle_sprite.clicked = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                for overlay_sprite in overlay_sprites:
-                    overlay_sprite.clicked = False
-                    overlay_sprite.colour = overlay_sprite.getOriginalColour()
-                    overlay_sprite.image.fill(overlay_sprite.colour)
-                for circle_sprite in circle_sprites:
-                    circle_sprite.clicked = False
+            number_sprites_black.add(NumbersBlack((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  win_vars["bar_thickness"] + i * (
+                                                          win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                                  number_list_black, count))
 
-            for mysprite in overlay_sprites:
-                if mysprite.clicked:
-                    mysprite.colour = (255, 255, 255)
-                    mysprite.image.fill(mysprite.colour)
-
-        # circle_sprites.draw(screen)
-        count = 0
-        for sprite in circle_sprites:
-            pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
             count += 1
-        for sprite in overlay_sprites:
-            screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-        # overlay_sprites.draw(screen)
 
-        pygame.display.update()
+    return circle_sprites
 
 
-def drawCircles2():
-    pygame.init()
-    screen = pygame.display.set_mode((600, 400))
-    pygame.display.set_caption("circles")
+# no longer drawing ellipses on top of sprites, its just drawing the sprites --> id is which rectangle was clicked so what colours to draw
+def drawCircles(window, circle_sprites, id):
+    # print(id)
+    circle_sprites[id].draw(window)
 
-    background = pygame.Surface(screen.get_size())
-    colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
-    circle_sprites = pygame.sprite.Group()
-    overlay_sprites = pygame.sprite.Group()
-    single = pygame.sprite.GroupSingle()
 
-    for i in range(0, 3):
-        circle_sprites.add(Circle(colour_list_circle[i], 25 + i * 150, 25, i))
-    circle_sprites.draw(screen)
+def draw(window, number_sprites):
+    for sprite in number_sprites:
+        window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
 
+
+def loadCircles(circle_list, win_vars):
+    loaded_circle_list = []
     count = 0
-    for sprite in circle_sprites:
-        pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
+    for circle in circle_list:
+        loaded_circle_list.append(pygame.image.load(circle_list[0][count]))
         count += 1
+    return loaded_circle_list
 
-    for i in range(0, 3):
-        overlay_sprites.add(Overlay((0, 0, 0), 25 + i * 150, 25, i))
 
-    for sprite in overlay_sprites:
-        screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+def addColours(colour_list, rect_clicked, circle_clicked):
+    colour = []
+    for i in range(0, 4):
+        colour.append(colour_list[rect_clicked][circle_clicked][i])
+    return colour
 
-    pygame.display.update()
-    # hide mouse
+
+# This is the main entry point to the game.
+
+def sidebar():
+    # todo: anni will create a proper init function to set these variables.
+    # init
+    win_size = 600, 400
     done = False
+    background_colour = (255, 255, 255)
+    pygame.init()
+    window = pygame.display.set_mode((win_size[0], win_size[1]))
+    pygame.display.set_caption("Gradient Rect")
+
+    # calculating variables
+    win_vars = {
+        "bar_thickness": win_size[1] * 0.05,
+        "sprite_size": ((win_size[0] / 3) - (win_size[1] * 0.1)) / 4,
+        "width_sidebar": win_size[0] / 3,
+        "bottom_bar_loc": win_size[1] * 0.95,
+        "black": (0, 0, 0),
+        "num_of_rectangles": 3,
+        "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
+        "space_between_circles": win_size[1] * 0.05
+    }
+
+    # todo: multiple colours loaded from levels file?
+    colour_list = [[(52, 83, 97), (63, 172, 185), (116, 190, 109), (235, 223, 255)],
+                   [(60, 38, 80), (233, 72, 137), (255, 121, 93), (255, 184, 88)],
+                   [(46, 58, 83), (96, 155, 185), (216, 225, 246), (249, 175, 164)]]
+    colour_list_circle = [
+        ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
+         "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
+        ["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
+         "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
+        ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
+         "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"]]
+
+    rect_sprite_list = pygame.sprite.Group()
+
+    number_list_white = ["number white/1.png", "number white/2.png", "number white/3.png", "number white/4.png",
+                         "number white/5.png",
+                         "number white/6.png", "number white/7.png", "number white/8.png", "number white/9.png"]
+
+    number_list_black = ["number black/1.png", "number black/2.png", "number black/3.png", "number black/4.png",
+                         "number black/5.png",
+                         "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
+
+    # todo: i should maybe find a better way to do this lol
+    circle_sprite_list0 = pygame.sprite.Group()
+    circle_sprite_list1 = pygame.sprite.Group()
+    circle_sprite_list2 = pygame.sprite.Group()
+
+    list_of_circle_sprites = [circle_sprite_list0, circle_sprite_list1, circle_sprite_list2]
+
+    overlay_sprites0 = pygame.sprite.Group()
+    overlay_sprites1 = pygame.sprite.Group()
+    overlay_sprites2 = pygame.sprite.Group()
+
+    list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
+
+    number_white_sprites0 = pygame.sprite.Group()
+    number_white_sprites1 = pygame.sprite.Group()
+    number_white_sprites2 = pygame.sprite.Group()
+
+    list_of_number_white_sprites = [number_white_sprites0, number_white_sprites1, number_white_sprites2]
+
+    number_black_sprites0 = pygame.sprite.Group()
+    number_black_sprites1 = pygame.sprite.Group()
+    number_black_sprites2 = pygame.sprite.Group()
+
+    list_of_number_black_sprites = [number_black_sprites0, number_black_sprites1, number_black_sprites2]
+
+    # -----------------------------
+    # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
+    # I'll probably also make a configurator for the settings that will return all of these as a ilist or tuple.
+    # -----------------------------
+
+    # displaying sprites
+    rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
+    for number in range(0, 3):
+        list_of_circle_sprites[number] = addCircleSprites(background_colour, colour_list_circle, number_list_white,
+                                                          number_list_black,
+                                                          list_of_circle_sprites[number],
+                                                          list_of_overlay_sprites[number],
+
+                                                          list_of_number_white_sprites[number],
+                                                          list_of_number_black_sprites[number], win_vars, number)
+    window.fill(background_colour)
+    rect_sprite_list.draw(window)
+    pygame.display.update()
+
+    # running the game
+    circles_visible = False
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
-            mouse_pos = pygame.mouse.get_pos()
+                # rectangleEventHandler(event, pygame.mouse.get_pos())
+            if event.type == pygame.MOUSEWHEEL:
+                if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
+                    if event.y == -1:
+                        for rect_sprite in rect_sprite_list:
+                            rect_sprite.rect.y -= win_vars["bar_thickness"]
+                            if DEBUG: print(rect_sprite.rect.y)
+                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
+                        pygame.display.flip()
+                    else:
+                        for rect_sprite in rect_sprite_list:
+                            rect_sprite.rect.y += win_vars["bar_thickness"]
+                            if DEBUG: print(rect_sprite.rect.y)
+                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
+                        pygame.display.flip()
+
+            # determines which rectangle is clicked?
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for overlay_sprite in overlay_sprites:
-                    if overlay_sprite.rect.collidepoint(mouse_pos):
-                        overlay_sprite.clicked = True
-                for circle_sprite in circle_sprites:
-                    if circle_sprite.rect.collidepoint(mouse_pos):
-                        circle_sprite.clicked = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                for overlay_sprite in overlay_sprites:
-                    overlay_sprite.clicked = False
-                    overlay_sprite.colour = overlay_sprite.getOriginalColour()
-                    overlay_sprite.image.fill(overlay_sprite.colour)
-                for circle_sprite in circle_sprites:
-                    circle_sprite.clicked = False
+                if event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    for rect_sprite in rect_sprite_list:
+                        if rect_sprite.rect.collidepoint(pos):
+                            rect_sprite.clicked = True
+                            temp_id = rect_sprite.level_id
+                            circles_visible = True
+                            print(temp_id)
 
-            for mysprite in overlay_sprites:
-                if mysprite.clicked:
-                    mysprite.colour = (255, 255, 255)
-                    # pygame.draw.ellipse(screen, mysprite.colour, mysprite.rect)
-                    mysprite.image.fill(mysprite.colour)
+            if circles_visible:
+                pos = pygame.mouse.get_pos()
+                for rect_sprite in list_of_overlay_sprites[temp_id]:
+                    if rect_sprite.rect.collidepoint(pos) or rect_sprite.complete == True:
+                        rect_sprite.hover = True
+                        rect_sprite.fillImage(0)
+                    else:
+                        rect_sprite.hover = False
+                        rect_sprite.fillImage(90)
+                # todo: it would be nice if i could combine white numbers and back numbers into one array/one calss but idk how
+                for number_sprite_white in list_of_number_white_sprites[temp_id]:
+                    if number_sprite_white.complete == True:
+                        number_sprite_white.alpha = 0
+                        number_sprite_white.fillImage(0)
+                    else:
+                        number_sprite_white.alpha = 255
+                        number_sprite_white.fillImage(255)
 
-        circle_sprites.draw(screen)
-        count = 0
-        for sprite in circle_sprites:
-            pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
-            count += 1
-        for sprite in overlay_sprites:
-            screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-        # overlay_sprites.draw(screen)
+                for number_sprite_black in list_of_number_black_sprites[temp_id]:
+                    if number_sprite_black.complete == True:
+                        number_sprite_black.alpha = 255
+                        number_sprite_black.fillImage(255)
+                    else:
+                        number_sprite_black.alpha = 0
+                        number_sprite_black.fillImage(0)
 
-        pygame.display.update()
+                drawCircles(window, list_of_circle_sprites, temp_id)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        pos = pygame.mouse.get_pos()
+                        for circle_sprite in list_of_circle_sprites[temp_id]:
+                            if circle_sprite.rect.collidepoint(pos):
+                                circle_sprite.clicked = True
+                                print(circle_sprite.id)
+                                test = runGame(temp_id, circle_sprite.id)
 
+                                # checking if level was completed
+                                # chris this is not the rgiht way to do it just take the exist status.
+                                # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
+                                # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
+                                if (test == 0):
+                                    for rect_sprite in list_of_overlay_sprites[temp_id]:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.complete = True
+                                    for rect_sprite in list_of_number_white_sprites[temp_id]:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.complete = True
+                                    for rect_sprite in list_of_number_black_sprites[temp_id]:
+                                        if (rect_sprite.id == circle_sprite.id):
+                                            rect_sprite.complete = True
 
-def drawCircles3():
-    pygame.init()
-    screen = pygame.display.set_mode((600, 400))
-    pygame.display.set_caption("circles")
+                                pygame.display.set_caption("Gradient Rect")
 
-    background = pygame.Surface(screen.get_size())
-    colour_list_circle = [(255, 0, 0), (0, 0, 255), (255, 255, 0)]
-    circle_sprites = pygame.sprite.Group()
-    overlay_sprites = pygame.sprite.Group()
-    single = pygame.sprite.GroupSingle()
+                # circle_sprite_list.empty()
+                window.fill(background_colour)
+                drawCircles(window, list_of_circle_sprites, temp_id)
+                draw(window, list_of_overlay_sprites[temp_id])
+                draw(window, list_of_number_white_sprites[temp_id])
+                draw(window, list_of_number_black_sprites[temp_id])
+                rect_sprite_list.draw(window)
 
-    for i in range(0, 3):
-        circle_sprites.add(Circle(colour_list_circle[i], 25 + i * 150, 25, i))
-    circle_sprites.draw(screen)
+            pygame.display.flip()
 
-    count = 0
-    for sprite in circle_sprites:
-        pygame.draw.ellipse(screen, colour_list_circle[count], sprite.rect)
-        count += 1
-
-    for i in range(0, 3):
-        overlay_sprites.add(Overlay((0, 0, 0), 25 + i * 150, 25, i))
-
-    for sprite in overlay_sprites:
-        screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
-    pygame.display.update()
-    # hide mouse
-    done = False
-    while not done:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-            mouse_pos = pygame.mouse.get_pos()
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                for sprite in overlay_sprites:
-                    if sprite.rect.collidepoint(mouse_pos):
-                        sprite.clicked = True
-                        sprite.alpha = 0
-                        sprite.fillImage(0)
-            if event.type == pygame.MOUSEBUTTONUP:
-                for sprite in overlay_sprites:
-                    sprite.clicked = False
-                    sprite.alpha = 128
-                    sprite.fillImage(128)
-
-            # circle_sprites.draw(screen)
-            count = 0
-            for sprite in circle_sprites:
-                pygame.draw.ellipse(screen, sprite.colour, sprite.rect)
-                count += 1
-
-            for sprite in overlay_sprites:
-                screen.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
-
-        pygame.display.update()
+    pygame.quit()
 
 
+# create loading screen!
 
-def drawGradientCircles():
-    pygame.init()
-    colours = []
-    colours.append([(255, 255, 255), (0, 0)])
-    colours.append([(168, 220, 255), (0, 1)])
-    colours.append([(0, 29, 69), (1, 1)])
-    colours.append([(255, 171, 107), (1, 0)])
-    colour_size = (2, 2)
+# create level selection screen !
 
-    window = pygame.display.set_mode((400, 400))
-    pygame.display.set_caption("anni is crying")
+# create configuration screen !
 
-    target_rect = pygame.Rect(0,0, 400, 400)
-    colour_rect = pygame.Surface((2,2))
-    for i in colours:
-        pygame.draw.line(colour_rect, i[0], i[1], i[1])
-    colour_rect = pygame.transform.smoothscale(colour_rect, (target_rect.width, target_rect.height))
-    window.blit(colour_rect, target_rect)
+# saving levels
+
 
 if __name__ == "__main__":
-    drawGradientCircles()
-    while True:
-        pygame.display.update()
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+    print("This is the main file!")
+    sidebar()
+    print("bleppers")
