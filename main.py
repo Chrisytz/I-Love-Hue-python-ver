@@ -75,34 +75,6 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.image.set_alpha(0)
 
 
-# class NumbersWhite(pygame.sprite.Sprite):
-#     def __init__(self, x_pos, y_pos, number_list, id):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = pygame.image.load(number_list[id]).convert_alpha()
-#         self.rect = self.image.get_rect()
-#         self.rect.x = x_pos
-#         self.rect.y = y_pos
-#         self.id = id
-#         self.complete = False
-#
-#     def fillImage(self):
-#         self.image.set_alpha(255)
-#
-#
-# class NumbersBlack(pygame.sprite.Sprite):
-#     def __init__(self, x_pos, y_pos, number_list, id):
-#         pygame.sprite.Sprite.__init__(self)
-#         self.image = pygame.image.load(number_list[id]).convert_alpha()
-#         self.rect = self.image.get_rect()
-#         self.rect.x = x_pos
-#         self.rect.y = y_pos
-#         self.id = id
-#         self.complete = False
-#
-#     def fillImage(self, alpha):
-#         self.image.set_alpha(alpha)
-
-
 class Overlay(pygame.sprite.Sprite):
     # overlay is a really bad name but that's ok we will go with it
     def __init__(self, colour, x_pos, y_pos, win_vars, id):
@@ -313,7 +285,7 @@ def sidebar():
         list_of_circle_sprites[number] = pygame.sprite.Group()
         list_of_overlay_sprites[number] = pygame.sprite.Group()
         list_of_number_sprites[number] = pygame.sprite.Group()
-        
+
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
     # I'll probably also make a configurator for the settings that will return all of these as a ilist or tuple.
