@@ -48,7 +48,7 @@ class Circle(pygame.sprite.Sprite):
 
 
 class OverlayNumbers(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, number_list, number_list_blk, i, j, id):
+    def __init__(self, x_pos, y_pos, number_list, number_list_blk, i, j, id, list_id):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load(number_list[id]).convert_alpha()
         self.img_blk = pygame.image.load(number_list_blk[id]).convert_alpha()
@@ -60,6 +60,7 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.id = id
         self.i = i
         self.j = j
+        self.list_id = list_id
         self.complete = False
         # print("printing id",id)
 
@@ -74,32 +75,32 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.image.set_alpha(0)
 
 
-class NumbersWhite(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, number_list, id):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(number_list[id]).convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.x = x_pos
-        self.rect.y = y_pos
-        self.id = id
-        self.complete = False
-
-    def fillImage(self):
-        self.image.set_alpha(255)
-
-
-class NumbersBlack(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, number_list, id):
-        pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(number_list[id]).convert_alpha()
-        self.rect = self.image.get_rect()
-        self.rect.x = x_pos
-        self.rect.y = y_pos
-        self.id = id
-        self.complete = False
-
-    def fillImage(self, alpha):
-        self.image.set_alpha(alpha)
+# class NumbersWhite(pygame.sprite.Sprite):
+#     def __init__(self, x_pos, y_pos, number_list, id):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image = pygame.image.load(number_list[id]).convert_alpha()
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x_pos
+#         self.rect.y = y_pos
+#         self.id = id
+#         self.complete = False
+#
+#     def fillImage(self):
+#         self.image.set_alpha(255)
+#
+#
+# class NumbersBlack(pygame.sprite.Sprite):
+#     def __init__(self, x_pos, y_pos, number_list, id):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image = pygame.image.load(number_list[id]).convert_alpha()
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x_pos
+#         self.rect.y = y_pos
+#         self.id = id
+#         self.complete = False
+#
+#     def fillImage(self, alpha):
+#         self.image.set_alpha(alpha)
 
 
 class Overlay(pygame.sprite.Sprite):
@@ -184,8 +185,8 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(background_colour, colour_list_circle, circle_sprites,
-                     overlay_sprites, win_vars, level_id):
+def addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black, circle_sprites,
+                     overlay_sprites, number_sprites, win_vars, level_id):
     count = 0
     for i in range(0, 3):
         for j in range(0, 3):
@@ -200,22 +201,27 @@ def addCircleSprites(background_colour, colour_list_circle, circle_sprites,
                                         win_vars["bar_thickness"] + i * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]), win_vars,
                                         count))
+            number_sprites.add(OverlayNumbers((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+                    win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                              win_vars["bar_thickness"] + i * (
+                                                      win_vars["circle_size"] + win_vars["space_between_circles"]),
+                                              number_list_white, number_list_black, i, j, count, level_id))
             count += 1
 
     return circle_sprites
 
 
-def addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id):
-    count = 0
-    for i in range(0, 3):
-        for j in range(0, 3):
-            number_sprites.add(OverlayNumbers((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
-                    win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                              win_vars["bar_thickness"] + i * (
-                                                      win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                              number_list_white, number_list_black, i, j, count))
-            count += 1
-    return number_sprites
+# def addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id):
+#     count = 0
+#     for i in range(0, 3):
+#         for j in range(0, 3):
+#             number_sprites.add(OverlayNumbers((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
+#                     win_vars["circle_size"] + win_vars["space_between_circles"]),
+#                                               win_vars["bar_thickness"] + i * (
+#                                                       win_vars["circle_size"] + win_vars["space_between_circles"]),
+#                                               number_list_white, number_list_black, i, j, count, level_id))
+#             count += 1
+#     return number_sprites
 
 
 # no longer drawing ellipses on top of sprites, its just drawing the sprites --> id is which rectangle was clicked so what colours to draw
@@ -244,6 +250,11 @@ def addColours(colour_list, rect_clicked, circle_clicked):
         colour.append(colour_list[rect_clicked][circle_clicked][i])
     return colour
 
+def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_number_sprites, number) :
+    for i in range(0, number):
+        list_of_circle_sprites[number] = pygame.sprite.Group()
+        list_of_overlay_sprites[number] = pygame.sprite.Group()
+        list_of_number_sprites[number] = pygame.sprite.Group()
 
 # This is the main entry point to the game.
 
@@ -292,19 +303,17 @@ def sidebar():
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
 
     # todo: i should maybe find a better way to do this lol
-    circle_sprite_list0 = pygame.sprite.Group()
-    circle_sprite_list1 = pygame.sprite.Group()
-    circle_sprite_list2 = pygame.sprite.Group()
 
-    list_of_circle_sprites = [circle_sprite_list0, circle_sprite_list1, circle_sprite_list2]
 
-    overlay_sprites0 = pygame.sprite.Group()
-    overlay_sprites1 = pygame.sprite.Group()
-    overlay_sprites2 = pygame.sprite.Group()
+    list_of_circle_sprites = [[],[],[]]
+    list_of_overlay_sprites = [[],[],[]]
+    list_of_number_sprites = [[],[],[]]
 
-    list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
-
-    number_sprites = pygame.sprite.Group()
+    for number in range(0,3):
+        list_of_circle_sprites[number] = pygame.sprite.Group()
+        list_of_overlay_sprites[number] = pygame.sprite.Group()
+        list_of_number_sprites[number] = pygame.sprite.Group()
+        
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
     # I'll probably also make a configurator for the settings that will return all of these as a ilist or tuple.
@@ -314,12 +323,12 @@ def sidebar():
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
         list_of_circle_sprites[number] = addCircleSprites(background_colour,
-                                                          colour_list_circle,
+                                                          colour_list_circle, number_list_white, number_list_black,
                                                           list_of_circle_sprites[number],
-                                                          list_of_overlay_sprites[number],
+                                                          list_of_overlay_sprites[number], list_of_number_sprites[number],
                                                           win_vars, number)
 
-    number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
+    #number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
     window.fill(background_colour)
     rect_sprite_list.draw(window)
@@ -387,7 +396,7 @@ def sidebar():
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.pos_id):
                                             rect_sprite.complete = True
-                                    for number_sprite in number_sprites:
+                                    for number_sprite in list_of_number_sprites[temp_id]:
                                         if (number_sprite.id == circle_sprite.pos_id):
                                             print("updating")
                                             number_sprite.update_image(True)
@@ -399,7 +408,7 @@ def sidebar():
                 window.fill(background_colour)
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 draw(window, list_of_overlay_sprites[temp_id])
-                draw(window, number_sprites)
+                draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
 
             pygame.display.flip()
