@@ -169,7 +169,6 @@ class Grid:
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
 
 
-
 def addColours(colour_list, rect_clicked, circle_clicked):
     colour = []
     for i in range(0, 4):
@@ -185,7 +184,7 @@ def evaluate_level(window, levelgrid, sprite_list):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return 0
+                done = True
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
@@ -221,7 +220,7 @@ def evaluate_level(window, levelgrid, sprite_list):
                     if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
-            sprite_list.draw(window) #THIS IS WHAT IS DRAWING THE SPRITES!
+            sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
             moving_sprite_list.draw(window)  # draw this last ALWAYS
             # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
             # in particular, we need a better way to calculate the '200' present here.
@@ -229,17 +228,14 @@ def evaluate_level(window, levelgrid, sprite_list):
                              pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                          levelgrid.horizontal_limit))
 
-
-
-        pygame.draw.rect(window,(255,255,255), (400, 200, 50,50)) #THIS IS JUST A TEST THING :)
+        pygame.draw.rect(window, (255, 255, 255), (400, 200, 50, 50))  # THIS IS JUST A TEST THING :)
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
             if DEBUG: print("you won")
-            done = True #important: we should need this but why dont we wghat
+            done = True  # important: we should need this but why dont we wghat
             return 0  # 0 = won the game
-
             # you've won the game
 
 
@@ -272,11 +268,10 @@ def run_level(level):
     levelgrid.addToSpriteGroup(sprite_list)
 
     if evaluate_level(window, levelgrid, sprite_list) == 0:
-        print("you have won")
+        # print("you have won")
         iscomplete = 0
     else:
         iscomplete = 1
-
 
     return iscomplete
 
@@ -395,7 +390,6 @@ def runGame(rect_id, circle_id):
         x_step = 8
         y_step = 8
 
-
     steps = x_step, y_step
     # constants are blocks that won't move.
     constants = []
@@ -407,10 +401,7 @@ def runGame(rect_id, circle_id):
     constants.append((x_step - 1, 0))
 
     level = testWindow, colours, colour_size, constants, window_size, steps
-    run_level(level)
-    if (run_level(level) == 0):
-        level_complete = 1
-    return level_complete
+    return run_level(level)
 
 
 if __name__ == "__main__":

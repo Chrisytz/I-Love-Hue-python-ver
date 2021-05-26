@@ -28,21 +28,22 @@ class Rect(pygame.sprite.Sprite):
         self.rect.x = x_pos
         self.rect.y = y_pos
         # self.colour = colour
-        self.level_id = level_id
+        self.level_id = level_id  ## what the fuck is level id chris?!?
 
 
 class Circle(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, pos_id, list_id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(circle_list[list_id][id]).convert_alpha()
+        self.image = pygame.image.load(circle_list[list_id][j]).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
         self.clicked = False
-        self.pos_id = pos_id
+        self.pos_id = pos_id  # pos id corresponds to the position of the thing on a level
         self.i = i
         self.j = j
-        self.list = list_id ## list id corresponds to the fucking LIST you put it ni you boNOBO
+        self.list_id = list_id  ## list id corresponds to the fucking LIST you put it ni you boNOBO
+        # list ID currently corresponds to the STAGE or SET of colours.
         self.complete = False
 
 
@@ -54,18 +55,23 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
+        self.x_pos = x_pos
+        self.y_pos = y_pos
         self.id = id
         self.i = i
         self.j = j
         self.complete = False
+        # print("printing id",id)
 
     def update_image(self, complete):
         self.complete = True
         self.image = self.img_blk
         self.rect = self.image.get_rect()
+        self.rect.x = self.x_pos
+        self.rect.y = self.y_pos
 
     def fillImage(self):
-        self.image.set_alpha(255)
+        self.image.set_alpha(0)
 
 
 class NumbersWhite(pygame.sprite.Sprite):
@@ -369,19 +375,21 @@ def sidebar():
                         for circle_sprite in list_of_circle_sprites[temp_id]:
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
-                                print(circle_sprite.id)
-                                test = runGame(temp_id, circle_sprite.id)
-
+                                print(circle_sprite.pos_id)
+                                test = runGame(temp_id, circle_sprite.list_id)
+                                print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
                                 # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
                                 if (test == 0):
+                                    print("won")
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
-                                        if (rect_sprite.id == circle_sprite.id):
+                                        if (rect_sprite.id == circle_sprite.pos_id):
                                             rect_sprite.complete = True
                                     for number_sprite in number_sprites:
-                                        if (number_sprite.id == circle_sprite.id):
+                                        if (number_sprite.id == circle_sprite.pos_id):
+                                            print("updating")
                                             number_sprite.update_image(True)
                                             number_sprite.complete = True
 
