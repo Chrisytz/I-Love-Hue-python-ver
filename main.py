@@ -151,7 +151,8 @@ def addSidebarSprites(sprite_list, colour_list, win_vars):
     return sprite_list
 
 
-def addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black, circle_sprites, overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
+def addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black, circle_sprites,
+                     overlay_sprites, number_sprites_white, number_sprites_black, win_vars, id):
     count = 0
     for i in range(0, 3):
         for j in range(0, 3):
@@ -164,7 +165,8 @@ def addCircleSprites(background_colour, colour_list_circle, number_list_white, n
                                         (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
                                         win_vars["bar_thickness"] + i * (
-                                                win_vars["circle_size"] + win_vars["space_between_circles"]), win_vars, count))
+                                                win_vars["circle_size"] + win_vars["space_between_circles"]), win_vars,
+                                        count))
 
             number_sprites_white.add(NumbersWhite((win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
@@ -185,6 +187,7 @@ def addCircleSprites(background_colour, colour_list_circle, number_list_white, n
 
 # no longer drawing ellipses on top of sprites, its just drawing the sprites --> id is which rectangle was clicked so what colours to draw
 def drawCircles(window, circle_sprites, id):
+    # print(id)
     circle_sprites[id].draw(window)
 
 
@@ -216,7 +219,7 @@ def sidebar():
     # init
     win_size = 600, 400
     done = False
-    background_colour = (18, 23, 36)
+    background_colour = (255, 255, 255)
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
     pygame.display.set_caption("Gradient Rect")
@@ -268,7 +271,6 @@ def sidebar():
 
     list_of_overlay_sprites = [overlay_sprites0, overlay_sprites1, overlay_sprites2]
 
-
     number_white_sprites0 = pygame.sprite.Group()
     number_white_sprites1 = pygame.sprite.Group()
     number_white_sprites2 = pygame.sprite.Group()
@@ -289,7 +291,8 @@ def sidebar():
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
     for number in range(0, 3):
-        list_of_circle_sprites[number] = addCircleSprites(background_colour, colour_list_circle, number_list_white, number_list_black,
+        list_of_circle_sprites[number] = addCircleSprites(background_colour, colour_list_circle, number_list_white,
+                                                          number_list_black,
                                                           list_of_circle_sprites[number],
                                                           list_of_overlay_sprites[number],
 
@@ -341,7 +344,7 @@ def sidebar():
                     else:
                         rect_sprite.hover = False
                         rect_sprite.fillImage(90)
-#todo: it would be nice if i could combine white numbers and back numbers into one array/one calss but idk how
+                # todo: it would be nice if i could combine white numbers and back numbers into one array/one calss but idk how
                 for number_sprite_white in list_of_number_white_sprites[temp_id]:
                     if number_sprite_white.complete == True:
                         number_sprite_white.alpha = 0
@@ -369,9 +372,10 @@ def sidebar():
                                 test = runGame(temp_id, circle_sprite.id)
 
                                 # checking if level was completed
+                                # chris this is not the rgiht way to do it just take the exist status.
                                 # TODO: CURRENTLY THE LEVEL IS COUNTED AS COMPELTE ERVEN IF U CLOSE THE WINDOW --> TO FIX THIS I WILL MAKE A BUTTON INSTEAD AND UPON POUSHING THAT BUTTON TEST = 0 (AKA U FAILED)
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
-                                if (test == 1):
+                                if (test == 0):
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.id):
                                             rect_sprite.complete = True
