@@ -65,13 +65,20 @@ further consideration:
 ##############################################################
 #############            WORKLOG            ##################
 ##############################################################
-May 26, 2021
+----- May 26, 2021 --------------------------------
 - Anni swapped number sprite generation from using doubled lists to using a single list.
     > this method is still lengthy so it can be further optimized
 - note the distinction between different ID's -> we are currently using LIST_ID as a name for LEVEL_ID or STAGE_ID
     - LIST_ID/LEVEL_ID/STAGE_ID all correspond to the identification of ONE colour palette (eg one square on the left)
     - POS_ID works internal to each stage/list-level and encodes the relative position of a circle/number to each other.
     - There are also changes made to i & j to ensure future compatibility wherein we have to check for i/j against larger grids.
+
+- Anni also updated the way in which level returns data. We no longer use multiple stages of checks, instead we use a
+flow through system where each function returns a value which is taken as the global return value after a few stages of return.
+    - note 0 = won
+           1 = exit with issues
+           2 = ?????
+           ? = ????? << for future expansion
 
 Immediate TODO for anni:
 - Don't auto-win on close level
