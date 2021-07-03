@@ -188,6 +188,10 @@ def evaluate_level(window, levelgrid, sprite_list):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
+                # Button to quit
+                if ((420 < posx < 580) and (200 < posy < 250)):
+                    if DEBUG: print("white button pressed")
+                    done = True
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
@@ -221,6 +225,7 @@ def evaluate_level(window, levelgrid, sprite_list):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
+            print (sprite_list)
             moving_sprite_list.draw(window)  # draw this last ALWAYS
             # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
             # in particular, we need a better way to calculate the '200' present here.
@@ -228,7 +233,14 @@ def evaluate_level(window, levelgrid, sprite_list):
                              pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                          levelgrid.horizontal_limit))
 
-        pygame.draw.rect(window, (255, 255, 255), (400, 200, 50, 50))  # THIS IS JUST A TEST THING :)
+        pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 50))  # THIS IS JUST A TEST THING :)
+        
+        '''
+        todo: create a new button, when button is clicked, first run smth similar to the .getColour() method to yeet the data into a sql thing or a text file
+        and then when u yeet the data back, aka when the level is clicked again, u run the .addToSpriteGroup() function to yeet it back
+        idk how to create a database or file or wtv for each level HELP
+        '''
+
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),

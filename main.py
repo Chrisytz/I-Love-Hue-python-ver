@@ -222,11 +222,13 @@ def addColours(colour_list, rect_clicked, circle_clicked):
         colour.append(colour_list[rect_clicked][circle_clicked][i])
     return colour
 
-def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_number_sprites, number) :
+
+def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_number_sprites, number):
     for i in range(0, number):
         list_of_circle_sprites[number] = pygame.sprite.Group()
         list_of_overlay_sprites[number] = pygame.sprite.Group()
         list_of_number_sprites[number] = pygame.sprite.Group()
+
 
 # This is the main entry point to the game.
 
@@ -276,12 +278,11 @@ def sidebar():
 
     # todo: i should maybe find a better way to do this lol
 
+    list_of_circle_sprites = [[], [], []]
+    list_of_overlay_sprites = [[], [], []]
+    list_of_number_sprites = [[], [], []]
 
-    list_of_circle_sprites = [[],[],[]]
-    list_of_overlay_sprites = [[],[],[]]
-    list_of_number_sprites = [[],[],[]]
-
-    for number in range(0,3):
+    for number in range(0, 3):
         list_of_circle_sprites[number] = pygame.sprite.Group()
         list_of_overlay_sprites[number] = pygame.sprite.Group()
         list_of_number_sprites[number] = pygame.sprite.Group()
@@ -297,10 +298,11 @@ def sidebar():
         list_of_circle_sprites[number] = addCircleSprites(background_colour,
                                                           colour_list_circle, number_list_white, number_list_black,
                                                           list_of_circle_sprites[number],
-                                                          list_of_overlay_sprites[number], list_of_number_sprites[number],
+                                                          list_of_overlay_sprites[number],
+                                                          list_of_number_sprites[number],
                                                           win_vars, number)
 
-    #number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
+    # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
     window.fill(background_colour)
     rect_sprite_list.draw(window)
