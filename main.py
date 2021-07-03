@@ -166,7 +166,7 @@ def addCircleSprites(background_colour, colour_list_circle, number_list_white, n
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars["bar_thickness"] + i * (
                                               win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars, colour_list_circle, i, j, count, level_id))
+                                      win_vars, colour_list_circle, i, count, count, level_id)) #OKAY SO I CHANGED THE FIRST COUNT FROM J TO COUNT it should work
             overlay_sprites.add(Overlay(background_colour,
                                         (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
@@ -339,7 +339,7 @@ def sidebar():
                             rect_sprite.clicked = True
                             temp_id = rect_sprite.level_id
                             circles_visible = True
-                            print(temp_id)
+                            #print(temp_id)
 
             if circles_visible:
                 pos = pygame.mouse.get_pos()
@@ -358,8 +358,8 @@ def sidebar():
                         for circle_sprite in list_of_circle_sprites[temp_id]:
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
-                                print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.list_id)
+                                #print(circle_sprite.pos_id)
+                                test = runGame(temp_id, circle_sprite.pos_id)
                                 print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
@@ -368,7 +368,7 @@ def sidebar():
                                 if (test == 0):
                                     print("won")
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
-                                        if (rect_sprite.id == circle_sprite.pos_id):
+                                        if (rect_sprite.id == circle_sprite.list_id):
                                             rect_sprite.complete = True
                                     for number_sprite in list_of_number_sprites[temp_id]:
                                         if (number_sprite.id == circle_sprite.pos_id):

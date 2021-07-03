@@ -7,6 +7,7 @@
 import sys
 import random
 import pygame
+import sqlite3
 
 # global vars
 DEBUG = False
@@ -176,7 +177,7 @@ def addColours(colour_list, rect_clicked, circle_clicked):
     return colour
 
 
-def evaluate_level(window, levelgrid, sprite_list):
+def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
@@ -225,7 +226,6 @@ def evaluate_level(window, levelgrid, sprite_list):
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
-            print (sprite_list)
             moving_sprite_list.draw(window)  # draw this last ALWAYS
             # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
             # in particular, we need a better way to calculate the '200' present here.
@@ -234,7 +234,7 @@ def evaluate_level(window, levelgrid, sprite_list):
                                          levelgrid.horizontal_limit))
 
         pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 50))  # THIS IS JUST A TEST THING :)
-        
+
         '''
         todo: create a new button, when button is clicked, first run smth similar to the .getColour() method to yeet the data into a sql thing or a text file
         and then when u yeet the data back, aka when the level is clicked again, u run the .addToSpriteGroup() function to yeet it back
@@ -251,7 +251,7 @@ def evaluate_level(window, levelgrid, sprite_list):
             # you've won the game
 
 
-def run_level(level):
+def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
     """This will run the entire level!"""
     isComplete = 1
     # Todo: Do we want this to only run one level?
@@ -277,9 +277,14 @@ def run_level(level):
     levelgrid.getColours()
     levelgrid.shuffle()
 
+    #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
+
     levelgrid.addToSpriteGroup(sprite_list)
 
-    if evaluate_level(window, levelgrid, sprite_list) == 0:
+    print ("rect id: ", rect_id)
+    print ("circle id: ", circle_id)
+
+    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id) == 0:
         # print("you have won")
         iscomplete = 0
     else:
@@ -413,7 +418,7 @@ def runGame(rect_id, circle_id):
     constants.append((x_step - 1, 0))
 
     level = testWindow, colours, colour_size, constants, window_size, steps
-    return run_level(level)
+    return run_level(level, rect_id, circle_id)
 
 
 if __name__ == "__main__":
