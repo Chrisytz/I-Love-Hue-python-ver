@@ -80,6 +80,9 @@ flow through system where each function returns a value which is taken as the gl
            2 = ?????
            ? = ????? << for future expansion
 
+----- July 4, 2021 --------------------------------
+- Chris did a save level thing but only like gamestate not if you've completed the level before or not
+
 Immediate TODO for anni:
 - Don't auto-win on close level
 - Create new data ingest structure for levels and running levels
