@@ -134,6 +134,9 @@ class Grid:
 
         return templist
 
+    # def setColoursFromSaved(self):
+    #     self.shuffle_grid.append
+
 
     def shuffle(self, bypass=False):
         # if you want to bypass grid shuffling
@@ -205,7 +208,21 @@ def deleteLevel(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
 
-    cur.execute("DELETE from levels where rect_id = :rect_id and circle_id = :circle_id")
+    cur.execute("DELETE from levels where rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+
+    con.commit()
+
+def isSavedLevel(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM levels WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+    data = cur.fetchall()
+    if len(data) == 0:
+        print('there is no saved game')
+        return 0
+    else:
+        print('there is a game saved')
+        return 1
 
 
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
@@ -278,6 +295,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
+            deleteLevel(rect_id, circle_id)
             if DEBUG: print("you won")
             done = True  # important: we should need this but why dont we wghat
             return 0  # 0 = won the game
@@ -311,6 +329,10 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
     levelgrid.shuffle()
 
     #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
+    isLevelSaved = isSavedLevel(rect_id, circle_id)
+    # if isLevelSaved == 1:
+
+
 
     levelgrid.addToSpriteGroup(sprite_list)
 
