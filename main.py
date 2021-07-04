@@ -379,7 +379,7 @@ def sidebar():
                                 if (test == 0):
                                     print("won")
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
-                                        if (rect_sprite.id == circle_sprite.list_id):
+                                        if (rect_sprite.id == circle_sprite.pos_id):
                                             rect_sprite.complete = True
                                     for number_sprite in list_of_number_sprites[temp_id]:
                                         if (number_sprite.id == circle_sprite.pos_id):
