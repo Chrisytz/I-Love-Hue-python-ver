@@ -6,6 +6,7 @@ import sys
 import random
 import pygame
 from level import runGame
+import sqlite3
 
 DEBUG = False
 
@@ -229,7 +230,17 @@ def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_numbe
         list_of_overlay_sprites[number] = pygame.sprite.Group()
         list_of_number_sprites[number] = pygame.sprite.Group()
 
+def createDatabase():
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='levels' ''')
 
+    if cur.fetchone()[0] == 1 :
+        print ('table exists')
+    else :
+        cur.execute('''CREATE TABLE levels
+                        (rect_id integer, circle_id integer, colour_codes text)''')
+        print ("database has been created")
 # This is the main entry point to the game.
 
 def sidebar():
@@ -401,5 +412,6 @@ def sidebar():
 
 if __name__ == "__main__":
     print("This is the main file!")
+    createDatabase()
     sidebar()
     print("bleppers")

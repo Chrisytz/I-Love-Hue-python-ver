@@ -118,6 +118,23 @@ class Grid:
             if ret:
                 return self.newgrid
 
+    def getGridColours(self):
+        x_size, y_size = self.drawing_size
+        x_step, y_step = self.steps
+
+        x_loc_scalar = x_size / x_step
+        y_loc_scalar = y_size / y_step
+
+        templist = []
+
+        for x in range(0, x_step):
+            for y in range(0, y_step):
+                templist.append(pygame.Surface.get_at(self.window, (int(x * x_loc_scalar), int(y * y_loc_scalar))))
+            self.original_grid.append(templist)
+
+        return templist
+
+
     def shuffle(self, bypass=False):
         # if you want to bypass grid shuffling
         if bypass:
@@ -176,6 +193,20 @@ def addColours(colour_list, rect_clicked, circle_clicked):
         colour.append(colour_list[rect_clicked][circle_clicked][i])
     return colour
 
+def saveLevel(rect_id, circle_id, colour_codes):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+
+    cur.execute("INSERT INTO levels VALUES (:rect_id, :circle_id, :colour_codes)", (rect_id, circle_id, colour_codes))
+
+    con.commit()
+
+def deleteLevel(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+
+    cur.execute("DELETE from levels where rect_id = :rect_id and circle_id = :circle_id")
+
 
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
     done = False
@@ -192,6 +223,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 # Button to quit
                 if ((420 < posx < 580) and (200 < posy < 250)):
                     if DEBUG: print("white button pressed")
+
+                    saveLevel(rect_id, circle_id, print(levelgrid.getGridColours())) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
                     done = True
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
