@@ -8,6 +8,7 @@ import sys
 import random
 import pygame
 import sqlite3
+import math
 
 # global vars
 DEBUG = False
@@ -134,8 +135,9 @@ class Grid:
 
         return templist
 
-    # def setColoursFromSaved(self):
-    #     self.shuffle_grid.append
+    def setColoursFromSaved(self, colourList):
+        self.shuffle_grid = colourList
+        print (self.shuffle_grid)
 
 
     def shuffle(self, bypass=False):
@@ -196,6 +198,48 @@ def addColours(colour_list, rect_clicked, circle_clicked):
         colour.append(colour_list[rect_clicked][circle_clicked][i])
     return colour
 
+def toString(colourList):
+
+    string = "".join([str(element) for element in colourList])
+    string = string.replace('(' , ', ')
+    string = string.replace(')' , '')
+    string = string[2:]
+    string = string.replace(' ' , '')
+    string = string.replace(',', ' ')
+    return string
+
+def toPygameColour(stringColours, steps):
+    colourSplit = stringColours.split()
+    colourList = []
+    colourListSmall = []
+    count = 0
+
+    for i in range (int(math.sqrt(len(colourSplit)/4))):
+        colourList.append([])
+        for j in range (steps):
+            for k in range (4):
+                colourListSmall.append(int(colourSplit[count]))
+                count += 1
+
+            colourListSmall = tuple(colourListSmall)
+            colourList[i].append(colourListSmall)
+            colourListSmall = []
+
+    print(colourList)
+    return colourList
+
+
+
+def getSavedColours(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM levels WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+
+    level = cur.fetchone()
+    return level[2]
+
+
+
 def saveLevel(rect_id, circle_id, colour_codes):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
@@ -240,8 +284,9 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 # Button to quit
                 if ((420 < posx < 580) and (200 < posy < 250)):
                     if DEBUG: print("white button pressed")
-
-                    saveLevel(rect_id, circle_id, print(levelgrid.getGridColours())) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
+                    saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours())) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
+                    print ("getgridcolours", levelgrid.getGridColours())
+                    print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
@@ -323,6 +368,7 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
     # window = pygame.display.set_mode((window_size))
     levelgrid = Grid(window, colours, colour_size, constants, window_size, drawing_size, steps)
     if DEBUG: print(constants)
+
     levelgrid.drawGradient()
     # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
@@ -330,14 +376,15 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
 
     #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
     isLevelSaved = isSavedLevel(rect_id, circle_id)
-    # if isLevelSaved == 1:
-
+    if isLevelSaved == 1:
+        print("steps:", levelgrid.steps[1])
+        colourList = toPygameColour(getSavedColours(rect_id, circle_id), levelgrid.steps[0])
+        print ("getsavecolours", getSavedColours(rect_id, circle_id))
+        levelgrid.setColoursFromSaved(colourList)
+        deleteLevel(rect_id, circle_id)
 
 
     levelgrid.addToSpriteGroup(sprite_list)
-
-    print ("rect id: ", rect_id)
-    print ("circle id: ", circle_id)
 
     if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id) == 0:
         # print("you have won")
@@ -502,7 +549,7 @@ if __name__ == "__main__":
     # colours.append([(51, 255, 153),(1,0)])
 
     # set 2
-    # colours.append([(33, 11, 84), (0, 0)])
+    # colours.append([(33, 11, 844), (0, 0)])
     # colours.append([(201, 205, 242), (0, 1)])
     # colours.append([(201, 255, 240), (1, 1)])
     # colours.append([(6, 39, 69), (1, 0)])
