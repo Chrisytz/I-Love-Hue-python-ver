@@ -304,7 +304,7 @@ def sidebar():
                          "number black/5.png",
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
 
-    sidebar_rect = ["sidebar rect/rect1.png", "sidebar rect/rect2.png", "sidebar rect/rect3.png"]
+    sidebar_rect = ["sidebar rect with text/sidebar1.png", "sidebar rect with text/sidebar2.png", "sidebar rect with text/sidebar3.png"]
 
     # todo: i should maybe find a better way to do this lol
 
