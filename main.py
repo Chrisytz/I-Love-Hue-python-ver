@@ -248,7 +248,8 @@ def sidebar():
     # init
     win_size = 600, 400
     done = False
-    background_colour = (255, 255, 255)
+    sidebar_colour = (235,238,211)
+    background_colour = (255,244,234)
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
     pygame.display.set_caption("Gradient Rect")
@@ -316,6 +317,7 @@ def sidebar():
     # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
     window.fill(background_colour)
+    pygame.draw.rect(window, sidebar_colour, (0,0,200,400))
     rect_sprite_list.draw(window)
     pygame.display.update()
 
@@ -360,7 +362,7 @@ def sidebar():
                         rect_sprite.fillImage(0)
                     else:
                         rect_sprite.hover = False
-                        rect_sprite.fillImage(90)
+                        rect_sprite.fillImage(70)
 
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -390,6 +392,7 @@ def sidebar():
 
                 # circle_sprite_list.empty()
                 window.fill(background_colour)
+                pygame.draw.rect(window, sidebar_colour, (0, 0, 200, 400))
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
