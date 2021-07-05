@@ -109,6 +109,20 @@ class Overlay(pygame.sprite.Sprite):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
 
+class Settings(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((600,400))
+        self.colour = (0,0,0)
+        self.image.set_alpha(0)
+        self.image.fill(self.colour)
+        self.rect = self.image.get_rect()
+        self.open = False
+
+    def fillWindow(self, alpha):
+        self.image.set_alpha(alpha)
+        self.image.fill(self.colour)
+
 
 # class Display():
 #     def __init__(self, win_width, win_height):
@@ -252,6 +266,15 @@ def createDatabase():
         cur.execute('''CREATE TABLE levels
                         (rect_id integer, circle_id integer, colour_codes text)''')
         print ("database has been created")
+
+# def settings(window):
+#     pygame.draw.rect(window, (0,0,0), (0,0, 600, 400))
+#     for event in pygame.get():
+#         if event.type == pygame.MOUSEBUTTONDOWN:
+#             if event.button == 1:
+#                 pos = pygame.mouse.get_pos()
+#                 if (560 < pos[0] < 600) and (0 < pos[1] < 40):
+
 # This is the main entry point to the game.
 
 def sidebar():
@@ -337,6 +360,10 @@ def sidebar():
     window.fill(background_colour)
     pygame.draw.rect(window, sidebar_colour, (0,0,200,400))
     rect_sprite_list.draw(window)
+    settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
+    window.blit(settingsButton, (0, 360))
+    settingsPage = Settings()
+
     pygame.display.update()
 
     # running the game
@@ -365,12 +392,22 @@ def sidebar():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
+                    if (0 < pos[0] < 40) and (360 < pos[1] < 400):
+                        print ("settings clicked")
+                        settingsPage.open = True
+                        circles_visible = False
+                        settingsPage.fillWindow(255)
+                    if (560 < pos[0] < 600) and (0 < pos[1] < 40):
+                        settingsPage.open = False
+                        circles_visible = True
+                        settingsPage.fillWindow(0)
                     for rect_sprite in rect_sprite_list:
                         if rect_sprite.rect.collidepoint(pos):
                             rect_sprite.clicked = True
                             temp_id = rect_sprite.level_id
                             circles_visible = True
                             #print(temp_id)
+
 
             if circles_visible:
                 pos = pygame.mouse.get_pos()
@@ -415,6 +452,7 @@ def sidebar():
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
+            window.blit(settingsPage.image, (0, 0, 400, 400))
 
             pygame.display.flip()
 
