@@ -346,20 +346,20 @@ def sidebar():
             if event.type == pygame.QUIT:
                 done = True
                 # rectangleEventHandler(event, pygame.mouse.get_pos())
-            if event.type == pygame.MOUSEWHEEL:
-                if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
-                    if event.y == -1:
-                        for rect_sprite in rect_sprite_list:
-                            rect_sprite.rect.y -= win_vars["bar_thickness"]
-                            if DEBUG: print(rect_sprite.rect.y)
-                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
-                        pygame.display.flip()
-                    else:
-                        for rect_sprite in rect_sprite_list:
-                            rect_sprite.rect.y += win_vars["bar_thickness"]
-                            if DEBUG: print(rect_sprite.rect.y)
-                        updateSprites(rect_sprite_list, window, win_size[1], win_vars)
-                        pygame.display.flip()
+            # if event.type == pygame.MOUSEWHEEL:
+            #     if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
+            #         if event.y == -1:
+            #             for rect_sprite in rect_sprite_list:
+            #                 rect_sprite.rect.y -= win_vars["bar_thickness"]
+            #                 if DEBUG: print(rect_sprite.rect.y)
+            #             updateSprites(rect_sprite_list, window, win_size[1], win_vars)
+            #             pygame.display.flip()
+            #         else:
+            #             for rect_sprite in rect_sprite_list:
+            #                 rect_sprite.rect.y += win_vars["bar_thickness"]
+            #                 if DEBUG: print(rect_sprite.rect.y)
+            #             updateSprites(rect_sprite_list, window, win_size[1], win_vars)
+            #             pygame.display.flip()
 
             # determines which rectangle is clicked?
             if event.type == pygame.MOUSEBUTTONDOWN:
