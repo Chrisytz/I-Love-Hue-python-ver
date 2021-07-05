@@ -17,19 +17,29 @@ DEBUG = False
 # one the side of each lvl --> #moves, home, restart --> smth smth import the shuffle function or wtv
 
 
-class Rect(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, colour, win_vars, level_id):
-        pygame.sprite.Sprite.__init__(self)
+# class Rect(pygame.sprite.Sprite):
+#     def __init__(self, x_pos, y_pos, colour, win_vars, level_id):
+#         pygame.sprite.Sprite.__init__(self)
+#
+#         # todo: this surface needs to scale wrt window size. (checkmark)
+#         self.image = pygame.Surface([win_vars["sprite_size"], win_vars["sprite_size"]])
+#         self.image.fill(colour)
+#         self.clicked = False
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x_pos
+#         self.rect.y = y_pos
+#         # self.colour = colour
+#         self.level_id = level_id  ## what the fuck is level id chris?!?
 
-        # todo: this surface needs to scale wrt window size. (checkmark)
-        self.image = pygame.Surface([win_vars["sprite_size"], win_vars["sprite_size"]])
-        self.image.fill(colour)
-        self.clicked = False
+class Rect(pygame.sprite.Sprite):
+    def __init__(self, sidebar_rect, x_pos, y_pos, level_id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load(sidebar_rect[level_id]).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
-        # self.colour = colour
-        self.level_id = level_id  ## what the fuck is level id chris?!?
+        self.clicked = False
+        self.level_id = level_id
 
 
 class Circle(pygame.sprite.Sprite):
@@ -148,13 +158,14 @@ def updateSprites(sprite_list, window, win_height, win_vars):
                      (0, win_vars["bottom_bar_loc"], win_vars["width_sidebar"], win_vars["bar_thickness"]))
 
 
-def addSidebarSprites(sprite_list, colour_list, win_vars):
+def addSidebarSprites(sprite_list, colour_list, win_vars, sidebar_rect):
     for i in range(0, win_vars["num_of_rectangles"]):
-        for j in range(0, 4):
-            sprite_list.add(
-                Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
-                     (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
-                     win_vars, i))
+        # for j in range(0, 4):
+        #     sprite_list.add(
+        #         Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
+        #              (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
+        #              win_vars, i))
+        sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"], (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i))
     return sprite_list
 
 
@@ -248,8 +259,13 @@ def sidebar():
     # init
     win_size = 600, 400
     done = False
+    # these are the light colours!
     sidebar_colour = (235,238,211)
     background_colour = (255,244,234)
+
+    # these are the dark colours
+    # sidebar_colour = (55,51,60)
+    # background_colour = (71,60,68)
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
     pygame.display.set_caption("Gradient Rect")
@@ -271,8 +287,8 @@ def sidebar():
                    [(60, 38, 80), (233, 72, 137), (255, 121, 93), (255, 184, 88)],
                    [(46, 58, 83), (96, 155, 185), (216, 225, 246), (249, 175, 164)]]
     colour_list_circle = [
-        ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
-         "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
+        ["Circles1NEW2/0.png", "Circles1NEW2/1.png", "Circles1NEW2/2.png", "Circles1NEW2/3.png", "Circles1NEW2/4.png", "Circles1NEW2/5.png",
+         "Circles1NEW2/6.png", "Circles1NEW2/7.png", "Circles1NEW2/8.png"],
         ["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
         ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
@@ -287,6 +303,8 @@ def sidebar():
     number_list_black = ["number black/1.png", "number black/2.png", "number black/3.png", "number black/4.png",
                          "number black/5.png",
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
+
+    sidebar_rect = ["sidebar rect/rect1.png", "sidebar rect/rect2.png", "sidebar rect/rect3.png"]
 
     # todo: i should maybe find a better way to do this lol
 
@@ -305,7 +323,7 @@ def sidebar():
     # -----------------------------
 
     # displaying sprites
-    rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars)
+    rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars, sidebar_rect)
     for number in range(0, 3):
         list_of_circle_sprites[number] = addCircleSprites(background_colour,
                                                           colour_list_circle, number_list_white, number_list_black,
