@@ -273,16 +273,14 @@ def createDatabase():
     cur = con.cursor()
     cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='levels' ''')
 
-    if cur.fetchone()[0] == 1 :
-        print ('table exists')
-    else :
+    if cur.fetchone()[0] != 1 :
         cur.execute('''CREATE TABLE levels
                         (rect_id integer, circle_id integer, colour_codes text)''')
         cur.execute('''CREATE TABLE highscore
                         (rect_id integer, circle_id integer, score integer )''')
         cur.execute('''CREATE TABLE score
                         (rect_id integer, circle_id integer, score integer)''')
-        print ("database has been created")
+        #print ("database has been created")
 
 
 # This is the main entry point to the game.
@@ -445,18 +443,18 @@ def sidebar():
                                 circle_sprite.clicked = True
                                 #print(circle_sprite.pos_id)
                                 test = runGame(temp_id, circle_sprite.pos_id)
-                                print("this is runGame result", test)
+                                #print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
                                 if (test == 0):
-                                    print("won")
+                                    # print("won")
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.pos_id):
                                             rect_sprite.complete = True
                                     for number_sprite in list_of_number_sprites[temp_id]:
                                         if (number_sprite.id == circle_sprite.pos_id):
-                                            print("updating")
+                                            # print("updating")
                                             number_sprite.update_image(True)
                                             number_sprite.complete = True
 

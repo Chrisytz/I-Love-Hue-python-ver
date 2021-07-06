@@ -137,7 +137,7 @@ class Grid:
 
     def setColoursFromSaved(self, colourList):
         self.shuffle_grid = colourList
-        print (self.shuffle_grid)
+        if DEBUG: print (self.shuffle_grid)
 
 
     def shuffle(self, bypass=False):
@@ -226,7 +226,7 @@ def toPygameColour(stringColours, steps):
             colourList[i].append(colourListSmall)
             colourListSmall = []
 
-    print(colourList)
+    if DEBUG: (colourList)
     return colourList
 
 
@@ -247,6 +247,13 @@ def getSavedScore(rect_id, circle_id):
     score = cur.fetchone()
     return score[2]
 
+def getHighScore(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM highscore WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+
+    score = cur.fetchone()
+    return score[2]
 
 def saveLevel(rect_id, circle_id, colour_codes, count):
     con = sqlite3.connect('levels.db')
@@ -267,18 +274,55 @@ def deleteLevel(rect_id, circle_id):
 
     con.commit()
 
+def isCompletedLevel(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM highscore WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+    data = cur.fetchall()
+    if len(data) == 0:
+        return 0
+    else:
+        return 1
+
 def isSavedLevel(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
     cur.execute("SELECT * FROM levels WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
     data = cur.fetchall()
     if len(data) == 0:
-        print('there is no saved game')
+        if DEBUG: print('there is no saved game')
         return 0
     else:
-        print('there is a game saved')
+        if DEBUG: print('there is a game saved')
         return 1
 
+def currectScore(window, move_count):
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render(str(int(move_count)), True, (255, 255, 255), (0, 0, 0))
+    text_rect = text.get_rect()
+    text_rect.center = (500, 150)
+    window.blit(text, text_rect)
+
+def highScore(window, best_moves):
+    font = pygame.font.Font('freesansbold.ttf', 32)
+    text = font.render(str(int(best_moves)), True, (255, 255, 255), (0, 0, 0))
+    text_rect = text.get_rect()
+    text_rect.center = (500, 50)
+    window.blit(text, text_rect)
+
+def saveHighScore(rect_id, circle_id, new_score):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    if isCompletedLevel(rect_id, circle_id) == 1:
+        top_score = getHighScore(rect_id, circle_id)
+    else:
+        top_score = 0
+
+    if new_score < top_score:
+        cur.execute("DELETE from highscore where rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+        cur.execute("INSERT INTO highscore VALUES (:rect_id, :circle_id, :score)", (rect_id, circle_id, new_score))
+
+    con.commit()
 
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count):
     done = False
@@ -300,8 +344,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                 if save_level_button.collidepoint(pos):
                     if DEBUG: print("white button pressed")
                     saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours()), int(move_count)) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
-                    print ("getgridcolours", levelgrid.getGridColours())
-                    print ("getsavecolours", getSavedColours(rect_id, circle_id))
+                    if DEBUG: print ("getgridcolours", levelgrid.getGridColours())
+                    if DEBUG: print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
                 if restart_level_button.collidepoint(pos):
                     done = True
@@ -358,11 +402,12 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
         pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
         pygame.draw.rect(window, (255, 255, 255), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render(str(int(move_count)), True, (255, 255, 255), (0,0,0))
-        text_rect = text.get_rect()
-        text_rect.center = (500,100)
-        window.blit(text, text_rect)
+
+        currectScore(window, move_count)
+        if isCompletedLevel(rect_id, circle_id) == 1:
+            highScore(window, getHighScore(rect_id, circle_id))
+        else:
+            highScore(window, 0)
 
 
         '''
@@ -376,6 +421,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
             deleteLevel(rect_id, circle_id)
+            saveHighScore(rect_id, circle_id, move_count)
             if DEBUG: print("you won")
             done = True  # important: we should need this but why dont we wghat
             return 0  # 0 = won the game
@@ -413,9 +459,9 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
     isLevelSaved = isSavedLevel(rect_id, circle_id)
     move_count = 0
     if isLevelSaved == 1:
-        print("steps:", levelgrid.steps[1])
+        if DEBUG: print("steps:", levelgrid.steps[1])
         colourList = toPygameColour(getSavedColours(rect_id, circle_id), levelgrid.steps[0])
-        print ("getsavecolours", getSavedColours(rect_id, circle_id))
+        if DEBUG: print ("getsavecolours", getSavedColours(rect_id, circle_id))
         levelgrid.setColoursFromSaved(colourList)
         move_count = getSavedScore(rect_id, circle_id)
         deleteLevel(rect_id, circle_id)
@@ -424,7 +470,7 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
 
 
     if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count) == 0:
-        # print("you have won")
+        print("you have won")
         iscomplete = 0
     else:
         iscomplete = 1
