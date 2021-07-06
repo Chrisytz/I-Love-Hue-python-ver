@@ -278,6 +278,10 @@ def createDatabase():
     else :
         cur.execute('''CREATE TABLE levels
                         (rect_id integer, circle_id integer, colour_codes text)''')
+        cur.execute('''CREATE TABLE highscore
+                        (rect_id integer, circle_id integer, score integer )''')
+        cur.execute('''CREATE TABLE score
+                        (rect_id integer, circle_id integer, score integer)''')
         print ("database has been created")
 
 

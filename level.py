@@ -239,13 +239,22 @@ def getSavedColours(rect_id, circle_id):
     level = cur.fetchone()
     return level[2]
 
+def getSavedScore(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM score WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+
+    score = cur.fetchone()
+    return score[2]
 
 
-def saveLevel(rect_id, circle_id, colour_codes):
+def saveLevel(rect_id, circle_id, colour_codes, count):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
 
     cur.execute("INSERT INTO levels VALUES (:rect_id, :circle_id, :colour_codes)", (rect_id, circle_id, colour_codes))
+    cur.execute("INSERT INTO score VALUES (:rect_id, :circle_id, :score)", (rect_id, circle_id, count))
+
 
     con.commit()
 
@@ -254,6 +263,7 @@ def deleteLevel(rect_id, circle_id):
     cur = con.cursor()
 
     cur.execute("DELETE from levels where rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+    cur.execute("DELETE from score where rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
 
     con.commit()
 
@@ -270,12 +280,11 @@ def isSavedLevel(rect_id, circle_id):
         return 1
 
 
-def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
+def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
     save_level_button = pygame.Rect(420, 200, 160,40)
     restart_level_button = pygame.Rect(420, 260, 160, 40)
-    count = 0
 
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
@@ -290,7 +299,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 # Button to quit
                 if save_level_button.collidepoint(pos):
                     if DEBUG: print("white button pressed")
-                    saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours())) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
+                    saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours()), int(move_count)) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
                     print ("getgridcolours", levelgrid.getGridColours())
                     print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
@@ -309,7 +318,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 if DEBUG: print("this is mousebutton up pos:", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
-                        count += 0.5
+                        move_count += 0.5
                         for sprite2 in moving_sprite_list:
                             sprite.rect.x = sprite2.original_x
                             sprite.rect.y = sprite2.original_y
@@ -323,9 +332,9 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                         sprite.rect.x = sprite.original_x
                         sprite.rect.y = sprite.original_y
                     sprite.clicked = False
-                if count % 1 != 0:
-                    count -= 0.5
-                print (int(count))
+                if move_count % 1 != 0:
+                    move_count -= 0.5
+                if DEBUG: print (int(move_count))
 
 
                 moving_sprite_list.empty()
@@ -350,7 +359,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
         pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
         pygame.draw.rect(window, (255, 255, 255), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render(str(int(count)), True, (255, 255, 255), (0,0,0))
+        text = font.render(str(int(move_count)), True, (255, 255, 255), (0,0,0))
         text_rect = text.get_rect()
         text_rect.center = (500,100)
         window.blit(text, text_rect)
@@ -402,17 +411,19 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
 
     #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
     isLevelSaved = isSavedLevel(rect_id, circle_id)
+    move_count = 0
     if isLevelSaved == 1:
         print("steps:", levelgrid.steps[1])
         colourList = toPygameColour(getSavedColours(rect_id, circle_id), levelgrid.steps[0])
         print ("getsavecolours", getSavedColours(rect_id, circle_id))
         levelgrid.setColoursFromSaved(colourList)
+        move_count = getSavedScore(rect_id, circle_id)
         deleteLevel(rect_id, circle_id)
 
     levelgrid.addToSpriteGroup(sprite_list)
 
 
-    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id) == 0:
+    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count) == 0:
         # print("you have won")
         iscomplete = 0
     else:
