@@ -275,6 +275,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
     moving_sprite_list = pygame.sprite.GroupSingle()
     save_level_button = pygame.Rect(420, 200, 160,40)
     restart_level_button = pygame.Rect(420, 260, 160, 40)
+    count = 0
+
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
@@ -307,6 +309,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 if DEBUG: print("this is mousebutton up pos:", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
+                        count += 0.5
                         for sprite2 in moving_sprite_list:
                             sprite.rect.x = sprite2.original_x
                             sprite.rect.y = sprite2.original_y
@@ -320,15 +323,23 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                         sprite.rect.x = sprite.original_x
                         sprite.rect.y = sprite.original_y
                     sprite.clicked = False
+                if count % 1 != 0:
+                    count -= 0.5
+                print (int(count))
+
+
                 moving_sprite_list.empty()
+
             if event.type == pygame.MOUSEMOTION:
                 posx, posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
                     # iirc the below code should run ok
                     if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
+
                         sprite.rect.move_ip(event.rel)
                         moving_sprite_list.draw(window)
             sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
+
             moving_sprite_list.draw(window)  # draw this last ALWAYS
             # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
             # in particular, we need a better way to calculate the '200' present here.
@@ -338,6 +349,11 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
 
         pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
         pygame.draw.rect(window, (255, 255, 255), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render(str(int(count)), True, (255, 255, 255), (0,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = (500,100)
+        window.blit(text, text_rect)
 
 
         '''
