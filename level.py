@@ -273,6 +273,9 @@ def isSavedLevel(rect_id, circle_id):
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
+    save_level_button = pygame.Rect(420, 200, 160,40)
+    restart_level_button = pygame.Rect(420, 260, 160, 40)
+
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
 
@@ -283,12 +286,16 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
                 # Button to quit
-                if ((420 < posx < 580) and (200 < posy < 250)):
+                if save_level_button.collidepoint(pos):
                     if DEBUG: print("white button pressed")
                     saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours())) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
                     print ("getgridcolours", levelgrid.getGridColours())
                     print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
+                if restart_level_button.collidepoint(pos):
+                    done = True
+                    runGame(rect_id, circle_id)
+
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
@@ -329,7 +336,9 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id):
                              pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                          levelgrid.horizontal_limit))
 
-        pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 50))  # THIS IS JUST A TEST THING :)
+        pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
+        pygame.draw.rect(window, (255, 255, 255), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
+
 
         '''
         todo: create a new button, when button is clicked, first run smth similar to the .getColour() method to yeet the data into a sql thing or a text file
@@ -384,8 +393,8 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
         levelgrid.setColoursFromSaved(colourList)
         deleteLevel(rect_id, circle_id)
 
-
     levelgrid.addToSpriteGroup(sprite_list)
+
 
     if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id) == 0:
         # print("you have won")
