@@ -280,7 +280,39 @@ def createDatabase():
                         (rect_id integer, circle_id integer, score integer )''')
         cur.execute('''CREATE TABLE score
                         (rect_id integer, circle_id integer, score integer)''')
+        cur.execute('''CREATE TABLE completedLevels
+                        (rect_id integer, circle_id integer)''')
+
         #print ("database has been created")
+
+def addToDatabase(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+
+    cur.execute("INSERT INTO completedLevels VALUES (:rect_id, :circle_id)", (rect_id, circle_id))
+
+    con.commit()
+
+def getFromDatabase(rect_id, circle_id):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM completedLevels WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+    data = cur.fetchall()
+    if len(data) == 0:
+        return 0
+    else:
+        return 1
+
+def updateCompleteness(overlay_sprites, number_sprites):
+    for i in range (3):
+        for sprite in overlay_sprites[i]:
+            if getFromDatabase(i, sprite.id) == 1:
+                sprite.complete = True
+        for sprite in number_sprites[i]:
+            if getFromDatabase(i, sprite.id) == 1:
+                sprite.update_image(True)
+                sprite.complete = True
+
 
 
 # This is the main entry point to the game.
@@ -363,6 +395,7 @@ def sidebar():
                                                           list_of_number_sprites[number],
                                                           win_vars, number)
 
+    updateCompleteness(list_of_overlay_sprites, list_of_number_sprites)
     # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
     window.fill(background_colour)
@@ -380,6 +413,7 @@ def sidebar():
     circles_visible = False
     circles_has_been_clicked = False
     rect_can_be_clicked = True
+
     while not done:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -452,6 +486,8 @@ def sidebar():
                                     for rect_sprite in list_of_overlay_sprites[temp_id]:
                                         if (rect_sprite.id == circle_sprite.pos_id):
                                             rect_sprite.complete = True
+                                            # print (temp_id, " and ", circle_sprite.pos_id)
+                                            addToDatabase(temp_id, circle_sprite.pos_id)
                                     for number_sprite in list_of_number_sprites[temp_id]:
                                         if (number_sprite.id == circle_sprite.pos_id):
                                             # print("updating")
