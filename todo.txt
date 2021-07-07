@@ -37,11 +37,11 @@ Todo
         ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
     - blind levels?
     - HINTS?
-    - gamestate tracking
+    ✓ gamestate tracking
 - main.py
     - main menu.
         ✓ Rectangles & Circle creation
-        - backgrounds
+        ✓ backgrounds
         - settings
         - visual components!
         --> rectangles and circles and settings
@@ -79,9 +79,6 @@ flow through system where each function returns a value which is taken as the gl
            1 = exit with issues
            2 = ?????
            ? = ????? << for future expansion
-
------ July 4, 2021 --------------------------------
-- Chris did a save level thing but only like gamestate not if you've completed the level before or not
 
 Immediate TODO for anni:
 - Don't auto-win on close level

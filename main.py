@@ -111,10 +111,10 @@ class Overlay(pygame.sprite.Sprite):
         self.image.fill(self.colour)
 
 class Settings(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, colour):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface((600,400))
-        self.colour = (0,0,0)
+        self.colour = colour
         self.image.set_alpha(0)
         self.image.fill(self.colour)
         self.rect = self.image.get_rect()
@@ -123,6 +123,28 @@ class Settings(pygame.sprite.Sprite):
     def fillWindow(self, alpha):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
+
+    def updateColour(self):
+        self.image = pygame.Surface((600,400))
+        self.image.fill(self.colour)
+        self.rect = self.image.get_rect()
+
+
+# class Buttons(pygame.sprite.Sprite):
+#     def __init(self):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.light_mode = pygame.Rect(40,40,160,40)
+#         self.dark_mode = pygame.Rect(40, 100, 160, 40)
+#         self.colour = (255,255,255)
+#         self.rect
+
+def createButtons():
+    light_mode = pygame.Rect(40, 40, 160, 40)
+    dark_mode = pygame.Rect(40, 100, 160, 40)
+    return light_mode, dark_mode
+
+#todo: I FUCKED THIS UP SO BADLY OMG its all wrong y i k e s
+
 
 '''
 OKAY SO many things to do, first we should create another class and then like in that other class we yeet in images from an array that i havent made yet
@@ -313,6 +335,28 @@ def updateCompleteness(overlay_sprites, number_sprites):
                 sprite.update_image(True)
                 sprite.complete = True
 
+def modes(lightMode, darkMode, textHoverColour, textColour, settingColour, sidebarColour, window, event):
+    pos = pygame.mouse.get_pos()
+    backgroundColour = settingColour
+    sideColour = sidebarColour
+    pygame.draw.rect(window, textColour, lightMode)
+    pygame.draw.rect(window, textColour, darkMode)
+
+    if lightMode.collidepoint(pos):
+        pygame.draw.rect(window, textHoverColour, lightMode)
+    if darkMode.collidepoint(pos):
+        pygame.draw.rect(window, textHoverColour, darkMode)
+
+    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+        if lightMode.collidepoint(pos):
+            backgroundColour = (255, 244, 234)
+            sideColour = (235, 238, 211)
+
+        if darkMode.collidepoint(pos):
+            backgroundColour = (71,60,68)
+            sideColour = (55,51,60)
+
+    return backgroundColour, backgroundColour, sideColour
 
 
 # This is the main entry point to the game.
@@ -329,6 +373,8 @@ def sidebar():
     # these are the dark colours
     # sidebar_colour = (55,51,60)
     # background_colour = (71,60,68)
+
+
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
     pygame.display.set_caption("Gradient Rect")
@@ -405,7 +451,10 @@ def sidebar():
     settingsCloseButtonInvs = pygame.Rect(0,0,40,40)
     settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
     window.blit(settingsButton, (0, 360))
-    settingsPage = Settings()
+    settingColour = (255, 244, 234)
+    light, dark = createButtons()
+    lmt, lmtc, dmt, dmtc = (0,0,0), (99,85,85), (255,255,255), (228,217,201) #lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
+    settingsPage = Settings(settingColour)
 
     pygame.display.update()
 
@@ -504,7 +553,20 @@ def sidebar():
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
                 window.blit(settingsButton, (0, 360))
-            window.blit(settingsPage.image, (0, 0, 400, 400))
+
+            textColour = None
+            textClickedColour = None
+            if settingsPage.open:
+                if settingsPage.colour == (255,244,234):
+                    textColour = lmt
+                    textClickedColour = lmtc
+                else:
+                    textColour = dmt
+                    textClickedColour = dmtc
+
+                window.blit(settingsPage.image, (0, 0, 600, 400))
+                settingsPage.colour, background_colour, sidebar_colour = modes(light, dark, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event)
+                settingsPage.updateColour()
 
             pygame.display.flip()
 
