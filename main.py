@@ -474,6 +474,9 @@ def sidebar():
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
     cursor = 0
 
+    textColour = lmt
+    textClickedColour = lmtc
+
     pygame.display.update()
 
     while not done:
@@ -549,7 +552,7 @@ def sidebar():
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 #print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour)
+                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour, textClickedColour)
                                 #print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
@@ -577,10 +580,6 @@ def sidebar():
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
                 window.blit(settingsButton, (0, 360))
-
-
-            textColour = None
-            textClickedColour = None
 
             if settingsPage.open:
                 if settingsPage.colour == (255,244,234):
