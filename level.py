@@ -327,12 +327,22 @@ def saveHighScore(rect_id, circle_id, new_score):
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
+    clicked_sprite_list = pygame.sprite.GroupSingle()
     save_level_button = pygame.Rect(420, 200, 160,40)
     restart_level_button = pygame.Rect(420, 260, 160, 40)
+    cursor_img = pygame.image.load('rsz_circle.png')
+    rect_size = 40
+    if circle_id < 3:
+        rect_size = 100
+    elif circle_id < 6:
+        rect_size = 50
 
+    show_cursor = True
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
+
+        window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -357,6 +367,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                         if DEBUG: print(sprite.constant)
                         sprite.clicked = True
                         moving_sprite_list.add(sprite)
+                        clicked_sprite_list = moving_sprite_list.copy()
+
             elif event.type == pygame.MOUSEBUTTONUP:
                 pos = pygame.mouse.get_pos()
                 if DEBUG: print("this is mousebutton up pos:", pos)
@@ -382,32 +394,45 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
 
                 moving_sprite_list.empty()
+                clicked_sprite_list.empty()
 
             if event.type == pygame.MOUSEMOTION:
                 posx, posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
                     # iirc the below code should run ok
                     if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
-
                         sprite.rect.move_ip(event.rel)
-                        moving_sprite_list.draw(window)
-            sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
 
-            moving_sprite_list.draw(window)  # draw this last ALWAYS
-            # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
-            # in particular, we need a better way to calculate the '200' present here.
-            pygame.draw.rect(window, (0, 0, 0),
-                             pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
-                                         levelgrid.horizontal_limit))
+        #moving_sprite_list.draw(window)
+        sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
+        moving_sprite_list.draw(window)  # draw this last ALWAYS
+
+        # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
+        # in particular, we need a better way to calculate the '200' present here.
+        pygame.draw.rect(window, (235,238,211),
+                         pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
+                                     levelgrid.horizontal_limit))
 
         pygame.draw.rect(window, (255, 255, 255), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
         pygame.draw.rect(window, (255, 255, 255), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
+
 
         currectScore(window, move_count)
         if isCompletedLevel(rect_id, circle_id) == 1:
             highScore(window, getHighScore(rect_id, circle_id))
         else:
             highScore(window, 0)
+
+        pygame.mouse.set_visible(False)
+
+
+
+        for sprite in moving_sprite_list:
+            pygame.draw.rect(window, window.get_at((int(sprite.original_x), int(sprite.original_y))), (int(sprite.original_x), int(sprite.original_y), rect_size, rect_size))
+
+        window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
+
+
 
 
         '''

@@ -444,27 +444,38 @@ def sidebar():
     updateCompleteness(list_of_overlay_sprites, list_of_number_sprites)
     # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
-    window.fill(background_colour)
-    pygame.draw.rect(window, sidebar_colour, (0,0,200,400))
-    rect_sprite_list.draw(window)
-    settingsButtonInvs = pygame.Rect(0, 360,40,40)
-    settingsCloseButtonInvs = pygame.Rect(0,0,40,40)
-    settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
-    window.blit(settingsButton, (0, 360))
-    settingColour = (255, 244, 234)
-    light, dark = createButtons()
-    lmt, lmtc, dmt, dmtc = (0,0,0), (99,85,85), (255,255,255), (228,217,201) #lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
-    settingsPage = Settings(settingColour)
 
-    pygame.display.update()
 
     # running the game
     circles_visible = False
     circles_has_been_clicked = False
     rect_can_be_clicked = True
+    settingColour = (255, 244, 234)
+    settingsPage = Settings(settingColour)
+    light, dark = createButtons()
+    lmt, lmtc, dmt, dmtc = (0, 0, 0), (99, 85, 85), (255, 255, 255), (228, 217,
+                                                                      201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
+    settingsButtonInvs = pygame.Rect(0, 360, 40, 40)
+    settingsCloseButtonInvs = pygame.Rect(0, 0, 40, 40)
+    settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
+    cursor_img = pygame.image.load('rsz_circle.png')
+
+
+    pygame.display.update()
 
     while not done:
+        window.fill(background_colour)
+        pygame.draw.rect(window, sidebar_colour, (0, 0, 200, 400))
+        rect_sprite_list.draw(window)
+
+        window.blit(settingsButton, (0, 360))
+
         for event in pygame.event.get():
+
+
+
+            # pygame.mouse.set_visible(False)
+            # window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
             if event.type == pygame.QUIT:
                 done = True
                 # rectangleEventHandler(event, pygame.mouse.get_pos())
@@ -554,6 +565,7 @@ def sidebar():
                 rect_sprite_list.draw(window)
                 window.blit(settingsButton, (0, 360))
 
+
             textColour = None
             textClickedColour = None
             if settingsPage.open:
@@ -570,6 +582,8 @@ def sidebar():
                 for i in range (3):
                     for sprite in list_of_overlay_sprites[i]:
                         sprite.colour = settingsPage.colour
+            pygame.mouse.set_visible(False)
+            window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
 
             pygame.display.flip()
 
