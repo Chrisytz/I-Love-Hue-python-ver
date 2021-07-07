@@ -110,6 +110,7 @@ class Overlay(pygame.sprite.Sprite):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
 
+
 class Settings(pygame.sprite.Sprite):
     def __init__(self, colour):
         pygame.sprite.Sprite.__init__(self)
@@ -125,7 +126,6 @@ class Settings(pygame.sprite.Sprite):
         self.image.fill(self.colour)
 
     def updateColour(self):
-        self.image = pygame.Surface((600,400))
         self.image.fill(self.colour)
         self.rect = self.image.get_rect()
 
@@ -567,6 +567,9 @@ def sidebar():
                 window.blit(settingsPage.image, (0, 0, 600, 400))
                 settingsPage.colour, background_colour, sidebar_colour = modes(light, dark, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event)
                 settingsPage.updateColour()
+                for i in range (3):
+                    for sprite in list_of_overlay_sprites[i]:
+                        sprite.colour = settingsPage.colour
 
             pygame.display.flip()
 
