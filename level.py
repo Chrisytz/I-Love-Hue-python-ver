@@ -324,13 +324,13 @@ def saveHighScore(rect_id, circle_id, new_score):
 
     con.commit()
 
-def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count):
+def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
     clicked_sprite_list = pygame.sprite.GroupSingle()
     save_level_button = pygame.Rect(420, 200, 160,40)
     restart_level_button = pygame.Rect(420, 260, 160, 40)
-    cursor_img = pygame.image.load('rsz_circle.png')
+    cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
     rect_size = 40
     if circle_id < 3:
         rect_size = 100
@@ -341,8 +341,6 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
-
-        window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -359,7 +357,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                     done = True
                 if restart_level_button.collidepoint(pos):
                     done = True
-                    runGame(rect_id, circle_id)
+                    runGame(rect_id, circle_id, cursor, background_colour)
 
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
@@ -409,7 +407,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
         # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
         # in particular, we need a better way to calculate the '200' present here.
-        pygame.draw.rect(window, (235,238,211),
+        pygame.draw.rect(window, (background_colour),
                          pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                      levelgrid.horizontal_limit))
 
@@ -430,7 +428,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         for sprite in moving_sprite_list:
             pygame.draw.rect(window, window.get_at((int(sprite.original_x), int(sprite.original_y))), (int(sprite.original_x), int(sprite.original_y), rect_size, rect_size))
 
-        window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
+        window.blit(cursor_list[cursor], ((pygame.mouse.get_pos()[0]-10), (pygame.mouse.get_pos()[1]-10)))
 
 
 
@@ -453,7 +451,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             # you've won the game
 
 
-def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
+def run_level(level, rect_id, circle_id, cursor, background_colour): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
     """This will run the entire level!"""
     isComplete = 1
     # Todo: Do we want this to only run one level?
@@ -494,7 +492,7 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
     levelgrid.addToSpriteGroup(sprite_list)
 
 
-    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count) == 0:
+    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour) == 0:
         print("you have won")
         iscomplete = 0
     else:
@@ -507,7 +505,7 @@ def run_level(level, rect_id, circle_id): #todo: ive alos gotta add rect id and 
     # at this point, everything has been created properly, hand over to run_game.
 
 
-def runGame(rect_id, circle_id):
+def runGame(rect_id, circle_id, cursor, background_colour):
     level = 0  # TODO: CHANGE THIS
     level_complete = 0
     window_size = (600, 400)
@@ -629,7 +627,7 @@ def runGame(rect_id, circle_id):
     constants.append((x_step - 1, 0))
 
     level = testWindow, colours, colour_size, constants, window_size, steps
-    return run_level(level, rect_id, circle_id)
+    return run_level(level, rect_id, circle_id, cursor, background_colour)
 
 
 if __name__ == "__main__":

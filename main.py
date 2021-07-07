@@ -141,7 +141,11 @@ class Settings(pygame.sprite.Sprite):
 def createButtons():
     light_mode = pygame.Rect(40, 40, 160, 40)
     dark_mode = pygame.Rect(40, 100, 160, 40)
-    return light_mode, dark_mode
+    circle = pygame.Rect(40, 160, 40, 40)
+    x = pygame.Rect(100, 160, 40, 40)
+    arrow = pygame.Rect(160, 160, 40, 40)
+
+    return light_mode, dark_mode, circle, x, arrow
 
 #todo: I FUCKED THIS UP SO BADLY OMG its all wrong y i k e s
 
@@ -335,17 +339,19 @@ def updateCompleteness(overlay_sprites, number_sprites):
                 sprite.update_image(True)
                 sprite.complete = True
 
-def modes(lightMode, darkMode, textHoverColour, textColour, settingColour, sidebarColour, window, event):
+def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour, textColour, settingColour, sidebarColour, window, event):
+    button_list = [lightMode, darkMode, circle, x, arrow]
+    cursor_value = current_cursor
     pos = pygame.mouse.get_pos()
     backgroundColour = settingColour
     sideColour = sidebarColour
-    pygame.draw.rect(window, textColour, lightMode)
-    pygame.draw.rect(window, textColour, darkMode)
+    for button in button_list:
+        pygame.draw.rect(window, textColour, button)
 
-    if lightMode.collidepoint(pos):
-        pygame.draw.rect(window, textHoverColour, lightMode)
-    if darkMode.collidepoint(pos):
-        pygame.draw.rect(window, textHoverColour, darkMode)
+    for button in button_list:
+        if button.collidepoint(pos):
+            pygame.draw.rect(window, textHoverColour, button)
+
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         if lightMode.collidepoint(pos):
@@ -356,7 +362,14 @@ def modes(lightMode, darkMode, textHoverColour, textColour, settingColour, sideb
             backgroundColour = (71,60,68)
             sideColour = (55,51,60)
 
-    return backgroundColour, backgroundColour, sideColour
+        if circle.collidepoint(pos):
+            cursor_value = 0
+        if x.collidepoint(pos):
+            cursor_value = 1
+        if arrow.collidepoint(pos):
+            cursor_value = 2
+
+    return backgroundColour, backgroundColour, sideColour, cursor_value
 
 
 # This is the main entry point to the game.
@@ -452,14 +465,14 @@ def sidebar():
     rect_can_be_clicked = True
     settingColour = (255, 244, 234)
     settingsPage = Settings(settingColour)
-    light, dark = createButtons()
+    light, dark, circle, x, arrow = createButtons()
     lmt, lmtc, dmt, dmtc = (0, 0, 0), (99, 85, 85), (255, 255, 255), (228, 217,
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
     settingsButtonInvs = pygame.Rect(0, 360, 40, 40)
     settingsCloseButtonInvs = pygame.Rect(0, 0, 40, 40)
     settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
-    cursor_img = pygame.image.load('rsz_circle.png')
-
+    cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
+    cursor = 0
 
     pygame.display.update()
 
@@ -536,7 +549,7 @@ def sidebar():
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 #print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.pos_id)
+                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour)
                                 #print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
@@ -568,6 +581,7 @@ def sidebar():
 
             textColour = None
             textClickedColour = None
+
             if settingsPage.open:
                 if settingsPage.colour == (255,244,234):
                     textColour = lmt
@@ -577,19 +591,16 @@ def sidebar():
                     textClickedColour = dmtc
 
                 window.blit(settingsPage.image, (0, 0, 600, 400))
-                settingsPage.colour, background_colour, sidebar_colour = modes(light, dark, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event)
+                settingsPage.colour, background_colour, sidebar_colour, cursor = modes(light, dark, circle, x, arrow, cursor, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event)
                 settingsPage.updateColour()
                 for i in range (3):
                     for sprite in list_of_overlay_sprites[i]:
                         sprite.colour = settingsPage.colour
             pygame.mouse.set_visible(False)
-            window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
+            window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]))
 
             pygame.display.flip()
-
     pygame.quit()
-
-
 # create loading screen!
 
 # create level selection screen !
