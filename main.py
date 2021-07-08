@@ -34,7 +34,7 @@ DEBUG = False
 class Rect(pygame.sprite.Sprite):
     def __init__(self, sidebar_rect, x_pos, y_pos, level_id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(sidebar_rect[level_id]).convert_alpha()
+        self.image = pygame.transform.smoothscale(pygame.image.load(sidebar_rect[level_id]).convert_alpha(), (160, 40))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -45,7 +45,7 @@ class Rect(pygame.sprite.Sprite):
 class Circle(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, pos_id, list_id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(circle_list[list_id][j]).convert_alpha()
+        self.image = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][j]).convert_alpha(), (107,107))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -62,7 +62,7 @@ class Circle(pygame.sprite.Sprite):
 class OverlayNumbers(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, number_list, number_list_blk, i, j, id, list_id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load(number_list[id]).convert_alpha()
+        self.image = pygame.transform.scale(pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(), (107,107)), (107,107))
         self.img_blk = pygame.image.load(number_list_blk[id]).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
@@ -78,7 +78,7 @@ class OverlayNumbers(pygame.sprite.Sprite):
 
     def update_image(self, complete):
         self.complete = True
-        self.image = self.img_blk
+        self.image = pygame.transform.scale(pygame.transform.smoothscale(self.img_blk, (107,107)), (107,107))
         self.rect = self.image.get_rect()
         self.rect.x = self.x_pos
         self.rect.y = self.y_pos
@@ -219,6 +219,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars, sidebar_rect):
         #              (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
         #              win_vars, i))
         sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"], (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i))
+
     return sprite_list
 
 
@@ -412,8 +413,8 @@ def sidebar():
                    [(60, 38, 80), (233, 72, 137), (255, 121, 93), (255, 184, 88)],
                    [(46, 58, 83), (96, 155, 185), (216, 225, 246), (249, 175, 164)]]
     colour_list_circle = [
-        ["Circles1NEW2/0.png", "Circles1NEW2/1.png", "Circles1NEW2/2.png", "Circles1NEW2/3.png", "Circles1NEW2/4.png", "Circles1NEW2/5.png",
-         "Circles1NEW2/6.png", "Circles1NEW2/7.png", "Circles1NEW2/8.png"],
+        ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
+         "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
         ["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
         ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",

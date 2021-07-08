@@ -516,7 +516,7 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
 def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj):
     level = 0  # TODO: CHANGE THIS
     level_complete = 0
-    window_size = (600, 400)
+    window_size = (900, 600)
     testWindow = pygame.display.set_mode((window_size))
 
     # common sizes for 1200x900
