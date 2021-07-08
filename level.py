@@ -331,11 +331,11 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     save_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"], win_vars["sidebar_rect_width"],win_vars["sprite_size"])
     restart_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"]+win_vars["sprite_size"]+win_vars["sprite_size"]/2, win_vars["sidebar_rect_width"], win_vars["sprite_size"])
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
-    rect_size = 40
+    rect_size = win_vars["gameboard_size"]/10
     if circle_id < 3:
-        rect_size = 100
+        rect_size = win_vars["gameboard_size"]/4
     elif circle_id < 6:
-        rect_size = 50
+        rect_size = win_vars["gameboard_size"]/8
 
     show_cursor = True
 

@@ -424,7 +424,8 @@ def sidebar():
         "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
         "space_between_circles": (win_size[1] * 0.05),
         "level_button_loc": (win_size[1])/2,
-        "font_size": win_size[1]/12.5
+        "font_size": win_size[1]/12.5,
+        "gameboard_size": win_size[1]
     }
 
     # todo: multiple colours loaded from levels file?
