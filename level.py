@@ -29,8 +29,8 @@ def drawGridLoose(window, win_size, steps, grid):
     pygame.display.update()
 
 
-def getColours(window, window_size, steps):
-    x_size, y_size = window_size
+def getColours(window, win_size, steps):
+    x_size, y_size = win_size
     x_step, y_step = steps
 
     x_loc_scalar = x_size / x_step
@@ -49,10 +49,10 @@ def getColours(window, window_size, steps):
 # Const functions here.
 
 class Rect(pygame.sprite.Sprite):
-    def __init__(self, pos, colour, window_size, steps, constant=False):
+    def __init__(self, pos, colour, win_size, steps, constant=False):
         pygame.sprite.Sprite.__init__(self)
-        rectsize_x = window_size[0] / steps[0]
-        rectsize_y = window_size[1] / steps[1]
+        rectsize_x = win_size[0] / steps[0]
+        rectsize_y = win_size[1] / steps[1]
         self.image = pygame.Surface([rectsize_x, rectsize_y])
         self.image.fill(colour)
         self.clicked = False
@@ -73,14 +73,14 @@ class Grid:
     This class should contain (one) grid which we can use to control everything on each level
     """
 
-    def __init__(self, window, colours, colour_size, constants, window_size, drawing_size, steps):
+    def __init__(self, window, colours, colour_size, constants, win_size, drawing_size, steps):
         self.window = window  # window which everything will be drawn onto
         self.colours = colours  # colours and their locations.
         self.gradient_size = colour_size
         self.constants = constants
-        self.window_size = window_size  # (x, y) size of window
+        self.win_size = win_size  # (x, y) size of window
         self.drawing_size = drawing_size
-        self.horizontal_limit = (2 / 3) * window_size[0]
+        self.horizontal_limit = (2 / 3) * win_size[0]
         self.steps = steps
         self.original_grid = []
         self.shuffle_grid = []
@@ -190,7 +190,7 @@ class Grid:
                 else:
                     rect = Rect(pos, self.shuffle_grid[i][j], self.drawing_size, self.steps)
                 sprite_list.add(rect)
-                # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.window_size, self.steps))
+                # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.win_size, self.steps))
 
 
 def addColours(colour_list, rect_clicked, circle_clicked):
@@ -296,18 +296,18 @@ def isSavedLevel(rect_id, circle_id):
         if DEBUG: print('there is a game saved')
         return 1
 
-def currentScore(window, move_count, background_colour, textColour):
-    font = pygame.font.Font('freesansbold.ttf', 32)
+def currentScore(window, move_count, background_colour, textColour, win_vars):
+    font = pygame.font.Font('freesansbold.ttf', int(win_vars["font_size"]))
     text = font.render(str(int(move_count)), True, (textColour), (background_colour))
     text_rect = text.get_rect()
-    text_rect.center = (500, 150)
+    text_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"]*3)
     window.blit(text, text_rect)
 
-def highScore(window, best_moves, background_colour, textColour):
-    font = pygame.font.Font('freesansbold.ttf', 32)
+def highScore(window, best_moves, background_colour, textColour, win_vars):
+    font = pygame.font.Font('freesansbold.ttf', int(win_vars["font_size"]))
     text = font.render(str(int(best_moves)), True, (textColour), (background_colour))
     text_rect = text.get_rect()
-    text_rect.center = (500, 50)
+    text_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"])
     window.blit(text, text_rect)
 
 def saveHighScore(rect_id, circle_id, new_score):
@@ -324,12 +324,12 @@ def saveHighScore(rect_id, circle_id, new_score):
 
     con.commit()
 
-def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj):
+def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
     clicked_sprite_list = pygame.sprite.GroupSingle()
-    save_level_button = pygame.Rect(420, 200, 160,40)
-    restart_level_button = pygame.Rect(420, 260, 160, 40)
+    save_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"], win_vars["sidebar_rect_width"],win_vars["sprite_size"])
+    restart_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"]+win_vars["sprite_size"]+win_vars["sprite_size"]/2, win_vars["sidebar_rect_width"], win_vars["sprite_size"])
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
     rect_size = 40
     if circle_id < 3:
@@ -357,7 +357,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                     done = True
                 if restart_level_button.collidepoint(pos):
                     done = True
-                    runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj)
+                    runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars)
 
                 if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
@@ -411,23 +411,23 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                          pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                      levelgrid.horizontal_limit))
 
-        load = pygame.Rect(420,200,160,40)
-        restart = pygame.Rect(420, 260, 160, 40)
-        if load.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(window, (textClickedColour), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
+        # load = pygame.Rect(420,200,160,40)
+        # restart = pygame.Rect(420, 260, 160, 40)
+        if save_level_button.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(window, (textClickedColour), (save_level_button))  # THIS IS JUST A TEST THING :)
         else:
-            pygame.draw.rect(window, (textColour), (420, 200, 160, 40))  # THIS IS JUST A TEST THING :)
+            pygame.draw.rect(window, (textColour), (save_level_button))  # THIS IS JUST A TEST THING :)
 
-        if restart.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(window, (textClickedColour), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
+        if restart_level_button.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(window, (textClickedColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
         else:
-            pygame.draw.rect(window, (textColour), (420, 260, 160, 40))  # THIS IS JUST A TEST THING :)
+            pygame.draw.rect(window, (textColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
 
-        currentScore(window, move_count, background_colour, textColour)
+        currentScore(window, move_count, background_colour, textColour, win_vars)
         if isCompletedLevel(rect_id, circle_id) == 1:
-            highScore(window, getHighScore(rect_id, circle_id), background_colour, textColour)
+            highScore(window, getHighScore(rect_id, circle_id), background_colour, textColour, win_vars)
         else:
-            highScore(window, 0, background_colour, textColour)
+            highScore(window, 0, background_colour, textColour, win_vars)
 
         pygame.mouse.set_visible(False)
 
@@ -459,7 +459,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             # you've won the game
 
 
-def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
+def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
     """This will run the entire level!"""
     isComplete = 1
     # Todo: Do we want this to only run one level?
@@ -467,22 +467,22 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     sprite_list = pygame.sprite.Group()
     sprite_single = pygame.sprite.GroupSingle()
 
-    window, colours, colour_size, constants, window_size, steps = level
+    window, colours, colour_size, constants, win_size, steps = level
     pygame.display.set_caption("LEVEL!!!!!")
-    if window_size[0] < window_size[1]:
-        drawing_size = (window_size[0], window_size[0])
+    if win_size[0] < win_size[1]:
+        drawing_size = (win_size[0], win_size[0])
     else:
-        drawing_size = (window_size[1], window_size[1])
+        drawing_size = (win_size[1], win_size[1])
 
     # TODO: horizontal lim to be coded here with diff between drawing size and window sizes
 
     # pygame.init()  # is pygame already init from another side?
-    # window = pygame.display.set_mode((window_size))
-    levelgrid = Grid(window, colours, colour_size, constants, window_size, drawing_size, steps)
+    # window = pygame.display.set_mode((win_size))
+    levelgrid = Grid(window, colours, colour_size, constants, win_size, drawing_size, steps)
     if DEBUG: print(constants)
 
     levelgrid.drawGradient()
-    # drawGridLoose(window, window_size, steps, levelgrid.shuffle_grid) # todo: remove
+    # drawGridLoose(window, win_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
     levelgrid.shuffle(bypass = False)
 
@@ -500,7 +500,7 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     levelgrid.addToSpriteGroup(sprite_list)
 
 
-    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj) == 0:
+    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars) == 0:
         print("you have won")
         iscomplete = 0
     else:
@@ -513,11 +513,11 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     # at this point, everything has been created properly, hand over to run_game.
 
 
-def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj):
+def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars):
     level = 0  # TODO: CHANGE THIS
     level_complete = 0
-    window_size = (900, 600)
-    testWindow = pygame.display.set_mode((window_size))
+    win_size = (900, 600)
+    testWindow = pygame.display.set_mode((win_size))
 
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
@@ -634,14 +634,14 @@ def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClick
     constants.append((0, y_step - 1))
     constants.append((x_step - 1, 0))
 
-    level = testWindow, colours, colour_size, constants, window_size, steps
-    return run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj)
+    level = testWindow, colours, colour_size, constants, win_size, steps
+    return run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars)
 
 
 if __name__ == "__main__":
     level = 0  # TODO: CHANGE THIS
-    window_size = (400, 400)
-    testWindow = pygame.display.set_mode((window_size))
+    win_size = (400, 400)
+    testWindow = pygame.display.set_mode((win_size))
     pygame.display.set_caption("test_window")
 
     # common sizes for 1200x900
@@ -784,5 +784,5 @@ if __name__ == "__main__":
     # createColourGridyx(windowSize, c1, c2, c3, c4, x_step, y_step, constants)
 
     steps = x_step, y_step
-    level = testWindow, colours, colour_size, constants, window_size, steps
+    level = testWindow, colours, colour_size, constants, win_size, steps
     run_level(level)

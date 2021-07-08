@@ -32,9 +32,10 @@ DEBUG = False
 #         self.level_id = level_id  ## what the fuck is level id chris?!?
 
 class Rect(pygame.sprite.Sprite):
-    def __init__(self, sidebar_rect, x_pos, y_pos, level_id):
+    def __init__(self, sidebar_rect, x_pos, y_pos, level_id, win_vars):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.smoothscale(pygame.image.load(sidebar_rect[level_id]).convert_alpha(), (160, 40))
+        self.size = int(win_vars["sidebar_rect_width"])
+        self.image = pygame.transform.smoothscale(pygame.image.load(sidebar_rect[level_id]).convert_alpha(), (self.size, int(self.size/4)))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -45,10 +46,16 @@ class Rect(pygame.sprite.Sprite):
 class Circle(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, pos_id, list_id):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][j]).convert_alpha(), (107,107))
+        self.size = int(win_vars["circle_size"])
+        self.image = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(), (self.size,self.size))
+        self.image_dark = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][1][j]).convert_alpha(), (self.size,self.size))
+        self.image_light = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(), (self.size,self.size))
+
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
+        self.x_pos = x_pos
+        self.y_pos = y_pos
         self.clicked = False
         self.has_been_clicked = False
         self.pos_id = pos_id  # pos id corresponds to the position of the thing on a level
@@ -58,12 +65,24 @@ class Circle(pygame.sprite.Sprite):
         # list ID currently corresponds to the STAGE or SET of colours.
         self.complete = False
 
+    def update_image(self, bg):
+        if bg == 0:
+            self.image = self.image_light
+        else:
+            self.image = self.image_dark
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x_pos
+        self.rect.y = self.y_pos
+
 
 class OverlayNumbers(pygame.sprite.Sprite):
-    def __init__(self, x_pos, y_pos, number_list, number_list_blk, i, j, id, list_id):
+    def __init__(self, x_pos, y_pos, number_list, number_list_blk, i, j, id, list_id, win_vars):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.transform.scale(pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(), (107,107)), (107,107))
-        self.img_blk = pygame.image.load(number_list_blk[id]).convert_alpha()
+        self.size = int(win_vars["circle_size"])
+
+        self.image = pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(), (self.size, self.size))
+        self.img_blk = pygame.transform.smoothscale(pygame.image.load(number_list_blk[id]).convert_alpha(), (self.size, self.size))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -73,12 +92,13 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.i = i
         self.j = j
         self.list_id = list_id
+        self.size = win_vars["circle_size"]
         self.complete = False
         # print("printing id",id)
 
     def update_image(self, complete):
         self.complete = True
-        self.image = pygame.transform.scale(pygame.transform.smoothscale(self.img_blk, (107,107)), (107,107))
+        self.image = self.img_blk
         self.rect = self.image.get_rect()
         self.rect.x = self.x_pos
         self.rect.y = self.y_pos
@@ -112,9 +132,9 @@ class Overlay(pygame.sprite.Sprite):
 
 
 class Settings(pygame.sprite.Sprite):
-    def __init__(self, colour):
+    def __init__(self, colour, win_size):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((600,400))
+        self.image = pygame.Surface((win_size[0],win_size[1]))
         self.colour = colour
         self.image.set_alpha(0)
         self.image.fill(self.colour)
@@ -138,25 +158,14 @@ class Settings(pygame.sprite.Sprite):
 #         self.colour = (255,255,255)
 #         self.rect
 
-def createButtons():
-    light_mode = pygame.Rect(40, 40, 160, 40)
-    dark_mode = pygame.Rect(40, 100, 160, 40)
-    circle = pygame.Rect(40, 160, 40, 40)
-    x = pygame.Rect(100, 160, 40, 40)
-    arrow = pygame.Rect(160, 160, 40, 40)
+def createButtons(win_vars):
+    light_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"], win_vars["sidebar_rect_width"], win_vars["sprite_size"])
+    dark_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"]*2 + (win_vars["sprite_size"]/2), win_vars["sidebar_rect_width"], win_vars["sprite_size"])
+    circle = pygame.Rect(win_vars["sprite_size"], win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
+    x = pygame.Rect(win_vars["sprite_size"]*2 + (win_vars["sprite_size"]/2), win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
+    arrow = pygame.Rect(win_vars["sprite_size"]*3 + ((win_vars["sprite_size"]/2)*2), win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
 
     return light_mode, dark_mode, circle, x, arrow
-
-#todo: I FUCKED THIS UP SO BADLY OMG its all wrong y i k e s
-
-
-'''
-OKAY SO many things to do, first we should create another class and then like in that other class we yeet in images from an array that i havent made yet
-so like each button thing in the settings is an image (we need a clicked and not clicked version)
-and then we do like if settingspage.open == true then we do all the collide point things and also change opacity of all the images to 255
-otherwise we just like dont show them and dont allow ppl to press on them by yeeting it out of the if statement or wtv
-    -> we would wanna do smth like a forloop to loop through all the possibilities and then we do a like if the clicked on this then this else if this then that
-'''
 
    # def closeWindow(self):
 
@@ -218,7 +227,7 @@ def addSidebarSprites(sprite_list, colour_list, win_vars, sidebar_rect):
         #         Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
         #              (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
         #              win_vars, i))
-        sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"], (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i))
+        sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"], (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i, win_vars))
 
     return sprite_list
 
@@ -243,7 +252,7 @@ def addCircleSprites(background_colour, colour_list_circle, number_list_white, n
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
                                               win_vars["bar_thickness"] + i * (
                                                       win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                              number_list_white, number_list_black, i, j, count, level_id))
+                                              number_list_white, number_list_black, i, j, count, level_id, win_vars))
             count += 1
 
     return circle_sprites
@@ -346,6 +355,7 @@ def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour
     pos = pygame.mouse.get_pos()
     backgroundColour = settingColour
     sideColour = sidebarColour
+    backgroundValue = None
     for button in button_list:
         pygame.draw.rect(window, textColour, button)
 
@@ -375,13 +385,19 @@ def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour
 
     return backgroundColour, backgroundColour, sideColour, cursor_value, adj
 
+def circleBackground(settingsColour):
+    if settingsColour == (255,244,234):
+        return 0
+    else:
+        return 1
+
 
 # This is the main entry point to the game.
 
 def sidebar():
     # todo: anni will create a proper init function to set these variables.
     # init
-    win_size = 600, 400
+    win_size = 900, 600
     done = False
     # these are the light colours!
     sidebar_colour = (235,238,211)
@@ -399,13 +415,16 @@ def sidebar():
     # calculating variables
     win_vars = {
         "bar_thickness": win_size[1] * 0.05,
-        "sprite_size": ((win_size[0] / 3) - (win_size[1] * 0.1)) / 4,
+        "sidebar_rect_width": ((win_size[0] / 3) - (win_size[1] * 0.1)),
+        "sprite_size": (((win_size[0] / 3) - (win_size[1] * 0.1)))/4,
         "width_sidebar": win_size[0] / 3,
         "bottom_bar_loc": win_size[1] * 0.95,
         "black": (0, 0, 0),
         "num_of_rectangles": 3,
         "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
-        "space_between_circles": win_size[1] * 0.05
+        "space_between_circles": (win_size[1] * 0.05),
+        "level_button_loc": (win_size[1])/2,
+        "font_size": win_size[1]/12.5
     }
 
     # todo: multiple colours loaded from levels file?
@@ -413,12 +432,16 @@ def sidebar():
                    [(60, 38, 80), (233, 72, 137), (255, 121, 93), (255, 184, 88)],
                    [(46, 58, 83), (96, 155, 185), (216, 225, 246), (249, 175, 164)]]
     colour_list_circle = [
-        ["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
-         "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
-        ["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
-         "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
-        ["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
-         "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"]]
+        [["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
+          "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
+         ["Circles1Dark/0.png", "Circles1Dark/1.png", "Circles1Dark/2.png", "Circles1Dark/3.png", "Circles1Dark/4.png", "Circles1Dark/5.png",
+          "Circles1Dark/6.png", "Circles1Dark/7.png", "Circles1Dark/8.png"]],
+        [["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
+          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"], ["Circles2Dark/0.png", "Circles2Dark/1.png", "Circles2Dark/2.png", "Circles2Dark/3.png", "Circles2Dark/4.png", "Circles2Dark/5.png",
+          "Circles2Dark/6.png", "Circles2Dark/7.png", "Circles2Dark/8.png"]],
+        [["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
+          "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"], ["Circles3Dark/0.png", "Circles3Dark/1.png", "Circles3Dark/2.png", "Circles3Dark/3.png", "Circles3Dark/4.png", "Circles3Dark/5.png",
+          "Circles3Dark/6.png", "Circles3Dark/7.png", "Circles3Dark/8.png"]]]
 
     rect_sprite_list = pygame.sprite.Group()
 
@@ -468,16 +491,19 @@ def sidebar():
     circles_has_been_clicked = False
     rect_can_be_clicked = True
     settingColour = (255, 244, 234)
-    settingsPage = Settings(settingColour)
-    light, dark, circle, x, arrow = createButtons()
+    settingsPage = Settings(settingColour, win_size)
+    light, dark, circle, x, arrow = createButtons(win_vars)
     lmt, lmtc, dmt, dmtc = (0, 0, 0), (99, 85, 85), (255, 255, 255), (228, 217,
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
-    settingsButtonInvs = pygame.Rect(0, 360, 40, 40)
-    settingsCloseButtonInvs = pygame.Rect(0, 0, 40, 40)
-    settingsButton = pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha()
+    settingsButtonInvs = pygame.Rect(0, win_size[1]-int(win_vars["sprite_size"]), win_vars["sprite_size"], win_vars["sprite_size"])
+    settingsCloseButtonInvs = pygame.Rect(0, 0, win_vars["sprite_size"], win_vars["sprite_size"])
+    settingsButton = pygame.transform.smoothscale(pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha(), (int(win_vars["sprite_size"]), int(win_vars["sprite_size"])))
+    settingsCloseButton = pygame.transform.smoothscale(pygame.image.load("rsz_x.png").convert_alpha(), (int(win_vars["sprite_size"]/2), int(win_vars["sprite_size"]/2)))
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
     cursor = 0
     adj = 10
+
+    circleBgColour = 0
 
     textColour = lmt
     textClickedColour = lmtc
@@ -486,10 +512,10 @@ def sidebar():
 
     while not done:
         window.fill(background_colour)
-        pygame.draw.rect(window, sidebar_colour, (0, 0, 200, 400))
+        pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
 
-        window.blit(settingsButton, (0, 360))
+        window.blit(settingsButton, (0, win_size[1]-int(win_vars["sprite_size"])))
 
         for event in pygame.event.get():
 
@@ -519,18 +545,19 @@ def sidebar():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    if settingsButtonInvs.collidepoint(pos):
+                    if settingsButtonInvs.collidepoint(pos): #todo: the invs thing is rlly messy i wanna fix if possible
                         settingsPage.open = True
                         circles_visible = False
                         rect_can_be_clicked = False
                         if circles_has_been_clicked == False:
                             temp_id = 0
                         settingsPage.fillWindow(255)
-                    if settingsCloseButtonInvs.collidepoint(pos):
-                        settingsPage.open = False
-                        circles_visible = True
-                        rect_can_be_clicked = True
-                        settingsPage.fillWindow(0)
+                    if settingsPage.open == True:
+                        if settingsCloseButtonInvs.collidepoint(pos):
+                            settingsPage.open = False
+                            circles_visible = True
+                            rect_can_be_clicked = True
+                            settingsPage.fillWindow(0)
                     if rect_can_be_clicked == True:
                         for rect_sprite in rect_sprite_list:
                             if rect_sprite.rect.collidepoint(pos):
@@ -557,7 +584,7 @@ def sidebar():
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 #print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour, textClickedColour, adj)
+                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars)
                                 #print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
@@ -579,12 +606,12 @@ def sidebar():
 
                 # circle_sprite_list.empty()
                 window.fill(background_colour)
-                pygame.draw.rect(window, sidebar_colour, (0, 0, 200, 400))
+                pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
                 drawCircles(window, list_of_circle_sprites, temp_id)
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
-                window.blit(settingsButton, (0, 360))
+                window.blit(settingsButton, (0, win_size[1]-int(win_vars["sprite_size"])))
 
             if settingsPage.open:
                 if settingsPage.colour == (255,244,234):
@@ -594,12 +621,20 @@ def sidebar():
                     textColour = dmt
                     textClickedColour = dmtc
 
-                window.blit(settingsPage.image, (0, 0, 600, 400))
+                window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
                 settingsPage.colour, background_colour, sidebar_colour, cursor, adj = modes(light, dark, circle, x, arrow, cursor, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event, adj)
                 settingsPage.updateColour()
+                circleBgColour = circleBackground(settingsPage.colour)
+                window.blit(settingsCloseButton, ((int(win_vars["sprite_size"]/4),int(win_vars["sprite_size"]/4))))
+                print (circleBgColour)
                 for i in range (3):
                     for sprite in list_of_overlay_sprites[i]:
                         sprite.colour = settingsPage.colour
+
+            for i in range(3):
+                for sprite in list_of_circle_sprites[i]:
+                    sprite.update_image(circleBgColour)
+
             pygame.mouse.set_visible(False)
             window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0]-adj, pygame.mouse.get_pos()[1]-adj))
 
