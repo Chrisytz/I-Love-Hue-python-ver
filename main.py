@@ -35,7 +35,8 @@ class Rect(pygame.sprite.Sprite):
     def __init__(self, sidebar_rect, x_pos, y_pos, level_id, win_vars):
         pygame.sprite.Sprite.__init__(self)
         self.size = int(win_vars["sidebar_rect_width"])
-        self.image = pygame.transform.smoothscale(pygame.image.load(sidebar_rect[level_id]).convert_alpha(), (self.size, int(self.size/4)))
+        self.image = pygame.transform.smoothscale(pygame.image.load(sidebar_rect[level_id]).convert_alpha(),
+                                                  (self.size, int(self.size / 4)))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -47,9 +48,12 @@ class Circle(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos, win_vars, circle_list, i, j, pos_id, list_id):
         pygame.sprite.Sprite.__init__(self)
         self.size = int(win_vars["circle_size"])
-        self.image = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(), (self.size,self.size))
-        self.image_dark = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][1][j]).convert_alpha(), (self.size,self.size))
-        self.image_light = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(), (self.size,self.size))
+        self.image = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(),
+                                                  (self.size, self.size))
+        self.image_dark = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][1][j]).convert_alpha(),
+                                                       (self.size, self.size))
+        self.image_light = pygame.transform.smoothscale(pygame.image.load(circle_list[list_id][0][j]).convert_alpha(),
+                                                        (self.size, self.size))
 
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
@@ -81,8 +85,10 @@ class OverlayNumbers(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.size = int(win_vars["circle_size"])
 
-        self.image = pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(), (self.size, self.size))
-        self.img_blk = pygame.transform.smoothscale(pygame.image.load(number_list_blk[id]).convert_alpha(), (self.size, self.size))
+        self.image = pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(),
+                                                  (self.size, self.size))
+        self.img_blk = pygame.transform.smoothscale(pygame.image.load(number_list_blk[id]).convert_alpha(),
+                                                    (self.size, self.size))
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -134,7 +140,7 @@ class Overlay(pygame.sprite.Sprite):
 class Settings(pygame.sprite.Sprite):
     def __init__(self, colour, win_size):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((win_size[0],win_size[1]))
+        self.image = pygame.Surface((win_size[0], win_size[1]))
         self.colour = colour
         self.image.set_alpha(0)
         self.image.fill(self.colour)
@@ -157,19 +163,28 @@ class Settings(pygame.sprite.Sprite):
 #         self.dark_mode = pygame.Rect(40, 100, 160, 40)
 #         self.colour = (255,255,255)
 #         self.rect
+'''
+OKAY SO BEFORE I FORGET EVERYTHING I NEED TO DO, we need to get rid of all these buttons and replace
+them with text and text.get_rect()
+'''
+
 
 def createButtons(win_vars):
-    light_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"], win_vars["sidebar_rect_width"], win_vars["sprite_size"])
-    dark_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"]*2 + (win_vars["sprite_size"]/2), win_vars["sidebar_rect_width"], win_vars["sprite_size"])
-    circle = pygame.Rect(win_vars["sprite_size"], win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
-    x = pygame.Rect(win_vars["sprite_size"]*2 + (win_vars["sprite_size"]/2), win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
-    arrow = pygame.Rect(win_vars["sprite_size"]*3 + ((win_vars["sprite_size"]/2)*2), win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
+    light_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"], win_vars["sidebar_rect_width"],
+                             win_vars["sprite_size"])
+    dark_mode = pygame.Rect(win_vars["sprite_size"], win_vars["sprite_size"] * 2 + (win_vars["sprite_size"] / 2),
+                            win_vars["sidebar_rect_width"], win_vars["sprite_size"])
+    circle = pygame.Rect(win_vars["sprite_size"], win_vars["sidebar_rect_width"], win_vars["sprite_size"],
+                         win_vars["sprite_size"])
+    x = pygame.Rect(win_vars["sprite_size"] * 2 + (win_vars["sprite_size"] / 2), win_vars["sidebar_rect_width"],
+                    win_vars["sprite_size"], win_vars["sprite_size"])
+    arrow = pygame.Rect(win_vars["sprite_size"] * 3 + ((win_vars["sprite_size"] / 2) * 2),
+                        win_vars["sidebar_rect_width"], win_vars["sprite_size"], win_vars["sprite_size"])
 
     return light_mode, dark_mode, circle, x, arrow
 
-   # def closeWindow(self):
 
-
+# def closeWindow(self):
 
 
 # class Display():
@@ -227,7 +242,8 @@ def addSidebarSprites(sprite_list, colour_list, win_vars, sidebar_rect):
         #         Rect(win_vars["bar_thickness"] + (win_vars["sprite_size"] * j),
         #              (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), colour_list[i][j],
         #              win_vars, i))
-        sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"], (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i, win_vars))
+        sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"],
+                             (win_vars["bar_thickness"] * (i + 1)) + (win_vars["sprite_size"] * i), i, win_vars))
 
     return sprite_list
 
@@ -241,7 +257,8 @@ def addCircleSprites(background_colour, colour_list_circle, number_list_white, n
                     win_vars["circle_size"] + win_vars["space_between_circles"]),
                                       win_vars["bar_thickness"] + i * (
                                               win_vars["circle_size"] + win_vars["space_between_circles"]),
-                                      win_vars, colour_list_circle, i, count, count, level_id)) #OKAY SO I CHANGED THE FIRST COUNT FROM J TO COUNT it should work
+                                      win_vars, colour_list_circle, i, count, count,
+                                      level_id))  # OKAY SO I CHANGED THE FIRST COUNT FROM J TO COUNT it should work
             overlay_sprites.add(Overlay(background_colour,
                                         (win_vars["width_sidebar"] + win_vars["bar_thickness"]) + j * (
                                                 win_vars["circle_size"] + win_vars["space_between_circles"]),
@@ -304,12 +321,13 @@ def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_numbe
         list_of_overlay_sprites[number] = pygame.sprite.Group()
         list_of_number_sprites[number] = pygame.sprite.Group()
 
+
 def createDatabase():
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
     cur.execute(''' SELECT count(name) FROM sqlite_master WHERE type='table' AND name='levels' ''')
 
-    if cur.fetchone()[0] != 1 :
+    if cur.fetchone()[0] != 1:
         cur.execute('''CREATE TABLE levels
                         (rect_id integer, circle_id integer, colour_codes text)''')
         cur.execute('''CREATE TABLE highscore
@@ -319,7 +337,8 @@ def createDatabase():
         cur.execute('''CREATE TABLE completedLevels
                         (rect_id integer, circle_id integer)''')
 
-        #print ("database has been created")
+        # print ("database has been created")
+
 
 def addToDatabase(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
@@ -329,18 +348,21 @@ def addToDatabase(rect_id, circle_id):
 
     con.commit()
 
+
 def getFromDatabase(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
-    cur.execute("SELECT * FROM completedLevels WHERE rect_id = :rect_id and circle_id = :circle_id", (rect_id, circle_id))
+    cur.execute("SELECT * FROM completedLevels WHERE rect_id = :rect_id and circle_id = :circle_id",
+                (rect_id, circle_id))
     data = cur.fetchall()
     if len(data) == 0:
         return 0
     else:
         return 1
 
+
 def updateCompleteness(overlay_sprites, number_sprites):
-    for i in range (3):
+    for i in range(3):
         for sprite in overlay_sprites[i]:
             if getFromDatabase(i, sprite.id) == 1:
                 sprite.complete = True
@@ -349,20 +371,50 @@ def updateCompleteness(overlay_sprites, number_sprites):
                 sprite.update_image(True)
                 sprite.complete = True
 
-def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour, textColour, settingColour, sidebarColour, window, event,adj):
-    button_list = [lightMode, darkMode, circle, x, arrow]
+
+'''
+here is where we draw everything, so ig we dont even need the createbuttons function??? 
+bc we can just.get_rect() the text right
+'''
+
+
+def modes(win_vars, lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour, textColour, settingColour,
+          sidebarColour, window, event, adj):
+    font = pygame.font.Font('freesansbold.ttf', 25)
+    # button_list = [lightMode, darkMode, circle, x, arrow]
     cursor_value = current_cursor
     pos = pygame.mouse.get_pos()
     backgroundColour = settingColour
     sideColour = sidebarColour
     backgroundValue = None
-    for button in button_list:
-        pygame.draw.rect(window, textColour, button)
 
-    for button in button_list:
+    text_list = [font.render('LIGHT MODE', True, textColour, backgroundColour),
+                 font.render('DARK MODE', True, textColour, backgroundColour),
+                 font.render('CURSOR', True, textColour, backgroundColour),
+                 font.render('WINDOW SIZE', True, textColour, backgroundColour)]
+
+    word_list = ["LIGHT MODE", "DARK MODE", "CURSOR", "WINDOW SIZE"]
+
+    rect_list = [text_list[0].get_rect(topleft=(win_vars["sprite_size"], win_vars["sprite_size"])),
+                 text_list[1].get_rect(
+                     topleft=(win_vars["sprite_size"], win_vars["sprite_size"] * 2 + (win_vars["sprite_size"] / 2))),
+                 text_list[2].get_rect(topleft=(win_vars["sprite_size"], win_vars["sidebar_rect_width"])),
+                 text_list[3].get_rect(topleft = (win_vars["sprite_size"], win_vars["sidebar_rect_width"] + win_vars["sprite_size"]*1.5))]
+    count = 0
+    for button in text_list:
+        window.blit(button, rect_list[count])
+        count += 1
+
+
+    # for button in button_list:
+    #     pygame.draw.rect(window, textColour, button)
+    count = 0
+    for button in rect_list:
         if button.collidepoint(pos):
-            pygame.draw.rect(window, textHoverColour, button)
-
+            textColour = textHoverColour
+            on_hover = font.render(word_list[count], True, textColour, backgroundColour)
+            window.blit(on_hover,button)
+        count += 1
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         if lightMode.collidepoint(pos):
@@ -370,8 +422,8 @@ def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour
             sideColour = (235, 238, 211)
 
         if darkMode.collidepoint(pos):
-            backgroundColour = (71,60,68)
-            sideColour = (55,51,60)
+            backgroundColour = (71, 60, 68)
+            sideColour = (55, 51, 60)
 
         if circle.collidepoint(pos):
             cursor_value = 0
@@ -385,8 +437,9 @@ def modes(lightMode, darkMode, circle, x, arrow, current_cursor, textHoverColour
 
     return backgroundColour, backgroundColour, sideColour, cursor_value, adj
 
+
 def circleBackground(settingsColour):
-    if settingsColour == (255,244,234):
+    if settingsColour == (255, 244, 234):
         return 0
     else:
         return 1
@@ -400,13 +453,12 @@ def sidebar():
     win_size = 900, 600
     done = False
     # these are the light colours!
-    sidebar_colour = (235,238,211)
-    background_colour = (255,244,234)
+    sidebar_colour = (235, 238, 211)
+    background_colour = (255, 244, 234)
 
     # these are the dark colours
     # sidebar_colour = (55,51,60)
     # background_colour = (71,60,68)
-
 
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]))
@@ -416,15 +468,15 @@ def sidebar():
     win_vars = {
         "bar_thickness": win_size[1] * 0.05,
         "sidebar_rect_width": ((win_size[0] / 3) - (win_size[1] * 0.1)),
-        "sprite_size": (((win_size[0] / 3) - (win_size[1] * 0.1)))/4,
+        "sprite_size": (((win_size[0] / 3) - (win_size[1] * 0.1))) / 4,
         "width_sidebar": win_size[0] / 3,
         "bottom_bar_loc": win_size[1] * 0.95,
         "black": (0, 0, 0),
         "num_of_rectangles": 3,
         "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
         "space_between_circles": (win_size[1] * 0.05),
-        "level_button_loc": (win_size[1])/2,
-        "font_size": win_size[1]/12.5,
+        "level_button_loc": (win_size[1]) / 2,
+        "font_size": win_size[1] / 12.5,
         "gameboard_size": win_size[1]
     }
 
@@ -435,13 +487,18 @@ def sidebar():
     colour_list_circle = [
         [["Circles1/0.png", "Circles1/1.png", "Circles1/2.png", "Circles1/3.png", "Circles1/4.png", "Circles1/5.png",
           "Circles1/6.png", "Circles1/7.png", "Circles1/8.png"],
-         ["Circles1Dark/0.png", "Circles1Dark/1.png", "Circles1Dark/2.png", "Circles1Dark/3.png", "Circles1Dark/4.png", "Circles1Dark/5.png",
+         ["Circles1Dark/0.png", "Circles1Dark/1.png", "Circles1Dark/2.png", "Circles1Dark/3.png", "Circles1Dark/4.png",
+          "Circles1Dark/5.png",
           "Circles1Dark/6.png", "Circles1Dark/7.png", "Circles1Dark/8.png"]],
         [["Circles2/0.png", "Circles2/1.png", "Circles2/2.png", "Circles2/3.png", "Circles2/4.png", "Circles2/5.png",
-          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"], ["Circles2Dark/0.png", "Circles2Dark/1.png", "Circles2Dark/2.png", "Circles2Dark/3.png", "Circles2Dark/4.png", "Circles2Dark/5.png",
+          "Circles2/6.png", "Circles2/7.png", "Circles2/8.png"],
+         ["Circles2Dark/0.png", "Circles2Dark/1.png", "Circles2Dark/2.png", "Circles2Dark/3.png", "Circles2Dark/4.png",
+          "Circles2Dark/5.png",
           "Circles2Dark/6.png", "Circles2Dark/7.png", "Circles2Dark/8.png"]],
         [["Circles3/0.png", "Circles3/1.png", "Circles3/2.png", "Circles3/3.png", "Circles3/4.png", "Circles3/5.png",
-          "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"], ["Circles3Dark/0.png", "Circles3Dark/1.png", "Circles3Dark/2.png", "Circles3Dark/3.png", "Circles3Dark/4.png", "Circles3Dark/5.png",
+          "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"],
+         ["Circles3Dark/0.png", "Circles3Dark/1.png", "Circles3Dark/2.png", "Circles3Dark/3.png", "Circles3Dark/4.png",
+          "Circles3Dark/5.png",
           "Circles3Dark/6.png", "Circles3Dark/7.png", "Circles3Dark/8.png"]]]
 
     rect_sprite_list = pygame.sprite.Group()
@@ -454,7 +511,8 @@ def sidebar():
                          "number black/5.png",
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
 
-    sidebar_rect = ["sidebar rect with text/sidebar1.png", "sidebar rect with text/sidebar2.png", "sidebar rect with text/sidebar3.png"]
+    sidebar_rect = ["sidebar rect with text/sidebar1.png", "sidebar rect with text/sidebar2.png",
+                    "sidebar rect with text/sidebar3.png"]
 
     # todo: i should maybe find a better way to do this lol
 
@@ -485,8 +543,6 @@ def sidebar():
     updateCompleteness(list_of_overlay_sprites, list_of_number_sprites)
     # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
-
-
     # running the game
     circles_visible = False
     circles_has_been_clicked = False
@@ -496,11 +552,15 @@ def sidebar():
     light, dark, circle, x, arrow = createButtons(win_vars)
     lmt, lmtc, dmt, dmtc = (0, 0, 0), (99, 85, 85), (255, 255, 255), (228, 217,
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
-    settingsButtonInvs = pygame.Rect(0, win_size[1]-int(win_vars["sprite_size"]), win_vars["sprite_size"], win_vars["sprite_size"])
+    settingsButtonInvs = pygame.Rect(0, win_size[1] - int(win_vars["sprite_size"]), win_vars["sprite_size"],
+                                     win_vars["sprite_size"])
     settingsCloseButtonInvs = pygame.Rect(0, 0, win_vars["sprite_size"], win_vars["sprite_size"])
-    settingsButton = pygame.transform.smoothscale(pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha(), (int(win_vars["sprite_size"]), int(win_vars["sprite_size"])))
-    settingsCloseButton = pygame.transform.smoothscale(pygame.image.load("rsz_x.png").convert_alpha(), (int(win_vars["sprite_size"]/2), int(win_vars["sprite_size"]/2)))
-    cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
+    settingsButton = pygame.transform.smoothscale(pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha(),
+                                                  (int(win_vars["sprite_size"]), int(win_vars["sprite_size"])))
+    settingsCloseButton = pygame.transform.smoothscale(pygame.image.load("rsz_x.png").convert_alpha(), (
+        int(win_vars["sprite_size"] / 2), int(win_vars["sprite_size"] / 2)))
+    cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'),
+                   pygame.image.load('rsz_cursor.png')]
     cursor = 0
     adj = 10
 
@@ -516,11 +576,9 @@ def sidebar():
         pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
 
-        window.blit(settingsButton, (0, win_size[1]-int(win_vars["sprite_size"])))
+        window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"])))
 
         for event in pygame.event.get():
-
-
 
             # pygame.mouse.set_visible(False)
             # window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
@@ -546,7 +604,8 @@ def sidebar():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    if settingsButtonInvs.collidepoint(pos): #todo: the invs thing is rlly messy i wanna fix if possible
+                    if settingsButtonInvs.collidepoint(
+                            pos):  # todo: the invs thing is rlly messy i wanna fix if possible
                         settingsPage.open = True
                         circles_visible = False
                         rect_can_be_clicked = False
@@ -584,9 +643,10 @@ def sidebar():
                         for circle_sprite in list_of_circle_sprites[temp_id]:
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
-                                #print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars)
-                                #print("this is runGame result", test)
+                                # print(circle_sprite.pos_id)
+                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour,
+                                               textClickedColour, adj, win_vars)
+                                # print("this is runGame result", test)
                                 # checking if level was completed
                                 # chris this is not the rgiht way to do it just take the exist status.
                                 # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
@@ -612,10 +672,10 @@ def sidebar():
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
-                window.blit(settingsButton, (0, win_size[1]-int(win_vars["sprite_size"])))
+                window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"])))
 
             if settingsPage.open:
-                if settingsPage.colour == (255,244,234):
+                if settingsPage.colour == (255, 244, 234):
                     textColour = lmt
                     textClickedColour = lmtc
                 else:
@@ -623,12 +683,18 @@ def sidebar():
                     textClickedColour = dmtc
 
                 window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
-                settingsPage.colour, background_colour, sidebar_colour, cursor, adj = modes(light, dark, circle, x, arrow, cursor, textClickedColour, textColour, settingsPage.colour, sidebar_colour, window, event, adj)
+                settingsPage.colour, background_colour, sidebar_colour, cursor, adj = modes(win_vars,light, dark, circle, x,
+                                                                                            arrow, cursor,
+                                                                                            textClickedColour,
+                                                                                            textColour,
+                                                                                            settingsPage.colour,
+                                                                                            sidebar_colour, window,
+                                                                                            event, adj)
                 settingsPage.updateColour()
                 circleBgColour = circleBackground(settingsPage.colour)
-                window.blit(settingsCloseButton, ((int(win_vars["sprite_size"]/4),int(win_vars["sprite_size"]/4))))
-                print (circleBgColour)
-                for i in range (3):
+                window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
+                print(circleBgColour)
+                for i in range(3):
                     for sprite in list_of_overlay_sprites[i]:
                         sprite.colour = settingsPage.colour
 
@@ -637,10 +703,12 @@ def sidebar():
                     sprite.update_image(circleBgColour)
 
             pygame.mouse.set_visible(False)
-            window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0]-adj, pygame.mouse.get_pos()[1]-adj))
+            window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
 
             pygame.display.flip()
     pygame.quit()
+
+
 # create loading screen!
 
 # create level selection screen !
