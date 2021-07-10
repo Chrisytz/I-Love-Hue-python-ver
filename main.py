@@ -537,7 +537,7 @@ def sidebar(windim, settingsOpen):
     # background_colour = (71,60,68)
 
     pygame.init()
-    window = pygame.display.set_mode((win_size[0], win_size[1]))
+    window = pygame.display.set_mode((win_size[0], win_size[1]), (pygame.RESIZABLE))
     pygame.display.set_caption("Gradient Rect")
 
     # calculating variables
@@ -553,7 +553,11 @@ def sidebar(windim, settingsOpen):
         "space_between_circles": (win_size[1] * 0.05),
         "level_button_loc": (win_size[1]) / 2,
         "font_size": win_size[1] / 20,
-        "gameboard_size": win_size[1]
+        "gameboard_size": win_size[1],
+        "exit_button_loc": (win_size[0] * 2 / 3 + ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6), win_size[1] * 2 / 3),
+        "restart_button_loc": (win_size[0] - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6) - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 4), win_size[1] * 2 / 3)
+        # "restart_button_loc": (win_size[0] - int((((win_size[0] / 3) - (win_size[1] * 0.1))) (3/8)), win_size[1] * 2 / 3)
+
     }
 
     # todo: multiple colours loaded from levels file?

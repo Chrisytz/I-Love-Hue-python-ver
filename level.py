@@ -297,18 +297,31 @@ def isSavedLevel(rect_id, circle_id):
         return 1
 
 def currentScore(window, move_count, background_colour, textColour, win_vars):
-    font = pygame.font.Font('freesansbold.ttf', int(win_vars["font_size"]))
-    text = font.render(str(int(move_count)), True, (textColour), (background_colour))
+    font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))
+    score = font.render(str(int(move_count)), True, (textColour), (background_colour))
+    score_rect = score.get_rect()
+    score_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"]*5)
+
+    text = font.render("CURRENT SCORE", True, textColour, background_colour)
     text_rect = text.get_rect()
-    text_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"]*3)
+    text_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"]*4)
+
     window.blit(text, text_rect)
+    window.blit(score, score_rect)
 
 def highScore(window, best_moves, background_colour, textColour, win_vars):
-    font = pygame.font.Font('freesansbold.ttf', int(win_vars["font_size"]))
-    text = font.render(str(int(best_moves)), True, (textColour), (background_colour))
+    font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))
+    score = font.render(str(int(best_moves)), True, (textColour), (background_colour))
+    score_rect = score.get_rect()
+    score_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"]*2)
+
+    text = font.render("HIGH SCORE", True, textColour, background_colour)
     text_rect = text.get_rect()
-    text_rect.center = (win_vars["width_sidebar"]*2 + win_vars["width_sidebar"]/2, win_vars["sprite_size"])
+    text_rect.center = (win_vars["width_sidebar"] * 2 + win_vars["width_sidebar"] / 2, win_vars["sprite_size"])
+
     window.blit(text, text_rect)
+
+    window.blit(score, score_rect)
 
 def saveHighScore(rect_id, circle_id, new_score):
     con = sqlite3.connect('levels.db')
@@ -324,6 +337,19 @@ def saveHighScore(rect_id, circle_id, new_score):
 
     con.commit()
 
+def buttons(mode, win_vars, exit_buttons, restart_buttons, window):
+    window.blit(exit_buttons[mode], win_vars["exit_button_loc"])
+    window.blit(restart_buttons[mode], win_vars["restart_button_loc"])
+
+    if exit_buttons[mode].get_rect(topleft = win_vars["exit_button_loc"]).collidepoint(pygame.mouse.get_pos()):
+        print ("uwu")
+        window.blit(exit_buttons[mode+1], win_vars["exit_button_loc"])
+
+    if restart_buttons[mode].get_rect(topleft = win_vars["restart_button_loc"]).collidepoint(pygame.mouse.get_pos()):
+        print ("owo")
+        window.blit(restart_buttons[mode+1], win_vars["restart_button_loc"])
+
+
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize):
     done = False
     moving_sprite_list = pygame.sprite.GroupSingle()
@@ -331,6 +357,20 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     save_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"], win_vars["sidebar_rect_width"],win_vars["sprite_size"])
     restart_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"]+win_vars["sprite_size"]+win_vars["sprite_size"]/2, win_vars["sidebar_rect_width"], win_vars["sprite_size"])
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
+
+    exit_buttons = [pygame.image.load('exit/exit_dark.png'), pygame.image.load('exit/exit_dark_hover.png'), pygame.image.load('exit/exit_light.png'), pygame.image.load('exit/exit_light_hover.png')]
+    restart_buttons = [pygame.image.load('restart/restart_dark.png'), pygame.image.load('restart/restart_dark_hover.png'), pygame.image.load('restart/restart_light.png'), pygame.image.load('restart/restart_light_hover.png')]
+    exit_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in exit_buttons]
+    restart_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in restart_buttons]
+
+    mode = None
+
+    if background_colour == (255,244,234):
+        mode = 2
+    else:
+        mode = 0
+
+
     rect_size = win_vars["gameboard_size"]/10
     if circle_id < 3:
         rect_size = win_vars["gameboard_size"]/4
@@ -349,17 +389,17 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
                 # Button to quit
-                if save_level_button.collidepoint(pos):
+                if exit_buttons[0].get_rect(topleft = win_vars["exit_button_loc"]).collidepoint(pos):
                     if DEBUG: print("white button pressed")
                     saveLevel(rect_id, circle_id, toString(levelgrid.getGridColours()), int(move_count)) #HOW TO CHANGE ARRAY INTO STRING WITHOUT ILELJAHFDKAGHFDK
                     if DEBUG: print ("getgridcolours", levelgrid.getGridColours())
                     if DEBUG: print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
-                if restart_level_button.collidepoint(pos):
+                if restart_buttons[mode].get_rect(topleft=win_vars["restart_button_loc"]).collidepoint(pos):
                     done = True
-                    runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, winsize)
+                    runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize)
 
-                if DEBUG: print("this is mousebutton down posx, posy: ", pos)
+                # if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
                         if DEBUG: print(sprite.constant)
@@ -411,17 +451,19 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                          pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                      levelgrid.horizontal_limit))
 
-        # load = pygame.Rect(420,200,160,40)
-        # restart = pygame.Rect(420, 260, 160, 40)
-        if save_level_button.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(window, (textClickedColour), (save_level_button))  # THIS IS JUST A TEST THING :)
-        else:
-            pygame.draw.rect(window, (textColour), (save_level_button))  # THIS IS JUST A TEST THING :)
+        # # load = pygame.Rect(420,200,160,40)
+        # # restart = pygame.Rect(420, 260, 160, 40)
+        # if save_level_button.collidepoint(pygame.mouse.get_pos()):
+        #     pygame.draw.rect(window, (textClickedColour), (save_level_button))  # THIS IS JUST A TEST THING :)
+        # else:
+        #     pygame.draw.rect(window, (textColour), (save_level_button))  # THIS IS JUST A TEST THING :)
+        #
+        # if restart_level_button.collidepoint(pygame.mouse.get_pos()):
+        #     pygame.draw.rect(window, (textClickedColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
+        # else:
+        #     pygame.draw.rect(window, (textColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
 
-        if restart_level_button.collidepoint(pygame.mouse.get_pos()):
-            pygame.draw.rect(window, (textClickedColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
-        else:
-            pygame.draw.rect(window, (textColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
+        buttons(mode, win_vars, exit_buttons, restart_buttons, window)
 
         currentScore(window, move_count, background_colour, textColour, win_vars)
         if hasHighScore == 1:
