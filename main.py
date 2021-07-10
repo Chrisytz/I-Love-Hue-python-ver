@@ -7,6 +7,7 @@ import random
 import pygame
 from level import runGame
 import sqlite3
+from settings import settings
 
 DEBUG = False
 
@@ -378,8 +379,16 @@ bc we can just.get_rect() the text right
 '''
 
 
+def changeColour(surface, red, green, blue):
+    arr = pygame.surfarray.pixels3d(surface)
+    arr[:, :, 0] = red
+    arr[:, :, 1] = green
+    arr[:, :, 2] = blue
+    return surface
+
+
 def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
-          sidebarColour, window, event, adj, win_size):
+          sidebarColour, window, event, adj, win_size, settingsPage, circles_visible, rect_can_be_clicked):
     font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))
     # button_list = [lightMode, darkMode, circle, x, arrow]
     cursor_value = current_cursor
@@ -397,16 +406,21 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
     line1_button = font.render("LIGHT MODE", True, textColour, backgroundColour)
     line2_button = font.render("DARK MODE", True, textColour, backgroundColour)
     line3_button = [font.render("CURSOR:", True, textColour, backgroundColour),
-                    pygame.transform.smoothscale(pygame.image.load('rsz_circle.png'),
+                    pygame.transform.smoothscale(pygame.image.load('circle.png').convert_alpha(),
                                                  (int(win_vars["sprite_size"] / 2.5),
                                                   int(win_vars["sprite_size"] / 2.5))),
-                    pygame.transform.smoothscale(pygame.image.load('rsz_x.png'),
+                    pygame.transform.smoothscale(pygame.image.load('x.png').convert_alpha(),
                                                  (int(win_vars["sprite_size"] / 2.5),
                                                   int(win_vars["sprite_size"] / 2.5))),
-                    pygame.transform.smoothscale(pygame.image.load('rsz_cursor.png'),
+                    pygame.transform.smoothscale(pygame.image.load('cursor.png').convert_alpha(),
                                                  (int(win_vars["sprite_size"] / 2.5),
                                                   int(win_vars["sprite_size"] / 2.5)))]
+    line3_button[1:4] = [changeColour(x, textColour[0], textColour[1], textColour[2]) for x in line3_button[1:4]]
+
     line4_button = [font.render(x, True, textColour, backgroundColour) for x in line4]
+
+    close_button = changeColour(pygame.transform.smoothscale(pygame.image.load('x.png').convert_alpha(), (
+    int(win_vars["sprite_size"] / 2), int(win_vars["sprite_size"] / 2))), textColour[0], textColour[1], textColour[2])
 
     line1_rect = line1_button.get_rect(
         topleft=(win_vars["sprite_size"], win_vars["sprite_size"] * 1.2))
@@ -418,7 +432,7 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
     for cursor in line3_button[1:4]:
         line3_rect.append(cursor.get_rect(topleft=(
             win_vars["sprite_size"] / 1.5 + line3_rect[line3_button.index(cursor) - 1].topright[0],
-            line2_rect.bottomright[1] + win_vars["sprite_size"])))
+            line2_rect.bottomright[1] + win_vars["sprite_size"] * 1.1)))
 
     line4_rect = [line4_button[0].get_rect(
         topleft=(win_vars["sprite_size"], line3_rect[0].bottomright[1] + win_vars["sprite_size"]))]
@@ -427,35 +441,8 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
         line4_rect.append(size.get_rect(topleft=(
             win_vars["sprite_size"] / 1.5 + line4_rect[line4_button.index(size) - 1].topright[0],
             line3_rect[0].bottomright[1] + win_vars["sprite_size"])))
-    # cursor_list = [pygame.transform.smoothscale(pygame.image.load('rsz_circle.png'),
-    #                                             (int(win_vars["sprite_size"]/2.5), int(win_vars["sprite_size"]/2.5))),
-    #                pygame.transform.smoothscale(pygame.image.load('rsz_x.png'),
-    #                                             (int(win_vars["sprite_size"]/2.5), int(win_vars["sprite_size"]/2.5))),
-    #                pygame.transform.smoothscale(pygame.image.load('rsz_cursor.png'),
-    #                                             (int(win_vars["sprite_size"]/2.5), int(win_vars["sprite_size"]/2.5)))]
-    #
-    # word_list = ["LIGHT MODE", "DARK MODE", "CURSOR", "WINDOW SIZE"]
-    #
-    # winsize_list = ["600 x 400", "900 x 600", "1200 x 800"]
-    #
-    # int_list1 = [2, 4, 5]
-    #
-    # int_list2 = [3, 7, 8]
-    #
-    # button_list = [font.render(x, True, textColour, backgroundColour) for x in word_list and winsize_list]
-    #
-    # rect_list = [x.get_rect(topleft=(win_vars["sprite_size"],
-    #                                  win_vars["sprite_size"] * (button_list.index(x) + 1) + win_vars["sprite_size"] * (
-    #                                          button_list.index(x) / 2))) for x in button_list[0:4]]
-    #
-    # for cursor in cursor_list:
-    #     rect_list.append(cursor.get_rect(
-    #         topleft=(rect_list[int_list1[cursor_list.index(cursor)]].topright[0] + win_vars["sprite_size"],
-    #                  win_vars["sprite_size"] * 3 + win_vars["sprite_size"])))
-    #
-    # for winsize in button_list[7:10]:
-    #     rect_list.append(winsize.get_rect(topleft=(rect_list[int_list2[cursor_list.index(winsize)]].topright[0] + win_vars["sprite_size"],
-    #                                               win_vars["sprite_size"] * 3 + win_vars["sprite_size"])))
+
+    close_rect = close_button.get_rect(topleft=(win_vars["sprite_size"] / 4, win_vars["sprite_size"] / 4))
 
     window.blit(line1_button, line1_rect)
     window.blit(line2_button, line2_rect)
@@ -465,6 +452,8 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
 
     for x in line4_button:
         window.blit(x, line4_rect[line4_button.index(x)])
+
+    window.blit(close_button, close_rect)
 
     if line1_rect.collidepoint(pos):
         textColour = textHoverColour
@@ -476,11 +465,22 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
         on_hover = font.render(line2, True, textColour, backgroundColour)
         window.blit(on_hover, line2_rect)
 
+    for cursor in line3_rect[1:4]:
+        if cursor.collidepoint(pos):
+            print("collided!")
+            on_hover = changeColour(line3_button[line3_rect.index(cursor)], textHoverColour[0], textHoverColour[1],
+                                    textHoverColour[2])
+            window.blit(on_hover, cursor)
+
     for button in line4_rect[1:4]:
         if button.collidepoint(pos):
             textColour = textHoverColour
             on_hover = font.render(line4[line4_rect.index(button)], True, textColour, backgroundColour)
             window.blit(on_hover, button)
+    if close_rect.collidepoint(pos):
+        on_hover = changeColour(close_button, textHoverColour[0], textHoverColour[1],
+                                textHoverColour[2])
+        window.blit(on_hover, close_rect)
 
     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
         if line1_rect.collidepoint(pos):
@@ -502,16 +502,23 @@ def modes(win_vars, current_cursor, textHoverColour, textColour, settingColour,
             adj = 0
         if line4_rect[1].collidepoint(pos):
             winDim = (600, 400)
-            sidebar(winDim, True)
+            sidebar(winDim, True, backgroundColour, sideColour)
         if line4_rect[2].collidepoint(pos):
             winDim = (900, 600)
-            sidebar(winDim, True)
+            sidebar(winDim, True, backgroundColour, sideColour)
 
         if line4_rect[3].collidepoint(pos):
             winDim = (1200, 800)
-            sidebar(winDim, True)
+            sidebar(winDim, True, backgroundColour, sideColour)
 
-    return backgroundColour, backgroundColour, sideColour, cursor_value, adj, winDim
+        if close_rect.collidepoint(pos):
+            done = True
+            settingsPage.open = False
+            circles_visible = True
+            rect_can_be_clicked = True
+            settingsPage.fillWindow(0)
+
+    return backgroundColour, backgroundColour, sideColour, cursor_value, adj, winDim, circles_visible, rect_can_be_clicked
 
 
 def circleBackground(settingsColour):
@@ -523,14 +530,14 @@ def circleBackground(settingsColour):
 
 # This is the main entry point to the game.
 
-def sidebar(windim, settingsOpen):
+def sidebar(windim, settingsOpen, settingColour, sidebarColour):
     # todo: anni will create a proper init function to set these variables.
     # init
     win_size = windim
     done = False
     # these are the light colours!
-    sidebar_colour = (235, 238, 211)
-    background_colour = (255, 244, 234)
+    sidebar_colour = sidebarColour
+    background_colour = settingColour
 
     # these are the dark colours
     # sidebar_colour = (55,51,60)
@@ -554,9 +561,10 @@ def sidebar(windim, settingsOpen):
         "level_button_loc": (win_size[1]) / 2,
         "font_size": win_size[1] / 20,
         "gameboard_size": win_size[1],
-        "exit_button_loc": (win_size[0] * 2 / 3 + ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6), win_size[1] * 2 / 3),
-        "restart_button_loc": (win_size[0] - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6) - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 4), win_size[1] * 2 / 3)
-        # "restart_button_loc": (win_size[0] - int((((win_size[0] / 3) - (win_size[1] * 0.1))) (3/8)), win_size[1] * 2 / 3)
+        "exit_button_loc": (
+        win_size[0] * 2 / 3 + ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6), win_size[1] * 3 / 4),
+        "restart_button_loc": (win_size[0] - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6) - (
+                    (((win_size[0] / 3) - (win_size[1] * 0.1))) / 4), win_size[1] * 3 / 4)
 
     }
 
@@ -627,19 +635,15 @@ def sidebar(windim, settingsOpen):
     circles_visible = False
     circles_has_been_clicked = False
     rect_can_be_clicked = True
-    settingColour = (255, 244, 234)
     settingsPage = Settings(settingColour, win_size)
     settingsPage.open = settingsOpen
-    light, dark, circle, x, arrow = createButtons(win_vars)
+    settingsPage.colour = settingColour
     lmt, lmtc, dmt, dmtc = (0, 0, 0), (99, 85, 85), (255, 255, 255), (228, 217,
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
     settingsButtonInvs = pygame.Rect(0, win_size[1] - int(win_vars["sprite_size"]), win_vars["sprite_size"],
                                      win_vars["sprite_size"])
-    settingsCloseButtonInvs = pygame.Rect(0, 0, win_vars["sprite_size"], win_vars["sprite_size"])
-    settingsButton = pygame.transform.smoothscale(pygame.image.load("rsz_gear-settings-icon-1.png").convert_alpha(),
+    settingsButton = pygame.transform.smoothscale(pygame.image.load("settings.png").convert_alpha(),
                                                   (int(win_vars["sprite_size"]), int(win_vars["sprite_size"])))
-    settingsCloseButton = pygame.transform.smoothscale(pygame.image.load("rsz_x.png").convert_alpha(), (
-        int(win_vars["sprite_size"] / 2), int(win_vars["sprite_size"] / 2)))
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'),
                    pygame.image.load('rsz_cursor.png')]
     cursor = 0
@@ -699,12 +703,6 @@ def sidebar(windim, settingsOpen):
                         if circles_has_been_clicked == False:
                             temp_id = 0
                         settingsPage.fillWindow(255)
-                    if settingsPage.open == True:
-                        if settingsCloseButtonInvs.collidepoint(pos):
-                            settingsPage.open = False
-                            circles_visible = True
-                            rect_can_be_clicked = True
-                            settingsPage.fillWindow(0)
                     if rect_can_be_clicked == True:
                         for rect_sprite in rect_sprite_list:
                             if rect_sprite.rect.collidepoint(pos):
@@ -760,6 +758,7 @@ def sidebar(windim, settingsOpen):
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
                 window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"])))
+
             if settingsPage.open:
                 if settingsPage.colour == (255, 244, 234):
                     textColour = lmt
@@ -769,22 +768,17 @@ def sidebar(windim, settingsOpen):
                     textClickedColour = dmtc
 
                 window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
-                settingsPage.colour, background_colour, sidebar_colour, cursor, adj, win_size = modes(win_vars,
-                                                                                                      cursor,
-                                                                                                      textClickedColour,
-                                                                                                      textColour,
-                                                                                                      settingsPage.colour,
-                                                                                                      sidebar_colour,
-                                                                                                      window,
-                                                                                                      event, adj,
-                                                                                                      win_size)
-                settingsPage.updateColour()
+                settingsPage.colour, background_colour, sidebar_colour, cursor, adj, win_size, circles_visible, rect_can_be_clicked = settings(win_vars, cursor, textClickedColour,
+                                                                                                                                               textColour, settingsPage.colour,
+                                                                                                                                               sidebar_colour, window, event, adj,
+                                                                                                                                               win_size, settingsPage,
+                                                                                                                                               circles_visible, rect_can_be_clicked,
+                                                                                                                                               cursor_list)
                 circleBgColour = circleBackground(settingsPage.colour)
-                window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
-                print(circleBgColour)
-                for i in range(3):
-                    for sprite in list_of_overlay_sprites[i]:
-                        sprite.colour = settingsPage.colour
+                # window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
+            for i in range(3):
+                for sprite in list_of_overlay_sprites[i]:
+                    sprite.colour = settingsPage.colour
 
             for i in range(3):
                 for sprite in list_of_circle_sprites[i]:
@@ -810,5 +804,5 @@ if __name__ == "__main__":
     print("This is the main file!")
     createDatabase()
     winsize = (600, 400)
-    sidebar(winsize, False)
+    sidebar(winsize, False, (255, 244, 234), (235, 238, 211))
     print("bleppers")
