@@ -152,8 +152,8 @@ class Settings(pygame.sprite.Sprite):
         self.image.set_alpha(alpha)
         self.image.fill(self.colour)
 
-    def updateColour(self):
-        self.image.fill(self.colour)
+    def updateColour(self, colour):
+        self.image.fill(colour)
         self.rect = self.image.get_rect()
 
 
@@ -772,8 +772,8 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour):
                                                                                                                                                textColour, settingsPage.colour,
                                                                                                                                                sidebar_colour, window, event, adj,
                                                                                                                                                win_size, settingsPage,
-                                                                                                                                               circles_visible, rect_can_be_clicked,
-                                                                                                                                               cursor_list)
+                                                                                                                                               circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc)
+
                 circleBgColour = circleBackground(settingsPage.colour)
                 # window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
             for i in range(3):

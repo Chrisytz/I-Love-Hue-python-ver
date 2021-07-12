@@ -1,5 +1,6 @@
 import pygame
 
+#todo: im gonna create a fucking text class because i am losing my fucking mind rn o m g w t f i s wrong with THISSSSKHADFKHASFD
 def changeColour(surface, red, green, blue):
     arr = pygame.surfarray.pixels3d(surface)
     arr[:, :, 0] = red
@@ -7,8 +8,52 @@ def changeColour(surface, red, green, blue):
     arr[:, :, 2] = blue
     return surface
 
+def hover(font, line1, line1_rect, line2, line2_rect, line3_rect, line3_button, line4, line4_rect, close_rect, close_button, textHoverColour, backgroundColour):
+    pos = pygame.mouse.get_pos()
+    on_hover = None
+    rect = None
+    hovered = False
+
+    if line1_rect.collidepoint(pos):
+        print("hover")
+        textColour = textHoverColour
+        on_hover = font.render(line1, True, textColour, backgroundColour)
+        rect = line1_rect
+        hovered = True
+
+    if line2_rect.collidepoint(pos):
+        textColour = textHoverColour
+        on_hover = font.render(line2, True, textColour, backgroundColour)
+        rect = line2_rect
+        hovered = True
+
+
+    for cursor in line3_rect[1:4]:
+        if cursor.collidepoint(pos):
+            print("collided!")
+            on_hover = changeColour(line3_button[line3_rect.index(cursor)], textHoverColour[0], textHoverColour[1], textHoverColour[2])
+            rect = cursor
+            hovered = True
+
+    for button in line4_rect[1:4]:
+        if button.collidepoint(pos):
+            textColour = textHoverColour
+            on_hover = font.render(line4[line4_rect.index(button)], True, textColour, backgroundColour)
+            rect = button
+            hovered = True
+
+    if close_rect.collidepoint(pos):
+        on_hover = changeColour(close_button, textHoverColour[0], textHoverColour[1],
+                                textHoverColour[2])
+        rect = close_rect
+        hovered = True
+
+    return hovered, on_hover, rect
+
+
+
 def settings(win_vars, current_cursor, textHoverColour, textColour, settingColour,
-          sidebarColour, window, event, adj, winsize, settingsPage, circles_visible, rect_can_be_clicked, cursor_list):
+          sidebarColour, window, event, adj, winsize, settingsPage, circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc):
     pygame.init()
     win_size = winsize
     window = pygame.display.set_mode((win_size))
@@ -19,11 +64,17 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
     font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))
     # button_list = [lightMode, darkMode, circle, x, arrow]
     cursor_value = current_cursor
-    pos = pygame.mouse.get_pos()
     backgroundColour = settingColour
     sideColour = sidebarColour
     backgroundValue = None
     winDim = win_size
+
+    if settingsPage.colour == (255, 244, 234):
+        textColour = lmt
+        textClickedColour = lmtc
+    else:
+        textColour = dmt
+        textClickedColour = dmtc
 
     line1 = "LIGHT MODE"
     line2 = "DARK MODE"
@@ -65,45 +116,44 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
 
     close_rect = close_button.get_rect(topleft = (win_vars["sprite_size"]/4, win_vars["sprite_size"]/4))
 
-
-
     while not done:
+        if event.type == pygame.QUIT:
+            done = True
+
+        settingsPage.update
+        window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
+
+        window.blit(line1_button, line1_rect)
+        window.blit(line2_button, line2_rect)
+
+        for x in line3_button:
+            window.blit(x, line3_rect[line3_button.index(x)])
+
+        for x in line4_button:
+            window.blit(x, line4_rect[line4_button.index(x)])
+
+        window.blit(close_button, close_rect)
+
+        hovered, button, rect = hover(font, line1, line1_rect, line2, line2_rect, line3_rect, line3_button, line4, line4_rect, close_rect, close_button, textHoverColour, backgroundColour)
+
+        if hovered:
+            window.blit(button, rect)
+
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-
-            while line1_rect.collidepoint(pos):
-                textColour = textHoverColour
-                on_hover = font.render(line1, True, textColour, backgroundColour)
-                window.blit(on_hover, line1_rect)
-
-            while line2_rect.collidepoint(pos):
-                textColour = textHoverColour
-                on_hover = font.render(line2, True, textColour, backgroundColour)
-                window.blit(on_hover, line2_rect)
-
-            for cursor in line3_rect[1:4]:
-                while cursor.collidepoint(pos):
-                    print ("collided!")
-                    on_hover = changeColour(line3_button[line3_rect.index(cursor)], textHoverColour[0], textHoverColour[1], textHoverColour[2])
-                    window.blit(on_hover, cursor)
-
-            for button in line4_rect[1:4]:
-                while button.collidepoint(pos):
-                    textColour = textHoverColour
-                    on_hover = font.render(line4[line4_rect.index(button)], True, textColour, backgroundColour)
-                    window.blit(on_hover, button)
-            while close_rect.collidepoint(pos):
-                on_hover = changeColour(close_button, textHoverColour[0], textHoverColour[1],
-                                        textHoverColour[2])
-                window.blit(on_hover, close_rect)
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pos = pygame.mouse.get_pos()
+
+                print ("mouse")
                 if line1_rect.collidepoint(pos):
+                    settingsPage.colour = (255, 244, 234)
+                    settingsPage.updateColour((255, 244, 234))
                     backgroundColour = (255, 244, 234)
                     sideColour = (235, 238, 211)
 
                 if line2_rect.collidepoint(pos):
+                    settingsPage.updateColour((71, 60, 68))
+                    settingsPage.colour = (71, 60, 68)
                     backgroundColour = (71, 60, 68)
                     sideColour = (55, 51, 60)
 
@@ -133,25 +183,7 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
                     circles_visible = True
                     rect_can_be_clicked = True
                     settingsPage.fillWindow(0)
-                    pygame.quit()
-
-        settingsPage.updateColour()
             # circleBgColour = circleBackground(settingsPage.colour)
-
-        window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
-
-        window.blit(line1_button, line1_rect)
-        window.blit(line2_button, line2_rect)
-
-        for x in line3_button:
-            window.blit(x, line3_rect[line3_button.index(x)])
-
-        for x in line4_button:
-            window.blit(x, line4_rect[line4_button.index(x)])
-
-        window.blit(close_button, close_rect)
-
-        settingsPage.updateColour()
 
         pygame.mouse.set_visible(False)
         window.blit(cursor_list[cursor_value], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
