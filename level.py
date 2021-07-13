@@ -342,11 +342,9 @@ def buttons(mode, win_vars, exit_buttons, restart_buttons, window):
     window.blit(restart_buttons[mode], win_vars["restart_button_loc"])
 
     if exit_buttons[mode].get_rect(topleft = win_vars["exit_button_loc"]).collidepoint(pygame.mouse.get_pos()):
-        print ("uwu")
         window.blit(exit_buttons[mode+1], win_vars["exit_button_loc"])
 
     if restart_buttons[mode].get_rect(topleft = win_vars["restart_button_loc"]).collidepoint(pygame.mouse.get_pos()):
-        print ("owo")
         window.blit(restart_buttons[mode+1], win_vars["restart_button_loc"])
 
 
@@ -383,8 +381,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     while not done:
 
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return 1
+            # if event.type == pygame.QUIT:
+            #     return 1
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
                 posx, posy = pos
