@@ -29,6 +29,7 @@ Todo
     ✓ constants
         - constant in shuffling
         - unmovable constants
+        - dots on the constants so that ppl know they are constants
     ✓ multiple point colour generation
     - scaling grids (multiple blocks per grid) // different grid layouts/constants/etc=
         ⬛ ⬜ ⬜ ⬛     ⬛ ⬜ ⬜ ⬛ ⬜ ⬜ ⬛
@@ -42,17 +43,18 @@ Todo
     - main menu.
         ✓ Rectangles & Circle creation
         ✓ backgrounds
-        - settings
+        ✓ settings
         - visual components!
         --> rectangles and circles and settings
+    - instructions page?
 - configuration settings
-    - so that people can adjust their game window sizes (independent of how many boxes in the grid)
+    ✓ so that people can adjust their game window sizes (independent of how many boxes in the grid)
         --> slider for window size (drop down is easier xd)
     - people can change MUSIC
-    - mouse settings? CURSORRRRR
+    ✓ mouse settings? CURSORRRRR
     - GRAPHICS SSETTINGS ! !  ! ! ! !
         - ( brightness )
-        - ( light mode / dark mode )
+        ✓ ( light mode / dark mode )
         ✓ ( cube boundary ? -> do we show black lines / white lines between cubes) THE AESTHETIC TT
 - endgame screens?????
     - when is the endgame and how long will it take you to get there
