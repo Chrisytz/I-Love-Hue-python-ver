@@ -309,11 +309,11 @@ def loadCircles(circle_list, win_vars):
     return loaded_circle_list
 
 
-def addColours(colour_list, rect_clicked, circle_clicked):
-    colour = []
-    for i in range(0, 4):
-        colour.append(colour_list[rect_clicked][circle_clicked][i])
-    return colour
+# def addColours(colour_list, rect_clicked, circle_clicked, win_vars):
+#     colour = []
+#     for i in range(0, win_vars["num_of_rectangles"]):
+#         colour.append(colour_list[rect_clicked][circle_clicked][i])
+#     return colour
 
 
 def generateLists(list_of_circle_sprites, list_of_overlay_sprites, list_of_number_sprites, number):
@@ -337,9 +337,46 @@ def createDatabase():
                         (rect_id integer, circle_id integer, score integer)''')
         cur.execute('''CREATE TABLE completedLevels
                         (rect_id integer, circle_id integer)''')
+        cur.execute('''CREATE TABLE settings
+                        (mode integer, cursor integer, size integer, adj integer)''')
 
         # print ("database has been created")
 
+def addSettingsToDatabase(mode, cursor, size, adj):
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+
+    cur.execute("INSERT INTO settings VALUES (:mode, :cursor, :size, :adj)", (mode, cursor, size, adj))
+
+    con.commit()
+
+def getSettingsFromDatabase():
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM settings")
+
+    score = cur.fetchone()
+    print (score)
+
+    return score
+
+def isSavedSettings():
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM settings")
+    data = cur.fetchall()
+    if len(data) == 0:
+        return 0
+    else:
+        return 1
+
+def deleteSettings():
+    con = sqlite3.connect('levels.db')
+    cur = con.cursor()
+
+    cur.execute("DELETE from settings")
+
+    con.commit()
 
 def addToDatabase(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
@@ -479,7 +516,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
     list_of_overlay_sprites = []
     list_of_number_sprites = []
 
-    for number in range(0, 4):
+    for number in range(0, win_vars["num_of_rectangles"]):
         list_of_circle_sprites.append(pygame.sprite.Group())
         list_of_overlay_sprites.append(pygame.sprite.Group())
         list_of_number_sprites.append(pygame.sprite.Group())
@@ -491,7 +528,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars, sidebar_rect)
-    for number in range(0, 4):
+    for number in range(0, win_vars["num_of_rectangles"]):
         list_of_circle_sprites[number] = addCircleSprites(background_colour,
                                                           colour_list_circle, number_list_white, number_list_black,
                                                           list_of_circle_sprites[number],
@@ -499,7 +536,9 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                           list_of_number_sprites[number],
                                                           win_vars, number)
 
+
     updateCompleteness(list_of_overlay_sprites, list_of_number_sprites)
+
     # number_sprites = addNumberSprites(win_vars, number_list_white, number_list_black, number_sprites, id)
 
     # running the game
@@ -520,15 +559,21 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
     adj = mouse_adj
 
     circleBgColour = 0
+    mode = None
 
     textColour = lmt
     textClickedColour = lmtc
 
     windimPressed = False
 
+
     pygame.display.update()
 
     while not done:
+        # for i in range(4):
+        #     for circle in list_of_circle_sprites[i]:
+        #         print("updating")
+        #         circle.update_image(2)
         window.fill(background_colour)
         pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
@@ -639,8 +684,12 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                                                                                                                win_size, settingsPage,
                                                                                                                                                circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc)
 
-                circleBgColour = circleBackground(settingsPage.colour)
                 # window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
+            if background_colour == (255, 244, 234):
+                mode = 0
+            else:
+                mode = 1
+
             if settingsPage.colour == (255, 244, 234):
                 textColour = lmt
                 textClickedColour = lmtc
@@ -648,13 +697,13 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                 textColour = dmt
                 textClickedColour = dmtc
             settingsButton = changeColour(settingsButton, textColour[0], textColour[1], textColour[2])
-            for i in range(3):
+            for i in range(win_vars["num_of_rectangles"]):
                 for sprite in list_of_overlay_sprites[i]:
                     sprite.colour = settingsPage.colour
 
-            for i in range(3):
+            for i in range(win_vars["num_of_rectangles"]):
                 for sprite in list_of_circle_sprites[i]:
-                    sprite.update_image(circleBgColour)
+                    sprite.update_image(mode)
 
             if windimPressed == True:
                 sidebar(win_size, True, background_colour, sidebar_colour, cursor, adj)
@@ -662,6 +711,11 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
             window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
 
             pygame.display.flip()
+    if isSavedSettings():
+        deleteSettings()
+
+    addSettingsToDatabase(mode, cursor, win_size[0], adj)
+
     pygame.quit()
 
 
@@ -678,5 +732,16 @@ if __name__ == "__main__":
     print("This is the main file!")
     createDatabase()
     winsize = (600, 400)
-    sidebar(winsize, False, (255, 244, 234), (235, 238, 211), 0, 10)
+    test = None
+    backgroundColour = (255, 244, 234)
+    sidebarColour = (235, 238, 211)
+    if isSavedSettings():
+        test = getSettingsFromDatabase()
+        winsize = (int(test[2]), int(test[2] * (2/3)))
+        if test[0] == 1:
+            backgroundColour =(71,60,68)
+            sidebarColour =(55,51,60)
+
+    sidebar(winsize, False, backgroundColour, sidebarColour, test[1], test[3])
+
     print("bleppers")

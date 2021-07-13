@@ -524,7 +524,7 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     levelgrid.drawGradient()
     # drawGridLoose(window, win_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
-    levelgrid.shuffle(bypass = True)
+    levelgrid.shuffle(bypass = False)
 
     #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
     isLevelSaved = isSavedLevel(rect_id, circle_id)
