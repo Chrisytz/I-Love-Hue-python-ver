@@ -420,7 +420,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
         "width_sidebar": win_size[0] / 3,
         "bottom_bar_loc": win_size[1] * 0.95,
         "black": (0, 0, 0),
-        "num_of_rectangles": 3,
+        "num_of_rectangles": 4,
         "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
         "space_between_circles": (win_size[1] * 0.05),
         "level_button_loc": (win_size[1]) / 2,
@@ -452,7 +452,13 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
           "Circles3/6.png", "Circles3/7.png", "Circles3/8.png"],
          ["Circles3Dark/0.png", "Circles3Dark/1.png", "Circles3Dark/2.png", "Circles3Dark/3.png", "Circles3Dark/4.png",
           "Circles3Dark/5.png",
-          "Circles3Dark/6.png", "Circles3Dark/7.png", "Circles3Dark/8.png"]]]
+          "Circles3Dark/6.png", "Circles3Dark/7.png", "Circles3Dark/8.png"]],
+        [["Circles4/0.png", "Circles4/1.png", "Circles4/2.png", "Circles4/3.png", "Circles4/4.png", "Circles4/5.png",
+          "Circles4/6.png", "Circles4/7.png", "Circles4/8.png"],
+         ["Circles4Dark/0.png", "Circles4Dark/1.png", "Circles4Dark/2.png", "Circles4Dark/3.png", "Circles4Dark/4.png",
+          "Circles4Dark/5.png",
+          "Circles4Dark/6.png", "Circles4Dark/7.png", "Circles4Dark/8.png"]]
+    ]
 
     rect_sprite_list = pygame.sprite.Group()
 
@@ -465,18 +471,18 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
 
     sidebar_rect = ["sidebar rect with text/sidebar1.png", "sidebar rect with text/sidebar2.png",
-                    "sidebar rect with text/sidebar3.png"]
+                    "sidebar rect with text/sidebar3.png", "sidebar rect with text/sidebar1.png"]
 
     # todo: i should maybe find a better way to do this lol
 
-    list_of_circle_sprites = [[], [], []]
-    list_of_overlay_sprites = [[], [], []]
-    list_of_number_sprites = [[], [], []]
+    list_of_circle_sprites = []
+    list_of_overlay_sprites = []
+    list_of_number_sprites = []
 
-    for number in range(0, 3):
-        list_of_circle_sprites[number] = pygame.sprite.Group()
-        list_of_overlay_sprites[number] = pygame.sprite.Group()
-        list_of_number_sprites[number] = pygame.sprite.Group()
+    for number in range(0, 4):
+        list_of_circle_sprites.append(pygame.sprite.Group())
+        list_of_overlay_sprites.append(pygame.sprite.Group())
+        list_of_number_sprites.append(pygame.sprite.Group())
 
     # -----------------------------
     # Chris you can probably get away with grouping win_width, win_height, sidebar_width, bar_thickness into one tuple.
@@ -485,7 +491,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 
     # displaying sprites
     rect_sprite_list = addSidebarSprites(rect_sprite_list, colour_list, win_vars, sidebar_rect)
-    for number in range(0, 3):
+    for number in range(0, 4):
         list_of_circle_sprites[number] = addCircleSprites(background_colour,
                                                           colour_list_circle, number_list_white, number_list_black,
                                                           list_of_circle_sprites[number],
