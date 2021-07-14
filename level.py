@@ -168,7 +168,7 @@ class Grid:
                     count += 1
             self.shuffle_grid.append(shuffleList)
 
-    def addToSpriteGroup(self, sprite_list):
+    def addToSpriteGroup(self, sprite_list, window):
         count = 0
         winx, winy = self.drawing_size
         x_step, y_step = self.steps
@@ -190,6 +190,8 @@ class Grid:
                 else:
                     rect = Rect(pos, self.shuffle_grid[i][j], self.drawing_size, self.steps)
                 sprite_list.add(rect)
+                # window.blit(rect.image, rect.rect)
+                # pygame.time.delay(100)
                 # self.sprite_list.add(Rect(pos, self.shuffle_grid[i][j], self.win_size, self.steps))
 
 
@@ -356,6 +358,7 @@ def changeColour(surface, red, green, blue):
 
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize):
     done = False
+    DIE = True
     moving_sprite_list = pygame.sprite.GroupSingle()
     clicked_sprite_list = pygame.sprite.GroupSingle()
     save_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"], win_vars["sidebar_rect_width"],win_vars["sprite_size"])
@@ -391,6 +394,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     while not done:
 
         for event in pygame.event.get():
+
             # if event.type == pygame.QUIT:
             #     return 1
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -452,6 +456,12 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                         sprite.rect.move_ip(event.rel)
 
         #moving_sprite_list.draw(window)
+        # if DIE == True:
+        #     sprite_list_non_shuffled.draw(window)
+        #     print("fuck uuuuuu")
+        #     pygame.time.delay(1000)
+        #     DIE = False
+
         sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
         moving_sprite_list.draw(window)  # draw this last ALWAYS
         for rect in constant_rects:
@@ -499,6 +509,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
+            pygame.time.delay(1000)
             deleteLevel(rect_id, circle_id)
             saveHighScore(rect_id, circle_id, move_count)
             if DEBUG: print("you won")
@@ -507,6 +518,11 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             # you've won the game
     return restart_pressed
 
+def not_shuffled (levelgrid, window):
+    spritesssss = pygame.sprite.Group()
+    blep = levelgrid
+    blep.addToSpriteGroup(spritesssss, window)
+    spritesssss.draw(window)
 
 def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
     """This will run the entire level!"""
@@ -514,6 +530,7 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     # Todo: Do we want this to only run one level?
     # system level variables.
     sprite_list = pygame.sprite.Group()
+    sprite_list_non_shuffled = pygame.sprite.Group()
     sprite_single = pygame.sprite.GroupSingle()
 
     window, colours, colour_size, constants, win_size, steps = level
@@ -528,12 +545,20 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     # pygame.init()  # is pygame already init from another side?
     # window = pygame.display.set_mode((win_size))
     levelgrid = Grid(window, colours, colour_size, constants, win_size, drawing_size, steps)
+    non_shuffled_levelgrid = Grid(window, colours, colour_size, constants, win_size, drawing_size, steps)
+
     if DEBUG: print(constants)
 
     levelgrid.drawGradient()
+    non_shuffled_levelgrid.drawGradient()
     # drawGridLoose(window, win_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
+    non_shuffled_levelgrid.getColours()
+
     levelgrid.shuffle(bypass = False)
+    non_shuffled_levelgrid.shuffle(bypass = True)
+
+
 
     #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
     isLevelSaved = isSavedLevel(rect_id, circle_id)
@@ -546,9 +571,12 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
         move_count = getSavedScore(rect_id, circle_id)
         deleteLevel(rect_id, circle_id)
 
-    levelgrid.addToSpriteGroup(sprite_list)
+    levelgrid.addToSpriteGroup(sprite_list, window)
+    non_shuffled_levelgrid.addToSpriteGroup(sprite_list_non_shuffled, window)
 
     hasHighScore = isCompletedLevel(rect_id, circle_id)
+
+    test = evaluate_level(window, levelgrid, sprite_list_non_shuffled, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
     game = evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
