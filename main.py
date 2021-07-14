@@ -449,6 +449,9 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
     window = pygame.display.set_mode((win_size[0], win_size[1]), (pygame.RESIZABLE))
     pygame.display.set_caption("Gradient Rect")
 
+    # music = pygame.mixer.music.load('Shigatsu wa Kimi no Uso EDKirameki.mp3')
+    # pygame.mixer.music.play(0)
+
     # calculating variables
     win_vars = {
         "bar_thickness": win_size[1] * 0.05,
@@ -656,24 +659,32 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                             if circle_sprite.rect.collidepoint(pos):
                                 circle_sprite.clicked = True
                                 # print(circle_sprite.pos_id)
-                                test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour,
-                                               textClickedColour, adj, win_vars, win_size)
-                                # print("this is runGame result", test)
-                                # checking if level was completed
-                                # chris this is not the rgiht way to do it just take the exist status.
-                                # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
-                                if (test == 0):
-                                    # print("won")
-                                    for rect_sprite in list_of_overlay_sprites[temp_id]:
-                                        if (rect_sprite.id == circle_sprite.pos_id):
-                                            rect_sprite.complete = True
-                                            # print (temp_id, " and ", circle_sprite.pos_id)
-                                            addToDatabase(temp_id, circle_sprite.pos_id)
-                                    for number_sprite in list_of_number_sprites[temp_id]:
-                                        if (number_sprite.id == circle_sprite.pos_id):
-                                            # print("updating")
-                                            number_sprite.update_image(True)
-                                            number_sprite.complete = True
+                                test = 2
+                                while test == 2:
+                                    print ("restart")
+                                    test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour,
+                                                   textClickedColour, adj, win_vars, win_size)
+                                    if (test == 0):
+                                        # print("won")
+                                        for rect_sprite in list_of_overlay_sprites[temp_id]:
+                                            if (rect_sprite.id == circle_sprite.pos_id):
+                                                rect_sprite.complete = True
+                                                # print (temp_id, " and ", circle_sprite.pos_id)
+                                                addToDatabase(temp_id, circle_sprite.pos_id)
+                                        for number_sprite in list_of_number_sprites[temp_id]:
+                                            if (number_sprite.id == circle_sprite.pos_id):
+                                                # print("updating")
+                                                number_sprite.update_image(True)
+                                                number_sprite.complete = True
+                                    # print("this is runGame result", test)
+                                    # checking if level was completed
+                                    # chris this is not the rgiht way to do it just take the exist status.
+                                    # TODO: SO LIKE WE NEED TO FIND A WAY TO SAVE THE DATA OF WHICH LEVELS UVE COMPELTED RIGHTTT --> do u just write to a new file?
+
+
+                                    # if (test == 2):
+                                    #     runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour,
+                                    #                    textClickedColour, adj, win_vars, win_size)
 
                                 pygame.display.set_caption("Gradient Rect")
 

@@ -40,7 +40,7 @@ Todo
     - HINTS?
     ✓ gamestate tracking
 - main.py
-    - main menu.
+    ✓ main menu.
         ✓ Rectangles & Circle creation
         ✓ backgrounds
         ✓ settings

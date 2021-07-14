@@ -385,6 +385,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         rect_size = win_vars["gameboard_size"]/8
 
     show_cursor = True
+    restart_pressed = -1
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
     while not done:
@@ -403,8 +404,10 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                     if DEBUG: print ("getsavecolours", getSavedColours(rect_id, circle_id))
                     done = True
                 if restart_buttons[mode].get_rect(topleft=win_vars["restart_button_loc"]).collidepoint(pos):
+                    restart_pressed = 2
                     done = True
-                    runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize)
+                    #runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize)
+
 
                 # if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
@@ -492,14 +495,6 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         window.blit(cursor_list[cursor], ((pygame.mouse.get_pos()[0]-adj), (pygame.mouse.get_pos()[1]-adj)))
 
 
-
-
-        '''
-        todo: create a new button, when button is clicked, first run smth similar to the .getColour() method to yeet the data into a sql thing or a text file
-        and then when u yeet the data back, aka when the level is clicked again, u run the .addToSpriteGroup() function to yeet it back
-        idk how to create a database or file or wtv for each level HELP
-        '''
-
         pygame.display.flip()
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
@@ -510,6 +505,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             done = True  # important: we should need this but why dont we wghat
             return 0  # 0 = won the game
             # you've won the game
+    return restart_pressed
 
 
 def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize): #todo: ive alos gotta add rect id and circle id arguments here i think as well as in evaluate level g y u h
@@ -554,9 +550,13 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
 
     hasHighScore = isCompletedLevel(rect_id, circle_id)
 
-    if evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize) == 0:
+    game = evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
+
+    if game == 0:
         print("you have won")
         iscomplete = 0
+    elif game == 2:
+        iscomplete = 2
     else:
         iscomplete = 1
 
