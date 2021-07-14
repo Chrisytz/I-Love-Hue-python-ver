@@ -457,7 +457,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
         "width_sidebar": win_size[0] / 3,
         "bottom_bar_loc": win_size[1] * 0.95,
         "black": (0, 0, 0),
-        "num_of_rectangles": 4,
+        "num_of_rectangles": 6,
         "circle_size": ((win_size[0] * (2 / 3)) - (4 * win_size[1] * 0.05)) / 3,
         "space_between_circles": (win_size[1] * 0.05),
         "level_button_loc": (win_size[1]) / 2,
@@ -490,11 +490,21 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
          ["Circles3Dark/0.png", "Circles3Dark/1.png", "Circles3Dark/2.png", "Circles3Dark/3.png", "Circles3Dark/4.png",
           "Circles3Dark/5.png",
           "Circles3Dark/6.png", "Circles3Dark/7.png", "Circles3Dark/8.png"]],
+        [["Circles6/0.png", "Circles6/1.png", "Circles6/2.png", "Circles6/3.png", "Circles6/4.png", "Circles6/5.png",
+          "Circles6/6.png", "Circles6/7.png", "Circles6/8.png"],
+         ["Circles6Dark/0.png", "Circles6Dark/1.png", "Circles6Dark/2.png", "Circles6Dark/3.png", "Circles6Dark/4.png",
+          "Circles6Dark/5.png",
+          "Circles6Dark/6.png", "Circles6Dark/7.png", "Circles6Dark/8.png"]],
         [["Circles4/0.png", "Circles4/1.png", "Circles4/2.png", "Circles4/3.png", "Circles4/4.png", "Circles4/5.png",
           "Circles4/6.png", "Circles4/7.png", "Circles4/8.png"],
          ["Circles4Dark/0.png", "Circles4Dark/1.png", "Circles4Dark/2.png", "Circles4Dark/3.png", "Circles4Dark/4.png",
           "Circles4Dark/5.png",
-          "Circles4Dark/6.png", "Circles4Dark/7.png", "Circles4Dark/8.png"]]
+          "Circles4Dark/6.png", "Circles4Dark/7.png", "Circles4Dark/8.png"]],
+        [["Circles5/0.png", "Circles5/1.png", "Circles5/2.png", "Circles5/3.png", "Circles5/4.png", "Circles5/5.png",
+          "Circles5/6.png", "Circles5/7.png", "Circles5/8.png"],
+         ["Circles5Dark/0.png", "Circles5Dark/1.png", "Circles5Dark/2.png", "Circles5Dark/3.png", "Circles5Dark/4.png",
+          "Circles5Dark/5.png",
+          "Circles5Dark/6.png", "Circles5Dark/7.png", "Circles5Dark/8.png"]],
     ]
 
     rect_sprite_list = pygame.sprite.Group()
@@ -508,7 +518,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                          "number black/6.png", "number black/7.png", "number black/8.png", "number black/9.png"]
 
     sidebar_rect = ["sidebar rect with text/sidebar1.png", "sidebar rect with text/sidebar2.png",
-                    "sidebar rect with text/sidebar3.png", "sidebar rect with text/sidebar1.png"]
+                    "sidebar rect with text/sidebar3.png", "sidebar rect with text/sidebar4.png", "sidebar rect with text/sidebar5.png",  "sidebar rect with text/sidebar3.png"]
 
     # todo: i should maybe find a better way to do this lol
 
@@ -552,7 +562,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
     settingsButtonInvs = pygame.Rect(0, win_size[1] - int(win_vars["sprite_size"]), win_vars["sprite_size"],
                                      win_vars["sprite_size"])
-    settingsButton = changeColour(pygame.transform.smoothscale(pygame.image.load("settings.png").convert_alpha(), (int(win_vars["sprite_size"]), int(win_vars["sprite_size"]))), lmt[0], lmt[1], lmt[2])
+    settingsButton = changeColour(pygame.transform.smoothscale(pygame.image.load("settings.png").convert_alpha(), (int(win_vars["sprite_size"]/1.2), int(win_vars["sprite_size"]/1.2))), lmt[0], lmt[1], lmt[2])
     cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'),
                    pygame.image.load('rsz_cursor.png')]
     cursor = cursor_value
@@ -578,7 +588,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
         pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
 
-        window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"])))
+        window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"]/1.2)))
 
         for event in pygame.event.get():
 
@@ -674,7 +684,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
-                window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"])))
+                window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"]/1.2)))
 
             if settingsPage.open:
 
@@ -735,13 +745,18 @@ if __name__ == "__main__":
     test = None
     backgroundColour = (255, 244, 234)
     sidebarColour = (235, 238, 211)
+    cursor = 0
+    adj = 10
     if isSavedSettings():
         test = getSettingsFromDatabase()
         winsize = (int(test[2]), int(test[2] * (2/3)))
+        cursor = test[1]
+        adj = test[3]
+
         if test[0] == 1:
             backgroundColour =(71,60,68)
             sidebarColour =(55,51,60)
 
-    sidebar(winsize, False, backgroundColour, sidebarColour, test[1], test[3])
+    sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj)
 
     print("bleppers")
