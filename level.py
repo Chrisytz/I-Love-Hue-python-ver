@@ -347,6 +347,12 @@ def buttons(mode, win_vars, exit_buttons, restart_buttons, window):
     if restart_buttons[mode].get_rect(topleft = win_vars["restart_button_loc"]).collidepoint(pygame.mouse.get_pos()):
         window.blit(restart_buttons[mode+1], win_vars["restart_button_loc"])
 
+def changeColour(surface, red, green, blue):
+    arr = pygame.surfarray.pixels3d(surface)
+    arr[:, :, 0] = red
+    arr[:, :, 1] = green
+    arr[:, :, 2] = blue
+    return surface
 
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize):
     done = False
@@ -360,6 +366,9 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     restart_buttons = [pygame.image.load('restart/restart_dark.png'), pygame.image.load('restart/restart_dark_hover.png'), pygame.image.load('restart/restart_light.png'), pygame.image.load('restart/restart_light_hover.png')]
     exit_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in exit_buttons]
     restart_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in restart_buttons]
+
+    constant = changeColour(pygame.transform.smoothscale(pygame.image.load('lock.png'), (int(levelgrid.win_size[1]/levelgrid.steps[0]),int(levelgrid.win_size[1]/levelgrid.steps[0]))), 105,94,101)
+    constant_rects = [constant.get_rect(topleft = (0,0)), constant.get_rect(bottomleft = (0, winsize[1])), constant.get_rect(topright = (winsize[1], 0)), constant.get_rect(bottomright = (winsize[1], winsize[1]))]
 
     mode = None
 
@@ -442,6 +451,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         #moving_sprite_list.draw(window)
         sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
         moving_sprite_list.draw(window)  # draw this last ALWAYS
+        for rect in constant_rects:
+            window.blit(constant, rect)
 
         # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
         # in particular, we need a better way to calculate the '200' present here.
@@ -468,6 +479,8 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             highScore(window, getHighScore(rect_id, circle_id), background_colour, textColour, win_vars)
         else:
             highScore(window, 0, background_colour, textColour, win_vars)
+
+
 
         pygame.mouse.set_visible(False)
 
