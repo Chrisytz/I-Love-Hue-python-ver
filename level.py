@@ -576,7 +576,7 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
 
     hasHighScore = isCompletedLevel(rect_id, circle_id)
 
-    test = evaluate_level(window, levelgrid, sprite_list_non_shuffled, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
+    #test = evaluate_level(window, levelgrid, sprite_list_non_shuffled, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
     game = evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
