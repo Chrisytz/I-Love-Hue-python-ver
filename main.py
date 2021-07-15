@@ -2,18 +2,21 @@ from screen import run_all
 from screen import play_sound
 import multiprocessing
 import time
-import config
 from multiprocessing.pool import ThreadPool
+import config
 
+config.init()
+mylist = [ False]
 
 def manager():
     p3 = multiprocessing.Process(target=play_sound)
     p3.start()
     # p3.terminate()
     while(True):
-        print(config._finish)
+
+        print(mylist[0])
         time.sleep(1)
-        if config._finish == True:
+        if mylist[0] == True:
             p3.terminate()
 
 def music():
@@ -35,7 +38,7 @@ if __name__ == '__main__':
     # FINISH = True
     # pool.terminate()
     # pool.join()
-    p1 = multiprocessing.Process(target=run_all)
+    p1 = multiprocessing.Process(target=run_all, args=(mylist, ))
     p2 = multiprocessing.Process(target=manager)
     p1.start()
     p2.start()

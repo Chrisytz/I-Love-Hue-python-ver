@@ -2,6 +2,8 @@ import pygame
 import sys
 import random
 
+import config
+
 #todo: im gonna create a fucking text class because i am losing my fucking mind rn o m g w t f i s wrong with THISSSSKHADFKHASFD
 class Settings(pygame.sprite.Sprite):
     def __init__(self, colour, win_size):

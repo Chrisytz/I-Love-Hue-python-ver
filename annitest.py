@@ -6,6 +6,7 @@ import sys
 import random
 import pygame
 from level import runGame
+import config
 
 DEBUG = False
 

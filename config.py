@@ -1,5 +1,8 @@
 from playsound import playsound
 
-_finish = False
+def init():
+    global _finish
+    _finish = False
 
-playsound('Shigatsu wa Kimi no Uso EDKirameki.mp3')
+    global mylist
+    mylist = [_finish]

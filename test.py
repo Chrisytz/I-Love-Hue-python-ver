@@ -4,6 +4,8 @@ import sys
 import random
 import pygame
 
+import config
+
 ### initiating variables
 size = 600, 400
 win_size = 800

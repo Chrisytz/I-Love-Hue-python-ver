@@ -10,6 +10,8 @@ import pygame
 import sqlite3
 import math
 
+import config
+
 # global vars
 DEBUG = False
 

@@ -1,5 +1,5 @@
 import sqlite3
-
+import config
 # con = sqlite3.connect('testing.db')
 # cur = con.cursor()
 #

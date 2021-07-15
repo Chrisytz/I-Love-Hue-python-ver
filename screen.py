@@ -764,7 +764,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 # saving levels
 
 
-def run_all():
+def run_all(mylist):
     print("This is the main file!")
     createDatabase()
     winsize = (600, 400)
@@ -787,8 +787,11 @@ def run_all():
             sidebarColour =(55,51,60)
 
     sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj)
+    print("finished")
     config._finish = True
-
+    print("config", config._finish)
+    mylist[0] = True
+    return mylist
 
 def play_sound():
         playsound('Shigatsu wa Kimi no Uso EDKirameki.mp3')
@@ -809,4 +812,4 @@ def multiProcessing():
 
 
 if __name__ == "__main__":
-    multiProcessing()
+    run_all()
