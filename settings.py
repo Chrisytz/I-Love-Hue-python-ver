@@ -1,7 +1,7 @@
 import pygame
 import sys
 import random
-
+from sound import Sound
 import config
 
 #todo: im gonna create a fucking text class because i am losing my fucking mind rn o m g w t f i s wrong with THISSSSKHADFKHASFD
@@ -87,14 +87,13 @@ def createButtons(backgroundColour, lmt, lmtc, dmt, dmtc, win_vars):
     medium = Buttons("900 x 600", textColour, textClickedColour, backgroundColour, font, win_vars["sprite_size"] / 1.5 + small.rect.topright[0], cursor.rect.bottomright[1] + win_vars["sprite_size"], True)
     large = Buttons("1200 x 800", textColour, textClickedColour, backgroundColour, font, win_vars["sprite_size"] / 1.5 + medium.rect.topright[0], cursor.rect.bottomright[1] + win_vars["sprite_size"], True)
 
-    button_list = [light_mode, dark_mode, cursor, cursor_circle, cursor_cross, cursor_arrow, window_size, small, medium, large]
+    sound = Buttons("SOUND:", textColour, textClickedColour, backgroundColour, font, win_vars["sprite_size"], window_size.rect.bottomright[1] + win_vars["sprite_size"], False)
+    sound_on = Buttons("ON", textColour, textClickedColour, backgroundColour, font, win_vars["sprite_size"] / 1.5 + sound.rect.topright[0], window_size.rect.bottomright[1] + win_vars["sprite_size"], True)
+    sound_off = Buttons("OFF", textColour, textClickedColour, backgroundColour, font, win_vars["sprite_size"] / 1.5 + sound_on.rect.topright[0], window_size.rect.bottomright[1] + win_vars["sprite_size"], True)
+
+    button_list = [light_mode, dark_mode, cursor, cursor_circle, cursor_cross, cursor_arrow, window_size, small, medium, large, sound, sound_on, sound_off]
 
     return button_list
-
-
-
-
-
 
 def changeColour(surface, red, green, blue):
     arr = pygame.surfarray.pixels3d(surface)
@@ -104,7 +103,7 @@ def changeColour(surface, red, green, blue):
     return surface
 
 def settings(win_vars, current_cursor, textHoverColour, textColour, settingColour,
-          sidebarColour, window, event, adj, winsize, settingsPage, circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc):
+          sidebarColour, window, event, adj, winsize, settingsPage, circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc, data):
     pygame.init()
     win_size = winsize
     window = pygame.display.set_mode((win_size))
@@ -134,11 +133,9 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
         window.blit(settingsPage.image, (0, 0, win_size[0], win_size[1]))
 
         if settingsPage.colour == (255, 244, 234):
-            print ("light")
             textColour = lmt
             textClickedColour = lmtc
         else:
-            print ("dark")
             textColour = dmt
             textClickedColour = dmtc
 
@@ -208,11 +205,16 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
                     # sidebar(winDim, True, backgroundColour, sideColour)
 
                 if button_list[9].rect.collidepoint(pos):
-                    button_list[9].onClick(font)
                     done = True
                     windim_pressed = True
                     winDim = (1200, 800)
                     # sidebar(winDim, True, backgroundColour, sideColour)
+
+                if button_list[11].rect.collidepoint(pos):
+                    data.value = 0
+                if button_list[12].rect.collidepoint(pos):
+                    data.value = 1
+
 
                 if close_rect.collidepoint(pos):
                     done = True

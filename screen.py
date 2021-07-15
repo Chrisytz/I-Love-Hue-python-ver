@@ -3,22 +3,14 @@
 # April 2021
 
 import sys
-import random
 import pygame
-from pygame import mixer
 from level import runGame
 import sqlite3
 from settings import settings
 import numpy
 from threading import Thread
 import multiprocessing
-
-import config
-
-
-
 from playsound import playsound
-import subprocess
 
 DEBUG = False
 
@@ -443,7 +435,7 @@ def circleBackground(settingsColour):
 
 # This is the main entry point to the game.
 
-def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mouse_adj):
+def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mouse_adj, data, exit):
     # todo: anni will create a proper init function to set these variables.
     # init
     win_size = windim
@@ -610,9 +602,9 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
             # window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
             if event.type == pygame.QUIT:
                 done = True
+                data.value = 1
+                exit.value = 1
                 # global FINISH
-                FINISH = True
-                config._finish = True
                 # rectangleEventHandler(event, pygame.mouse.get_pos())
             # if event.type == pygame.MOUSEWHEEL:
             #     if pygame.mouse.get_pos()[0] < win_vars["width_sidebar"]:
@@ -717,7 +709,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                                                                                                                textColour, settingsPage.colour,
                                                                                                                                                sidebar_colour, window, event, adj,
                                                                                                                                                win_size, settingsPage,
-                                                                                                                                               circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc)
+                                                                                                                                               circles_visible, rect_can_be_clicked, cursor_list, lmt, lmtc, dmt, dmtc, data)
 
                 # window.blit(settingsCloseButton, ((int(win_vars["sprite_size"] / 4), int(win_vars["sprite_size"] / 4))))
             if background_colour == (255, 244, 234):
@@ -741,7 +733,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                     sprite.update_image(mode)
 
             if windimPressed == True:
-                sidebar(win_size, True, background_colour, sidebar_colour, cursor, adj)
+                sidebar(win_size, True, background_colour, sidebar_colour, cursor, adj, data, exit)
             pygame.mouse.set_visible(False)
             window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
 
@@ -755,6 +747,8 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
     pygame.quit()
 
 
+
+
 # create loading screen!
 
 # create level selection screen !
@@ -764,7 +758,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 # saving levels
 
 
-def run_all(mylist):
+def run_all(data, exit):
     print("This is the main file!")
     createDatabase()
     winsize = (600, 400)
@@ -786,15 +780,16 @@ def run_all(mylist):
             backgroundColour =(71,60,68)
             sidebarColour =(55,51,60)
 
-    sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj)
-    print("finished")
-    config._finish = True
-    print("config", config._finish)
-    mylist[0] = True
-    return mylist
+    sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj, data, exit)
+    data.value = 1
+    exit.value=1
 
 def play_sound():
-        playsound('Shigatsu wa Kimi no Uso EDKirameki.mp3')
+    playsound('Shigatsu wa Kimi no Uso EDKirameki-[AudioTrimmer.com].wav')
+
+# def musicccc():
+#     wav_file = AudioSegment.from_file(file="Shigatsu wa Kimi no Uso EDKirameki.wav", format="wav")
+#     play(wav_file)
 
 
 def thread_handler():
