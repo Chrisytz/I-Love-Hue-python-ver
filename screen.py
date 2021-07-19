@@ -350,6 +350,7 @@ def addSettingsToDatabase(mode, cursor, size, adj):
     cur = con.cursor()
 
     cur.execute("INSERT INTO settings VALUES (:mode, :cursor, :size, :adj)", (mode, cursor, size, adj))
+    print ("settings added")
 
     con.commit()
 
@@ -432,10 +433,21 @@ def circleBackground(settingsColour):
     else:
         return 1
 
+def splashscreen(win_size, window):
 
+    done = False
+    splashscreen = pygame.transform.smoothscale(pygame.image.load('colour game splash screen.png').convert_alpha(),(win_size[0], win_size[1]))
+    while not done:
+        for event in pygame.event.get():
+            window.blit(splashscreen, splashscreen.get_rect(topleft = (0,0)))
+            pygame.display.flip()
+            if event.type == pygame.QUIT:
+                return True
+            if event.type == pygame.KEYDOWN:
+                done = True
 # This is the main entry point to the game.
 
-def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mouse_adj, data, exit):
+def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mouse_adj, data, exit, showSplashscreen):
     # todo: anni will create a proper init function to set these variables.
     # init
     win_size = windim
@@ -582,14 +594,18 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 
     windimPressed = False
 
+    if showSplashscreen:
+        done = splashscreen(win_size, window)
 
-    pygame.display.update()
 
     while not done:
+        if isSavedSettings():
+            deleteSettings()
         # for i in range(4):
         #     for circle in list_of_circle_sprites[i]:
         #         print("updating")
         #         circle.update_image(2)
+
         window.fill(background_colour)
         pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
@@ -601,6 +617,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
             # pygame.mouse.set_visible(False)
             # window.blit(cursor_img, (pygame.mouse.get_pos()[0] - 20, pygame.mouse.get_pos()[1] - 20))
             if event.type == pygame.QUIT:
+                addSettingsToDatabase(mode, cursor, win_size[0], adj)
                 done = True
                 data.value = 1
                 exit.value = 1
@@ -733,16 +750,11 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                     sprite.update_image(mode)
 
             if windimPressed == True:
-                sidebar(win_size, True, background_colour, sidebar_colour, cursor, adj, data, exit)
+                sidebar(win_size, True, background_colour, sidebar_colour, cursor, adj, data, exit, False)
             pygame.mouse.set_visible(False)
             window.blit(cursor_list[cursor], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
 
             pygame.display.flip()
-    if isSavedSettings():
-        deleteSettings()
-
-    addSettingsToDatabase(mode, cursor, win_size[0], adj)
-
 
     pygame.quit()
 
@@ -779,31 +791,15 @@ def run_all(data, exit):
         if test[0] == 1:
             backgroundColour =(71,60,68)
             sidebarColour =(55,51,60)
+        print (winsize, cursor, adj)
 
-    sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj, data, exit)
+    sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj, data, exit, True)
+
     data.value = 1
-    exit.value=1
+    exit.value = 1
 
 def play_sound():
     playsound('Shigatsu wa Kimi no Uso EDKirameki-[AudioTrimmer.com].wav')
-
-# def musicccc():
-#     wav_file = AudioSegment.from_file(file="Shigatsu wa Kimi no Uso EDKirameki.wav", format="wav")
-#     play(wav_file)
-
-
-def thread_handler():
-    Thread(target = play_sound).start()
-    Thread(target = run_all).start()
-    sys.exit()
-
-def multiProcessing():
-    p1 = multiprocessing.Process(target=run_all)
-    p2 = multiprocessing.Process(target=play_sound)
-    p1.start()
-    p2.start()
-    p1.join()
-    p2.join()
 
 
 if __name__ == "__main__":

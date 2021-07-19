@@ -358,6 +358,34 @@ def changeColour(surface, red, green, blue):
     arr[:, :, 2] = blue
     return surface
 
+def star(window, win_size):
+    win_value = 0
+    if win_size[0] == 900:
+        win_value = 1
+    elif win_size[0] == 1200:
+        win_value = 2
+
+    points = [[(112,321), (200, 50), (288, 321), (57, 154), (343, 154), (112, 321)],
+              [(168, 482), (300, 75), (432, 482), (86, 230), (514, 230), (168, 482)],
+              [(224, 643), (400, 100), (576, 643), (115, 307), (685, 307), (224, 643)]]
+    thickness = [3,5,7]
+
+    for count in range(5):
+        steps_taken = 0
+        start_x = int(points[win_value][count][0])
+        start_y = int(points[win_value][count][1])
+        step_x = (points[win_value][count+1][0]-points[win_value][count][0])/200
+        step_y = (points[win_value][count + 1][1] - points[win_value][count][1]) / 200
+        while steps_taken < 200:
+            #pygame.draw.line(window, (122,122,122), (start_x, start_y), (start_x+step_x, start_y +step_y), 5)
+            pygame.draw.circle(window, (255,255,255), (start_x, start_y), thickness[win_value])
+            pygame.display.update()
+            start_x += step_x
+            start_y += step_y
+            steps_taken += 1
+
+    pygame.time.wait(1200)
+
 def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize):
     done = False
     DIE = True
@@ -511,11 +539,13 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
         if levelgrid.original_grid == getColours(window, (levelgrid.horizontal_limit, levelgrid.horizontal_limit),
                                                  levelgrid.steps):
-            pygame.time.delay(1000)
             deleteLevel(rect_id, circle_id)
             saveHighScore(rect_id, circle_id, move_count)
             if DEBUG: print("you won")
+            pygame.time.delay(100)
+            star(window, winsize)
             done = True  # important: we should need this but why dont we wghat
+
             return 0  # 0 = won the game
             # you've won the game
     return restart_pressed
