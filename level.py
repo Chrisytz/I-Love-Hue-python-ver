@@ -4,13 +4,10 @@
 
 # This describes the function of one level
 
-import sys
 import random
 import pygame
 import sqlite3
 import math
-
-import config
 
 # global vars
 DEBUG = False
@@ -391,19 +388,17 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     DIE = True
     moving_sprite_list = pygame.sprite.GroupSingle()
     clicked_sprite_list = pygame.sprite.GroupSingle()
-    save_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"], win_vars["sidebar_rect_width"],win_vars["sprite_size"])
-    restart_level_button = pygame.Rect(win_vars["width_sidebar"]*2+win_vars["sprite_size"]/2, win_vars["level_button_loc"]+win_vars["sprite_size"]+win_vars["sprite_size"]/2, win_vars["sidebar_rect_width"], win_vars["sprite_size"])
-    cursor_list = [pygame.image.load('rsz_circle.png'), pygame.image.load('rsz_x.png'), pygame.image.load('rsz_cursor.png')]
+    cursor_list = [pygame.image.load('Images/rsz_circle.png'), pygame.image.load('Images/rsz_x.png'), pygame.image.load('Images/rsz_cursor.png')]
 
-    exit_buttons = [pygame.image.load('exit/exit_dark.png'), pygame.image.load('exit/exit_dark_hover.png'), pygame.image.load('exit/exit_light.png'), pygame.image.load('exit/exit_light_hover.png')]
-    restart_buttons = [pygame.image.load('restart/restart_dark.png'), pygame.image.load('restart/restart_dark_hover.png'), pygame.image.load('restart/restart_light.png'), pygame.image.load('restart/restart_light_hover.png')]
+    exit_buttons = [pygame.image.load('Images/exit/exit_dark.png'), pygame.image.load('Images/exit/exit_dark_hover.png'), pygame.image.load('Images/exit/exit_light.png'), pygame.image.load(
+        'Images/exit/exit_light_hover.png')]
+    restart_buttons = [pygame.image.load('Images/restart/restart_dark.png'), pygame.image.load('Images/restart/restart_dark_hover.png'), pygame.image.load(
+        'Images/restart/restart_light.png'), pygame.image.load('Images/restart/restart_light_hover.png')]
     exit_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in exit_buttons]
     restart_buttons = [pygame.transform.smoothscale(x, (int(win_vars["sprite_size"]),int(win_vars["sprite_size"]))) for x in restart_buttons]
 
-    constant = changeColour(pygame.transform.smoothscale(pygame.image.load('lock.png'), (int(levelgrid.win_size[1]/levelgrid.steps[0]),int(levelgrid.win_size[1]/levelgrid.steps[0]))), 105,94,101)
+    constant = changeColour(pygame.transform.smoothscale(pygame.image.load('Images/lock.png'), (int(levelgrid.win_size[1] / levelgrid.steps[0]), int(levelgrid.win_size[1] / levelgrid.steps[0]))), 107, 107, 107)
     constant_rects = [constant.get_rect(topleft = (0,0)), constant.get_rect(bottomleft = (0, winsize[1])), constant.get_rect(topright = (winsize[1], 0)), constant.get_rect(bottomright = (winsize[1], winsize[1]))]
-
-    mode = None
 
     if background_colour == (255,244,234):
         mode = 2
@@ -417,7 +412,6 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
     elif circle_id < 6:
         rect_size = win_vars["gameboard_size"]/8
 
-    show_cursor = True
     restart_pressed = -1
 
     # TODO: THIS LIMIT NEEDS TO BE CHANGED TO BE A PASSED VAR TO RESPOND TO SCRREEN SCALING --> levelgrid.horizontalLimit **DONE I THINK**
@@ -425,11 +419,10 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
 
         for event in pygame.event.get():
 
-            # if event.type == pygame.QUIT:
-            #     return 1
+            if event.type == pygame.QUIT:
+                return 1
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
-                posx, posy = pos
                 # Button to quit
                 if exit_buttons[0].get_rect(topleft = win_vars["exit_button_loc"]).collidepoint(pos):
                     if DEBUG: print("white button pressed")
@@ -440,10 +433,9 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
                 if restart_buttons[mode].get_rect(topleft=win_vars["restart_button_loc"]).collidepoint(pos):
                     restart_pressed = 2
                     done = True
-                    #runGame(rect_id, circle_id, cursor, background_colour, textColour, textClickedColour, adj, win_vars, winsize)
 
 
-                # if DEBUG: print("this is mousebutton down posx, posy: ", pos)
+                if DEBUG: print("this is mousebutton down posx, posy: ", pos)
                 for sprite in sprite_list:
                     if sprite.rect.collidepoint(pos) and sprite.movable:
                         if DEBUG: print(sprite.constant)
@@ -481,39 +473,17 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
             if event.type == pygame.MOUSEMOTION:
                 posx, posy = pygame.mouse.get_pos()
                 for sprite in moving_sprite_list:
-                    # iirc the below code should run ok
                     if sprite.clicked == True and sprite.movable and (posx < levelgrid.horizontal_limit):
                         sprite.rect.move_ip(event.rel)
-
-        #moving_sprite_list.draw(window)
-        # if DIE == True:
-        #     sprite_list_non_shuffled.draw(window)
-        #     print("fuck uuuuuu")
-        #     pygame.time.delay(1000)
-        #     DIE = False
 
         sprite_list.draw(window)  # THIS IS WHAT IS DRAWING THE SPRITES!
         moving_sprite_list.draw(window)  # draw this last ALWAYS
         for rect in constant_rects:
             window.blit(constant, rect)
 
-        # TODO: FIND A BETTER WAY TO DRAW RECTANGLES
-        # in particular, we need a better way to calculate the '200' present here.
         pygame.draw.rect(window, (background_colour),
                          pygame.Rect(levelgrid.horizontal_limit, 0, levelgrid.horizontal_limit / 2,
                                      levelgrid.horizontal_limit))
-
-        # # load = pygame.Rect(420,200,160,40)
-        # # restart = pygame.Rect(420, 260, 160, 40)
-        # if save_level_button.collidepoint(pygame.mouse.get_pos()):
-        #     pygame.draw.rect(window, (textClickedColour), (save_level_button))  # THIS IS JUST A TEST THING :)
-        # else:
-        #     pygame.draw.rect(window, (textColour), (save_level_button))  # THIS IS JUST A TEST THING :)
-        #
-        # if restart_level_button.collidepoint(pygame.mouse.get_pos()):
-        #     pygame.draw.rect(window, (textClickedColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
-        # else:
-        #     pygame.draw.rect(window, (textColour), (restart_level_button))  # THIS IS JUST A TEST THING :)
 
         buttons(mode, win_vars, exit_buttons, restart_buttons, window)
 
@@ -523,11 +493,7 @@ def evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_coun
         else:
             highScore(window, 0, background_colour, textColour, win_vars)
 
-
-
         pygame.mouse.set_visible(False)
-
-
 
         for sprite in moving_sprite_list:
             pygame.draw.rect(window, window.get_at((int(sprite.original_x), int(sprite.original_y))), (int(sprite.original_x), int(sprite.original_y), rect_size, rect_size))
@@ -562,11 +528,9 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
     # Todo: Do we want this to only run one level?
     # system level variables.
     sprite_list = pygame.sprite.Group()
-    sprite_list_non_shuffled = pygame.sprite.Group()
     sprite_single = pygame.sprite.GroupSingle()
 
     window, colours, colour_size, constants, win_size, steps = level
-    pygame.display.set_caption("LEVEL!!!!!")
     if win_size[0] < win_size[1]:
         drawing_size = (win_size[0], win_size[0])
     else:
@@ -574,25 +538,15 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
 
     # TODO: horizontal lim to be coded here with diff between drawing size and window sizes
 
-    # pygame.init()  # is pygame already init from another side?
-    # window = pygame.display.set_mode((win_size))
     levelgrid = Grid(window, colours, colour_size, constants, win_size, drawing_size, steps)
-    non_shuffled_levelgrid = Grid(window, colours, colour_size, constants, win_size, drawing_size, steps)
 
     if DEBUG: print(constants)
 
     levelgrid.drawGradient()
-    non_shuffled_levelgrid.drawGradient()
-    # drawGridLoose(window, win_size, steps, levelgrid.shuffle_grid) # todo: remove
     levelgrid.getColours()
-    non_shuffled_levelgrid.getColours()
 
     levelgrid.shuffle(bypass = False)
-    non_shuffled_levelgrid.shuffle(bypass = True)
 
-
-
-    #todo: insert an if statement here checking if there is a game saved and if so just addtospritegroup and dont do everything else
     isLevelSaved = isSavedLevel(rect_id, circle_id)
     move_count = 0
     if isLevelSaved == 1:
@@ -604,16 +558,12 @@ def run_level(level, rect_id, circle_id, cursor, background_colour, textColour, 
         deleteLevel(rect_id, circle_id)
 
     levelgrid.addToSpriteGroup(sprite_list, window)
-    non_shuffled_levelgrid.addToSpriteGroup(sprite_list_non_shuffled, window)
 
     hasHighScore = isCompletedLevel(rect_id, circle_id)
-
-    #test = evaluate_level(window, levelgrid, sprite_list_non_shuffled, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
     game = evaluate_level(window, levelgrid, sprite_list, rect_id, circle_id, move_count, cursor, background_colour, textColour, textClickedColour, adj, win_vars, hasHighScore, winsize)
 
     if game == 0:
-        print("you have won")
         iscomplete = 0
     elif game == 2:
         iscomplete = 2
@@ -643,10 +593,6 @@ def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClick
 
     # for 900x900, 9, 6, 3
     # steps = 8, 8
-
-    # IDFK IF I CAN DO THIS BUT HAVE IT ANYWAYS
-    # okay so pretty much [] is the whole list, [[colourlist]], [[[four colours]]] are nested inside and within
-    # [[[four colours]]] there are [[[[colour1, pos], [colour2, pos], [colour3, pos], [colour4, pos]]]]
 
     colour_list = [
         # colourlist 1
@@ -706,17 +652,7 @@ def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClick
           [(72, 83, 120), (1, 0)], [(255, 200, 199), (0, 0)]],
          [[(255, 158, 137), (0, 1)], [(72, 87, 105), (1, 1)],
           [(156, 192, 240), (1, 0)], [(166, 245, 255), (0, 0)]]],
-        #colourlist 4 (really circles6)
-        [[[(115, 223, 217), (0, 0)], [(255, 230, 148), (1, 0)], [(171, 142, 242), (0, 1)], [(254, 139, 158), (1, 1)]],
-         [[(255, 201, 128), (0, 0)], [(72, 180, 194), (1, 0)], [(234, 161, 181), (0, 1)], [(199, 226, 255), (1, 1)]],
-         [[(137, 205, 212), (0, 0)], [(255, 191, 168), (1, 0)], [(177, 243, 197), (0, 1)], [(249, 255, 181), (1, 1)]],
-         [[(126, 213, 191), (0, 0)], [(220, 255, 209), (1, 0)], [(231, 166, 180), (0, 1)], [(255, 216, 168), (1, 1)]],
-         [[(212, 164, 178), (0, 0)], [(127, 191, 231), (1, 0)], [(239, 229, 180), (0, 1)], [(178, 247, 200), (1, 1)]],
-         [[(203, 170, 242), (0, 0)], [(134, 231, 240), (1, 0)], [(255, 207, 199), (0, 1)], [(255, 224, 181), (1, 1)]],
-         [[(103, 197, 199), (0, 0)], [(186, 245, 231), (1, 0)], [(96, 119, 137), (0, 1)], [(235, 177, 180), (1, 1)]],
-         [[(232, 196, 132), (0, 0)], [(252, 126, 138), (1, 0)], [(255, 199, 250), (0, 1)], [(161, 122, 222), (1, 1)]],
-         [[(159, 213, 163), (0, 0)], [(99, 187, 196), (1, 0)], [(253, 201, 209), (0, 1)], [(116, 149, 208), (1, 1)]]],
-        #colourlist 5 (really circles4)
+        # colourlist 4
         [[[(16, 19, 38), (0, 0)], [(137, 162, 193), (1, 0)],
           [(212, 195, 198), (0, 1)], [(227, 214, 209), (1, 1)]],
          [[(110, 152, 186), (0, 0)], [(61, 74, 91), (1, 0)],
@@ -735,18 +671,32 @@ def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClick
           [(230, 233, 238), (0, 1)], [(191, 235, 255), (1, 1)]],
          [[(245, 249, 255), (0, 0)], [(240, 228, 228), (1, 0)],
           [(204, 197, 230), (0, 1)], [(121, 135, 189), (1, 1)]]],
+        # colourlist 5 (really circles6)
+        [[[(115, 223, 217), (0, 0)], [(255, 230, 148), (1, 0)], [(171, 142, 242), (0, 1)], [(254, 139, 158), (1, 1)]],
+         [[(255, 201, 128), (0, 0)], [(72, 180, 194), (1, 0)], [(234, 161, 181), (0, 1)], [(199, 226, 255), (1, 1)]],
+         [[(137, 205, 212), (0, 0)], [(255, 191, 168), (1, 0)], [(177, 243, 197), (0, 1)], [(249, 255, 181), (1, 1)]],
+         [[(126, 213, 191), (0, 0)], [(220, 255, 209), (1, 0)], [(231, 166, 180), (0, 1)], [(255, 216, 168), (1, 1)]],
+         [[(212, 164, 178), (0, 0)], [(127, 191, 231), (1, 0)], [(239, 229, 180), (0, 1)], [(178, 247, 200), (1, 1)]],
+         [[(203, 170, 242), (0, 0)], [(134, 231, 240), (1, 0)], [(255, 207, 199), (0, 1)], [(255, 224, 181), (1, 1)]],
+         [[(103, 197, 199), (0, 0)], [(186, 245, 231), (1, 0)], [(96, 119, 137), (0, 1)], [(235, 177, 180), (1, 1)]],
+         [[(232, 196, 132), (0, 0)], [(252, 126, 138), (1, 0)], [(255, 199, 250), (0, 1)], [(161, 122, 222), (1, 1)]],
+         [[(159, 213, 163), (0, 0)], [(99, 187, 196), (1, 0)], [(253, 201, 209), (0, 1)], [(116, 149, 208), (1, 1)]]],
+        # colourlist6 (really circles5)
+        [[[(191, 22, 81), (0, 0)], [(90, 19, 60), (1, 0)], [(233, 193, 177), (0, 1)], [(55, 57, 111), (1, 1)]],
+         [[(19, 23, 83), (0, 0)], [(72, 37, 90), (1, 0)], [(247, 189, 148), (0, 1)], [(219, 112, 113), (1, 1)]],
+         [[(211, 117, 109), (0, 0)], [(237, 183, 154), (1, 0)], [(134, 17, 56), (0, 1)], [(58, 61, 107), (1, 1)]],
+         [[(240, 217, 212), (0, 0)], [(20, 21, 82), (1, 0)], [(232, 156, 130), (0, 1)], [(100, 41, 69), (1, 1)]],
+         [[(235, 155, 175), (0, 0)], [(157, 16, 69), (1, 0)], [(87, 120, 147), (0, 1)], [(42, 35, 80), (1, 1)]],
+         [[(113, 22, 73), (0, 0)], [(239, 197, 186), (1, 0)], [(76, 84, 112), (0, 1)], [(204, 220, 238), (1, 1)]],
+         [[(161, 170, 224), (0, 0)], [(245, 206, 208), (1, 0)], [(61, 16, 67), (0, 1)], [(192, 128, 209), (1, 1)]],
+         [[(157, 215, 223), (0, 0)], [(233, 202, 189), (1, 0)], [(49, 81, 106), (0, 1)], [(85, 26, 76), (1, 1)]],
+         [[(236, 209, 222), (0, 0)], [(56, 57, 113), (1, 0)], [(191, 233, 233), (0, 1)], [(85, 119, 144), (1, 1)]]]
 
     ]
 
     colours = addColours(colour_list, rect_id, circle_id)
 
     colour_size = (2, 2)
-    # use 4 random colours for now
-    # c1, c2, c3, c4 = ((33, 11, 84), (201, 205, 242), (201, 255, 249), (6, 39, 69))
-    # c1 = (255, 0, 0)
-    # c2 = (0, 255, 0)
-    # c3 = (0, 0, 255)
-    # c4 = (150, 150, 150)
 
     # constants are blocks that won't move.
 
@@ -786,7 +736,6 @@ if __name__ == "__main__":
     level = 0  # TODO: CHANGE THIS
     win_size = (400, 400)
     testWindow = pygame.display.set_mode((win_size))
-    pygame.display.set_caption("test_window")
 
     # common sizes for 1200x900
     # 300x300:  x=4     y=3

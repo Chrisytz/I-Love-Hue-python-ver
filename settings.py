@@ -1,10 +1,5 @@
 import pygame
-import sys
-import random
-from sound import Sound
-import config
 
-#todo: im gonna create a fucking text class because i am losing my fucking mind rn o m g w t f i s wrong with THISSSSKHADFKHASFD
 class Settings(pygame.sprite.Sprite):
     def __init__(self, colour, win_size):
         pygame.sprite.Sprite.__init__(self)
@@ -107,23 +102,19 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
     pygame.init()
     win_size = winsize
     window = pygame.display.set_mode((win_size))
-    pygame.display.set_caption("SETTINGGSSSADAD")
-
     done = False
 
     font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))
-    # button_list = [lightMode, darkMode, circle, x, arrow]
     cursor_value = current_cursor
     backgroundColour = settingColour
     sideColour = sidebarColour
-    backgroundValue = None
     winDim = win_size
     windim_pressed = False
     button_list = createButtons(backgroundColour, lmt, lmtc, dmt, dmtc, win_vars)
 
 
 
-    close_button = changeColour(pygame.transform.smoothscale(pygame.image.load('x.png').convert_alpha(), (int(win_vars["sprite_size"] / 2), int(win_vars["sprite_size"] / 2))),
+    close_button = changeColour(pygame.transform.smoothscale(pygame.image.load('Images/x.png').convert_alpha(), (int(win_vars["sprite_size"] / 2), int(win_vars["sprite_size"] / 2))),
                                 textColour[0], textColour[1], textColour[2])
 
     close_rect = close_button.get_rect(topleft = (win_vars["sprite_size"]/4, win_vars["sprite_size"]/4))
@@ -151,6 +142,10 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
 
         for event in pygame.event.get():
             pos = pygame.mouse.get_pos()
+
+            if event.type == pygame.QUIT:
+                done = True
+
             for button in button_list:
                 if button.rect.collidepoint(pos) and button.clickable:
                     button.hover = True
@@ -164,8 +159,6 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
 
 
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                pos = pygame.mouse.get_pos()
-
                 if button_list[0].rect.collidepoint(pos):
                     close_button = changeColour(close_button, textColour[0], textColour[1], textColour[2])
                     settingsPage.colour = (255, 244, 234)
@@ -197,40 +190,35 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
                     done = True
                     windim_pressed = True
                     winDim = (600, 400)
-                    # sidebar(winDim, True, backgroundColour, sideColour)
+
                 if button_list[8].rect.collidepoint(pos):
                     done = True
                     windim_pressed = True
                     winDim = (900, 600)
-                    # sidebar(winDim, True, backgroundColour, sideColour)
 
                 if button_list[9].rect.collidepoint(pos):
                     done = True
                     windim_pressed = True
                     winDim = (1200, 800)
-                    # sidebar(winDim, True, backgroundColour, sideColour)
 
                 if button_list[11].rect.collidepoint(pos):
                     data.value = 0
+
                 if button_list[12].rect.collidepoint(pos):
                     data.value = 1
-
 
                 if close_rect.collidepoint(pos):
                     done = True
 
-                if done == True:
-                    settingsPage.open = False
-                    circles_visible = True
-                    rect_can_be_clicked = True
-                    settingsPage.fillWindow(0)
-            # circleBgColour = circleBackground(settingsPage.colour)
+            if done == True:
+                settingsPage.open = False
+                circles_visible = True
+                rect_can_be_clicked = True
+                settingsPage.fillWindow(0)
 
         pygame.mouse.set_visible(False)
         window.blit(cursor_list[cursor_value], (pygame.mouse.get_pos()[0] - adj, pygame.mouse.get_pos()[1] - adj))
 
         pygame.display.flip()
-        # for button in button_list:
-        #     button.reset(font)
 
     return backgroundColour, backgroundColour, sideColour, cursor_value, adj, winDim, circles_visible, rect_can_be_clicked, windim_pressed

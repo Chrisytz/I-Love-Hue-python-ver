@@ -1,7 +1,11 @@
+import os
+os.system('pip install playsound')
+
 import sys
 
-from screen import run_all
-from screen import play_sound
+
+from homescreen import run_all
+from homescreen import play_sound
 import multiprocessing
 from multiprocessing import Manager
 import config
@@ -13,17 +17,16 @@ def soundmanager(num):
     p3 = multiprocessing.Process(target=play_sound)
     p3.start()
     count = 1
-    # p3.terminate()
     while(True):
         if num.value == 1:
             p3.terminate()
             count -= 1
-            num.value = 2
+            num.value = 10
         if num.value == 0 and count == 0:
             p3 = multiprocessing.Process(target=play_sound)
             p3.start()
-            num.value = 2
             count += 1
+            num.value = 11
 
 
 def processManager():
