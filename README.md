@@ -7,7 +7,7 @@ much thanks to [Anthony Luo](https://github.com/antholuo) for helping me too man
 1. Install VLC 64-bit. You can do so by clicking [here](https://get.videolan.org/vlc/3.0.16/win64/vlc-3.0.16-win64.exe).
 2. Clone the entire repository wherever you would like. A link to the top level of the repository can be found by clicking [here](https://github.com/Chrisytz/I-Love-Hue-python-ver).
     - it is important that you clone the entire repository. Dependencies have not been packaged with the exe.
-    - If you're struggling to clone the repository, click [here](https://github.com/Chrisytz/I-Love-Hue-python-ver) and then click the top right arrow, which will open a dropdown like this. Then click on 'download zip'.
+    - If you're struggling to clone the repository, click [here](https://github.com/Chrisytz/I-Love-Hue-python-ver) and then click the green `'code'` arrow in the top right corner., which will open a dropdown like this. Then click on 'download zip'.
     - ![image](https://user-images.githubusercontent.com/45152791/126379142-161d5f31-77d1-49f9-a0c1-aee835504ad9.png). 
 3. Open the repository within your file system. Find `main.exe`, and double-click to run on windows.
 4. If windows security blocks you from playing the game click 'More info' and then 'Run anyways'.
