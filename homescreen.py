@@ -10,7 +10,7 @@ from settings import settings
 import numpy
 from threading import Thread
 import multiprocessing
-from playsound import playsound
+import simpleaudio as sa
 
 DEBUG = False
 
@@ -576,8 +576,7 @@ def run_all(data, exit):
     exit.value = 1
 
 def play_sound():
-    playsound('music.mp3')
-
+    sa.WaveObject.from_wave_file('music.wav').play().wait_done()
 
 if __name__ == "__main__":
     run_all()
