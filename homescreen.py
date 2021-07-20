@@ -305,7 +305,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
     done = False
     pygame.init()
     window = pygame.display.set_mode((win_size[0], win_size[1]), (pygame.RESIZABLE))
-    pygame.display.set_caption("Gradient Rect")
+    pygame.display.set_caption("Shade of Hue")
 
     sidebar_colour = sidebarColour
     background_colour = settingColour
