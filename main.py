@@ -1,12 +1,9 @@
-from mulitprocessing import freeze_support
-
 import sys
 
 
 from homescreen import run_all
 from homescreen import play_sound
 import multiprocessing
-from multiprocessing import Manager
 import config
 
 config.init()
@@ -29,7 +26,7 @@ def soundmanager(num):
 
 
 def processManager():
-    manager = Manager()
+    manager = multiprocessing.Manager()
     num = manager.Value('i', 2)
     finish = manager.Value('i',0)
 
@@ -44,5 +41,5 @@ def processManager():
             sys.exit()
 
 if __name__ == '__main__':
-    freeze_support()
+    multiprocessing.freeze_support()
     processManager()
