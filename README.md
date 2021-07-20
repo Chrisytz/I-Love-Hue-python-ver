@@ -9,8 +9,9 @@ much thanks to [Anthony Luo](https://github.com/antholuo) for helping me too man
     - it is important that you clone the entire repository. Dependencies have not been packaged with the exe.
     - If you're struggling to clone the repository, click [here](https://github.com/Chrisytz/I-Love-Hue-python-ver) and then click the green `'code'` arrow in the top right corner., which will open a dropdown like this. Then click on 'download zip'.
     - ![image](https://user-images.githubusercontent.com/45152791/126379142-161d5f31-77d1-49f9-a0c1-aee835504ad9.png). 
-3. Open the repository within your file system. Find `main.exe`, and double-click to run on windows.
-4. If windows security blocks you from playing the game click 'More info' and then 'Run anyways'.
+3. Open the repository within your file system. Unpack the zip file wherever you would like.
+4. In the unpacked folder, find `main.exe`, and double-click to run on windows.
+5. If windows security blocks you from playing the game click 'More info' and then 'Run anyways'.
 ![image](https://user-images.githubusercontent.com/52107461/126377564-a232f23a-10ab-40e5-bd07-b351bda47d17.png)![image](https://user-images.githubusercontent.com/52107461/126377733-dadaeb99-c9f6-4032-ac65-60eb7829b0d2.png)
 
 
