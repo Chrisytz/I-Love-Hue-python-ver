@@ -1,5 +1,4 @@
-import os
-os.system('pip install playsound')
+from mulitprocessing import freeze_support
 
 import sys
 
@@ -45,4 +44,5 @@ def processManager():
             sys.exit()
 
 if __name__ == '__main__':
+    freeze_support()
     processManager()
