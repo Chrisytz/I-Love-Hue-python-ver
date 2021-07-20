@@ -4,8 +4,8 @@ os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
 import pafy
 import vlc
 
-def play_music():
-    url = "https://youtu.be/wTowEKjDGkU"
+def play_music1():
+    url = "https://youtu.be/St-H0-xc-sc?list=LL"
     video = pafy.new(url)
     best = video.getbest()
     playurl = best.url

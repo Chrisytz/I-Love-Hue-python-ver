@@ -5,13 +5,13 @@ from homescreen import play_sound
 import multiprocessing
 import config
 
-from sound_player import play_music
+from sound_player import play_music1
 
 config.init()
 mylist = [ False]
 
 def soundmanager(num):
-    p3 = multiprocessing.Process(target=play_music)
+    p3 = multiprocessing.Process(target=play_music1)
     p3.start()
     count = 1
     while(True):
@@ -20,7 +20,7 @@ def soundmanager(num):
             count -= 1
             num.value = 10
         if num.value == 0 and count == 0:
-            p3 = multiprocessing.Process(target=play_music)
+            p3 = multiprocessing.Process(target=play_music1)
             p3.start()
             count += 1
             num.value = 11
