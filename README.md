@@ -2,8 +2,9 @@ a colourgame~
 
 much thanks to [Anthony Luo](https://github.com/antholuo) for helping me too many times.
 
-## Installation Instructions
-
+# Installation Instructions
+Installation is different on Windows and MacOS. Please read carefully
+## Windows Installation
 1. Install VLC 64-bit. You can do so by clicking [here](https://get.videolan.org/vlc/3.0.16/win64/vlc-3.0.16-win64.exe).
 2. Clone the entire repository wherever you would like. A link to the top level of the repository can be found by clicking [here](https://github.com/Chrisytz/I-Love-Hue-python-ver).
     - It is important that you clone the entire repository. Dependencies have not been packaged with the exe.
@@ -13,6 +14,21 @@ much thanks to [Anthony Luo](https://github.com/antholuo) for helping me too man
 4. In the unpacked folder, find `main.exe`, and double-click to run on windows.
 5. If windows security blocks you from playing the game click 'More info' and then 'Run anyways'.
 ![image](https://user-images.githubusercontent.com/52107461/126377564-a232f23a-10ab-40e5-bd07-b351bda47d17.png)![image](https://user-images.githubusercontent.com/52107461/126377733-dadaeb99-c9f6-4032-ac65-60eb7829b0d2.png)
+
+## MacOS Installation
+1. Install VLC 64-bit. You can do so by clicking [here](https://www.videolan.org/vlc/download-macosx.html).
+2. Clone the entire repository wherever you would like. A link to the top level of the repository can be found by clicking [here](https://github.com/Chrisytz/I-Love-Hue-python-ver).
+    - It is important that you clone the entire repository. Dependencies have not been packaged with the exe.
+    - If you're struggling to clone the repository, click [here](https://github.com/Chrisytz/I-Love-Hue-python-ver) and then click the green `'code'` arrow in the top right corner., which will open a dropdown like this. Then click on 'download zip'.
+    - ![image](https://user-images.githubusercontent.com/45152791/126379142-161d5f31-77d1-49f9-a0c1-aee835504ad9.png). 
+3. Open the repository within your file system. Unpack the zip file wherever you would like.
+4. If you have python and pip installed, skip to step #7. If you have a python IDE, you can now open the repository, install dependencies, and run `main.py`.
+5. run `curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py`
+6. run `python get-pip.py`
+7. Navigate to the unpacked repository.
+8. run `pip install -r requirements.txt`
+9. run `python main.py`
+10. profit!
 
 
 ### Useful commands for codebase
