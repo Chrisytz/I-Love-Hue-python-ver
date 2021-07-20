@@ -13,7 +13,7 @@ Install all dependencies:
 ```python
 pip install -r requirements.txt
 ```
-freeze dependencies:
+update dependencies:
 ```python
 pip freeze > requirements.txt
 ```
