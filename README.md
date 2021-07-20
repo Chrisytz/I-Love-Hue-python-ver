@@ -30,6 +30,7 @@ Installation is different on Windows and MacOS. Please read carefully
 9. run `python main.py`
 10. profit!
 
+* note: We are unclear about the compatibility of the exe with wine. Feel free to try.
 
 ### Useful commands for codebase
 Install all dependencies:
