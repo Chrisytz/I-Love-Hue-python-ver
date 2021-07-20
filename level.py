@@ -606,6 +606,7 @@ def runGame(rect_id, circle_id, cursor, background_colour, textColour, textClick
     win_size = winsize
     testWindow = pygame.display.set_mode((win_size))
 
+
     # common sizes for 1200x900
     # 300x300:  x=4     y=3
     # 150x150:  x=8     y=6

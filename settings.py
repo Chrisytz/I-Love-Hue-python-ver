@@ -102,6 +102,7 @@ def settings(win_vars, current_cursor, textHoverColour, textColour, settingColou
     pygame.init()
     win_size = winsize
     window = pygame.display.set_mode((win_size))
+
     done = False
 
     font = pygame.font.Font('Quicksand-Regular.ttf', int(win_vars["font_size"]))

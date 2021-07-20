@@ -521,7 +521,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                 number_sprite.update_image(True)
                                                 number_sprite.complete = True
 
-                                pygame.display.set_caption("Gradient Rect")
+                                pygame.display.set_caption("Shade of Hue")
 
                 window.fill(background_colour)
                 pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
