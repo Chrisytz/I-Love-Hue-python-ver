@@ -15,6 +15,7 @@ def play_music1():
     Media = Instance.media_new(playurl)
     Media.get_mrl()
     player.set_media(Media)
+    player.audio_set_volume(50)
     player.play()
     while True:
         pass
