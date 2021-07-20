@@ -1,9 +1,10 @@
+import os
+os.add_dll_directory(r'C:\Program Files\VideoLAN\VLC')
+
 import pafy
 import vlc
 
-
-
-url = "https://www.youtube.com/watch?v=bMt47wvK6u0"
+url = "https://youtu.be/wTowEKjDGkU"
 video = pafy.new(url)
 best = video.getbest()
 playurl = best.url
@@ -14,3 +15,5 @@ Media = Instance.media_new(playurl)
 Media.get_mrl()
 player.set_media(Media)
 player.play()
+while True:
+    pass
