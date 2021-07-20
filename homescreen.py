@@ -72,7 +72,7 @@ class OverlayNumbers(pygame.sprite.Sprite):
         self.image = pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(),
                                                   (self.size, self.size))
         self.img_blk = changeColour(pygame.transform.smoothscale(pygame.image.load(number_list[id]).convert_alpha(),
-                                                    (self.size, self.size)), 0,0,0)
+                                                                 (self.size, self.size)), 0, 0, 0)
         self.rect = self.image.get_rect()
         self.rect.x = x_pos
         self.rect.y = y_pos
@@ -139,6 +139,7 @@ class Settings(pygame.sprite.Sprite):
         self.image.fill(colour)
         self.rect = self.image.get_rect()
 
+
 def addSidebarSprites(sprite_list, win_vars, sidebar_rect):
     for i in range(0, win_vars["num_of_rectangles"]):
         sprite_list.add(Rect(sidebar_rect, win_vars["bar_thickness"],
@@ -173,12 +174,15 @@ def addCircleSprites(background_colour, colour_list_circle, number_list, circle_
 
     return circle_sprites
 
+
 def drawCircles(window, circle_sprites, id):
     circle_sprites[id].draw(window)
+
 
 def draw(window, number_sprites):
     for sprite in number_sprites:
         window.blit(sprite.image, (sprite.rect.x, sprite.rect.y))
+
 
 def createDatabase():
     con = sqlite3.connect('levels.db')
@@ -197,14 +201,16 @@ def createDatabase():
         cur.execute('''CREATE TABLE settings
                         (mode integer, cursor integer, size integer, adj integer, music integer)''')
 
+
 def addSettingsToDatabase(mode, cursor, size, adj, music):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
 
     cur.execute("INSERT INTO settings VALUES (:mode, :cursor, :size, :adj, :music)", (mode, cursor, size, adj, music))
-    print ("settings added")
+    print("settings added")
 
     con.commit()
+
 
 def getSettingsFromDatabase():
     con = sqlite3.connect('levels.db')
@@ -212,9 +218,10 @@ def getSettingsFromDatabase():
     cur.execute("SELECT * FROM settings")
 
     score = cur.fetchone()
-    print (score)
+    print(score)
 
     return score
+
 
 def isSavedSettings():
     con = sqlite3.connect('levels.db')
@@ -226,6 +233,7 @@ def isSavedSettings():
     else:
         return 1
 
+
 def deleteSavedSettings():
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
@@ -234,6 +242,7 @@ def deleteSavedSettings():
 
     con.commit()
 
+
 def addLevelToDatabase(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
     cur = con.cursor()
@@ -241,6 +250,7 @@ def addLevelToDatabase(rect_id, circle_id):
     cur.execute("INSERT INTO completedLevels VALUES (:rect_id, :circle_id)", (rect_id, circle_id))
 
     con.commit()
+
 
 def getLevelFromDatabase(rect_id, circle_id):
     con = sqlite3.connect('levels.db')
@@ -253,6 +263,7 @@ def getLevelFromDatabase(rect_id, circle_id):
     else:
         return 1
 
+
 def updateCompleteness(overlay_sprites, number_sprites):
     for i in range(3):
         for sprite in overlay_sprites[i]:
@@ -263,6 +274,7 @@ def updateCompleteness(overlay_sprites, number_sprites):
                 sprite.update_image(True)
                 sprite.complete = True
 
+
 def changeColour(surface, red, green, blue):
     arr = pygame.surfarray.pixels3d(surface)
     arr[:, :, 0] = red
@@ -270,13 +282,14 @@ def changeColour(surface, red, green, blue):
     arr[:, :, 2] = blue
     return surface
 
-def splashscreen(win_size, window):
 
+def splashscreen(win_size, window):
     done = False
-    splashscreen = pygame.transform.smoothscale(pygame.image.load('Images/colour game splash screen.png').convert_alpha(), (win_size[0], win_size[1]))
+    splashscreen = pygame.transform.smoothscale(
+        pygame.image.load('Images/colour game splash screen.png').convert_alpha(), (win_size[0], win_size[1]))
     while not done:
         for event in pygame.event.get():
-            window.blit(splashscreen, splashscreen.get_rect(topleft = (0,0)))
+            window.blit(splashscreen, splashscreen.get_rect(topleft=(0, 0)))
             pygame.display.flip()
             if event.type == pygame.QUIT:
                 return True
@@ -286,7 +299,7 @@ def splashscreen(win_size, window):
 
 # This is the main entry point to the game.
 def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mouse_adj, data, exit, showSplashscreen):
-    #init
+    # init
 
     win_size = windim
     done = False
@@ -296,7 +309,6 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 
     sidebar_colour = sidebarColour
     background_colour = settingColour
-
 
     # calculating variables
     win_vars = {
@@ -313,52 +325,67 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
         "font_size": win_size[1] / 20,
         "gameboard_size": win_size[1],
         "exit_button_loc": (
-        win_size[0] * 2 / 3 + ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6), win_size[1] * 3 / 4),
+            win_size[0] * 2 / 3 + ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6), win_size[1] * 3 / 4),
         "restart_button_loc": (win_size[0] - ((((win_size[0] / 3) - (win_size[1] * 0.1))) / 6) - (
-                    (((win_size[0] / 3) - (win_size[1] * 0.1))) / 4), win_size[1] * 3 / 4)
+                (((win_size[0] / 3) - (win_size[1] * 0.1))) / 4), win_size[1] * 3 / 4)
 
     }
 
     colour_list_circle = [
-        [["Images/Circles1/0.png", "Images/Circles1/1.png", "Images/Circles1/2.png", "Images/Circles1/3.png", "Images/Circles1/4.png", "Images/Circles1/5.png",
+        [["Images/Circles1/0.png", "Images/Circles1/1.png", "Images/Circles1/2.png", "Images/Circles1/3.png",
+          "Images/Circles1/4.png", "Images/Circles1/5.png",
           "Images/Circles1/6.png", "Images/Circles1/7.png", "Images/Circles1/8.png"],
-         ["Images/Circles1Dark/0.png", "Images/Circles1Dark/1.png", "Images/Circles1Dark/2.png", "Images/Circles1Dark/3.png", "Images/Circles1Dark/4.png",
+         ["Images/Circles1Dark/0.png", "Images/Circles1Dark/1.png", "Images/Circles1Dark/2.png",
+          "Images/Circles1Dark/3.png", "Images/Circles1Dark/4.png",
           "Images/Circles1Dark/5.png",
           "Images/Circles1Dark/6.png", "Images/Circles1Dark/7.png", "Images/Circles1Dark/8.png"]],
-        [["Images/Circles2/0.png", "Images/Circles2/1.png", "Images/Circles2/2.png", "Images/Circles2/3.png", "Images/Circles2/4.png", "Images/Circles2/5.png",
+        [["Images/Circles2/0.png", "Images/Circles2/1.png", "Images/Circles2/2.png", "Images/Circles2/3.png",
+          "Images/Circles2/4.png", "Images/Circles2/5.png",
           "Images/Circles2/6.png", "Images/Circles2/7.png", "Images/Circles2/8.png"],
-         ["Images/Circles2Dark/0.png", "Images/Circles2Dark/1.png", "Images/Circles2Dark/2.png", "Images/Circles2Dark/3.png", "Images/Circles2Dark/4.png",
+         ["Images/Circles2Dark/0.png", "Images/Circles2Dark/1.png", "Images/Circles2Dark/2.png",
+          "Images/Circles2Dark/3.png", "Images/Circles2Dark/4.png",
           "Images/Circles2Dark/5.png",
           "Images/Circles2Dark/6.png", "Images/Circles2Dark/7.png", "Images/Circles2Dark/8.png"]],
-        [["Images/Circles3/0.png", "Images/Circles3/1.png", "Images/Circles3/2.png", "Images/Circles3/3.png", "Images/Circles3/4.png", "Images/Circles3/5.png",
+        [["Images/Circles3/0.png", "Images/Circles3/1.png", "Images/Circles3/2.png", "Images/Circles3/3.png",
+          "Images/Circles3/4.png", "Images/Circles3/5.png",
           "Images/Circles3/6.png", "Images/Circles3/7.png", "Images/Circles3/8.png"],
-         ["Images/Circles3Dark/0.png", "Images/Circles3Dark/1.png", "Images/Circles3Dark/2.png", "Images/Circles3Dark/3.png", "Images/Circles3Dark/4.png",
+         ["Images/Circles3Dark/0.png", "Images/Circles3Dark/1.png", "Images/Circles3Dark/2.png",
+          "Images/Circles3Dark/3.png", "Images/Circles3Dark/4.png",
           "Images/Circles3Dark/5.png",
           "Images/Circles3Dark/6.png", "Images/Circles3Dark/7.png", "Images/Circles3Dark/8.png"]],
-        [["Images/Circles4/0.png", "Images/Circles4/1.png", "Images/Circles4/2.png", "Images/Circles4/3.png", "Images/Circles4/4.png", "Images/Circles4/5.png",
+        [["Images/Circles4/0.png", "Images/Circles4/1.png", "Images/Circles4/2.png", "Images/Circles4/3.png",
+          "Images/Circles4/4.png", "Images/Circles4/5.png",
           "Images/Circles4/6.png", "Images/Circles4/7.png", "Images/Circles4/8.png"],
-         ["Images/Circles4Dark/0.png", "Images/Circles4Dark/1.png", "Images/Circles4Dark/2.png", "Images/Circles4Dark/3.png", "Images/Circles4Dark/4.png",
+         ["Images/Circles4Dark/0.png", "Images/Circles4Dark/1.png", "Images/Circles4Dark/2.png",
+          "Images/Circles4Dark/3.png", "Images/Circles4Dark/4.png",
           "Images/Circles4Dark/5.png",
           "Images/Circles4Dark/6.png", "Images/Circles4Dark/7.png", "Images/Circles4Dark/8.png"]],
-        [["Images/Circles6/0.png", "Images/Circles6/1.png", "Images/Circles6/2.png", "Images/Circles6/3.png", "Images/Circles6/4.png", "Images/Circles6/5.png",
+        [["Images/Circles6/0.png", "Images/Circles6/1.png", "Images/Circles6/2.png", "Images/Circles6/3.png",
+          "Images/Circles6/4.png", "Images/Circles6/5.png",
           "Images/Circles6/6.png", "Images/Circles6/7.png", "Images/Circles6/8.png"],
-         ["Images/Circles6Dark/0.png", "Images/Circles6Dark/1.png", "Images/Circles6Dark/2.png", "Images/Circles6Dark/3.png", "Images/Circles6Dark/4.png",
+         ["Images/Circles6Dark/0.png", "Images/Circles6Dark/1.png", "Images/Circles6Dark/2.png",
+          "Images/Circles6Dark/3.png", "Images/Circles6Dark/4.png",
           "Images/Circles6Dark/5.png",
           "Images/Circles6Dark/6.png", "Images/Circles6Dark/7.png", "Images/Circles6Dark/8.png"]],
-        [["Images/Circles5/0.png", "Images/Circles5/1.png", "Images/Circles5/2.png", "Images/Circles5/3.png", "Images/Circles5/4.png", "Images/Circles5/5.png",
+        [["Images/Circles5/0.png", "Images/Circles5/1.png", "Images/Circles5/2.png", "Images/Circles5/3.png",
+          "Images/Circles5/4.png", "Images/Circles5/5.png",
           "Images/Circles5/6.png", "Images/Circles5/7.png", "Images/Circles5/8.png"],
-         ["Images/Circles5Dark/0.png", "Images/Circles5Dark/1.png", "Images/Circles5Dark/2.png", "Images/Circles5Dark/3.png", "Images/Circles5Dark/4.png",
+         ["Images/Circles5Dark/0.png", "Images/Circles5Dark/1.png", "Images/Circles5Dark/2.png",
+          "Images/Circles5Dark/3.png", "Images/Circles5Dark/4.png",
           "Images/Circles5Dark/5.png",
           "Images/Circles5Dark/6.png", "Images/Circles5Dark/7.png", "Images/Circles5Dark/8.png"]]
     ]
 
     rect_sprite_list = pygame.sprite.Group()
 
-    number_list = ["Images/numberWhite/1.png", "Images/numberWhite/2.png", "Images/numberWhite/3.png", "Images/numberWhite/4.png",
-                   "Images/numberWhite/5.png", "Images/numberWhite/6.png", "Images/numberWhite/7.png", "Images/numberWhite/8.png", "Images/numberWhite/9.png"]
+    number_list = ["Images/numberWhite/1.png", "Images/numberWhite/2.png", "Images/numberWhite/3.png",
+                   "Images/numberWhite/4.png",
+                   "Images/numberWhite/5.png", "Images/numberWhite/6.png", "Images/numberWhite/7.png",
+                   "Images/numberWhite/8.png", "Images/numberWhite/9.png"]
 
     sidebar_rect = ["Images/sidebarRect/sidebar1.png", "Images/sidebarRect/sidebar2.png",
-                    "Images/sidebarRect/sidebar3.png", "Images/sidebarRect/sidebar4.png", "Images/sidebarRect/sidebar6.png",  "Images/sidebarRect/sidebar5.png"]
+                    "Images/sidebarRect/sidebar3.png", "Images/sidebarRect/sidebar4.png",
+                    "Images/sidebarRect/sidebar6.png", "Images/sidebarRect/sidebar5.png"]
 
     list_of_circle_sprites = []
     list_of_overlay_sprites = []
@@ -384,11 +411,9 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                           list_of_number_sprites[number],
                                                           win_vars, number)
 
-
     updateCompleteness(list_of_overlay_sprites, list_of_number_sprites)
 
-
-    #init and setting variables
+    # init and setting variables
     circles_visible = False
     circles_has_been_clicked = False
     rect_can_be_clicked = True
@@ -399,7 +424,10 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                                                       201)  # lmt = lightmodetext, lmtc = lightmodetextonclick, dmt = darkmodetext, dmtc = darkmodetextonclick
     settingsButtonInvs = pygame.Rect(0, win_size[1] - int(win_vars["sprite_size"]), win_vars["sprite_size"],
                                      win_vars["sprite_size"])
-    settingsButton = changeColour(pygame.transform.smoothscale(pygame.image.load("Images/settings.png").convert_alpha(), (int(win_vars["sprite_size"] / 1.2), int(win_vars["sprite_size"] / 1.2))), lmt[0], lmt[1], lmt[2])
+    settingsButton = changeColour(pygame.transform.smoothscale(pygame.image.load("Images/settings.png").convert_alpha(),
+                                                               (int(win_vars["sprite_size"] / 1.2),
+                                                                int(win_vars["sprite_size"] / 1.2))), lmt[0], lmt[1],
+                                  lmt[2])
     cursor_list = [pygame.image.load('Images/rsz_circle.png'), pygame.image.load('Images/rsz_x.png'),
                    pygame.image.load('Images/rsz_cursor.png')]
     cursor = cursor_value
@@ -424,13 +452,13 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
         pygame.draw.rect(window, sidebar_colour, (0, 0, win_vars["width_sidebar"], win_size[1]))
         rect_sprite_list.draw(window)
 
-        window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"]/1.2)))
+        window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"] / 1.2)))
 
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 addSettingsToDatabase(mode, cursor, win_size[0], adj, data.value)
-                print ("saved data value is:" , data.value)
+                print("saved data value is:", data.value)
                 done = True
                 data.value = 1
                 exit.value = 1
@@ -480,7 +508,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                                 circle_sprite.clicked = True
                                 test = 2
                                 while test == 2:
-                                    print ("restart")
+                                    print("restart")
                                     test = runGame(temp_id, circle_sprite.pos_id, cursor, background_colour, textColour,
                                                    textClickedColour, adj, win_vars, win_size)
                                     if (test == 0):
@@ -501,21 +529,22 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
                 draw(window, list_of_overlay_sprites[temp_id])
                 draw(window, list_of_number_sprites[temp_id])
                 rect_sprite_list.draw(window)
-                window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"]/1.2)))
+                window.blit(settingsButton, (0, win_size[1] - int(win_vars["sprite_size"] / 1.2)))
 
             if settingsPage.open:
-                settingsPage.colour, background_colour, sidebar_colour, cursor, adj, win_size, circles_visible, rect_can_be_clicked, windimPressed = settings(win_vars, cursor,
-                                                                                                                                                              textClickedColour,
-                                                                                                                                                              textColour,
-                                                                                                                                                              settingsPage.colour,
-                                                                                                                                                              sidebar_colour,
-                                                                                                                                                              window, event, adj,
-                                                                                                                                                              win_size,
-                                                                                                                                                              settingsPage,
-                                                                                                                                                              circles_visible,
-                                                                                                                                                              rect_can_be_clicked,
-                                                                                                                                                              cursor_list, lmt,
-                                                                                                                                                              lmtc, dmt, dmtc, data)
+                settingsPage.colour, background_colour, sidebar_colour, cursor, adj, win_size, circles_visible, rect_can_be_clicked, windimPressed = settings(
+                    win_vars, cursor,
+                    textClickedColour,
+                    textColour,
+                    settingsPage.colour,
+                    sidebar_colour,
+                    window, event, adj,
+                    win_size,
+                    settingsPage,
+                    circles_visible,
+                    rect_can_be_clicked,
+                    cursor_list, lmt,
+                    lmtc, dmt, dmtc, data)
 
             if background_colour == (255, 244, 234):
                 mode = 0
@@ -546,6 +575,7 @@ def sidebar(windim, settingsOpen, settingColour, sidebarColour, cursor_value, mo
 
     pygame.quit()
 
+
 def run_all(data, exit):
     print("This is the main file!")
     createDatabase()
@@ -558,7 +588,7 @@ def run_all(data, exit):
 
     if isSavedSettings():
         test = getSettingsFromDatabase()
-        winsize = (int(test[2]), int(test[2] * (2/3)))
+        winsize = (int(test[2]), int(test[2] * (2 / 3)))
         cursor = test[1]
         adj = test[3]
         data.value = int(test[4])
@@ -566,17 +596,19 @@ def run_all(data, exit):
             data.value = 1
 
         if test[0] == 1:
-            backgroundColour =(71,60,68)
-            sidebarColour =(55,51,60)
-        print (winsize, cursor, adj)
-    print ("data value from settings is:" , data.value)
+            backgroundColour = (71, 60, 68)
+            sidebarColour = (55, 51, 60)
+        print(winsize, cursor, adj)
+    print("data value from settings is:", data.value)
     sidebar(winsize, False, backgroundColour, sidebarColour, cursor, adj, data, exit, True)
 
     data.value = 1
     exit.value = 1
 
+
 def play_sound():
     sa.WaveObject.from_wave_file('music.wav').play().wait_done()
+
 
 if __name__ == "__main__":
     run_all()
